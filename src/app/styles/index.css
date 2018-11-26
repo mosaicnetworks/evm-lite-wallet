@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400');
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
+* {
+    border-radius: 0 !important;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #FAFAFA;
+    font-family: 'Roboto', sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+.page-heading {
+    font-family: 'Lato', sans-serif !important;
+    height: 70px;
+    line-height: 70px;
+    border-top: none;
+    border-bottom: none;
+}
+
+.page-heading .heading {
+    text-transform: uppercase;
+    float: left;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.page-heading .right {
+    float: right;
+}
+
+.card {
+    box-shadow: none !important;
+    border: 1px solid #eEE !important;
+}
