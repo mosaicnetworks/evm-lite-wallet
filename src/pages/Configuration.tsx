@@ -4,9 +4,7 @@ import {connect} from "react-redux";
 
 import {Button, Divider, Form, Header, Icon, Label} from "semantic-ui-react";
 
-import {DefaultProps, Store} from "../redux";
-
-import ConfigurationActions from "../redux/actions/Configuration";
+import {ConfigActions, DefaultProps, Store} from "evml-redux";
 
 
 export interface ConfigurationLocalProps extends DefaultProps {
@@ -150,16 +148,16 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
 }
 
 const mapStoreToProps = (store: Store) => ({
-    isLoading: store.config.isLoading,
-    config: store.config.readConfigResponse,
-    readError: store.config.readConfigError,
-    writeError: store.config.saveConfigError,
-    saveResponse: store.config.saveConfigResponse
+    isLoading: store.config.readConfig.isLoading,
+    config: store.config.readConfig.readConfigResponse,
+    readError: store.config.readConfig.readConfigError,
+    writeError: store.config.saveConfig.saveConfigError,
+    saveResponse: store.config.saveConfig.saveConfigResponse
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    handleReadConfig: () => dispatch(ConfigurationActions.handleReadConfig()),
-    handleSaveConfig: (data: any) => dispatch(ConfigurationActions.handleSaveConfig(data))
+    handleReadConfig: () => dispatch(ConfigActions.handleReadConfig()),
+    handleSaveConfig: (data: any) => dispatch(ConfigActions.handleSaveConfig(data))
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(Configuration);

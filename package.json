@@ -51,7 +51,7 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
     "electron": "electron ./src/main.js",
-    "server": "./server.sh"
+    "server": "./scripts/server.sh"
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",

@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import {BaseAccount} from 'evml-cli';
 import {Divider, Header} from "semantic-ui-react";
 
-import {AccountsActions, DefaultProps, Store} from "../redux/index";
+import {AccountsActions, DefaultProps, Store} from "evml-redux";
 
 import Account from '../components/account/Account';
 import AccountCreate from "../components/account/AccountCreate";

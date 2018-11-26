@@ -5,7 +5,7 @@ import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semant
 
 import {BaseAccount} from 'evml-cli';
 
-import {AccountsActions, DefaultProps, Store} from "../../redux/index";
+import {AccountsActions, DefaultProps, Store} from "evml-redux";
 
 import './styles/Account.css'
 

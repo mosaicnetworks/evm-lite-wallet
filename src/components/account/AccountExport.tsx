@@ -3,12 +3,12 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Icon, Modal} from "semantic-ui-react";
 
-import {DefaultProps, Store} from "../../redux/index";
+import {DefaultProps, Store} from "evml-redux";
 
 import './styles/Account.css'
 
 export interface LocalAccountsEditProps extends DefaultProps {
-    error: string;
+    error?: string;
 }
 
 interface State {
