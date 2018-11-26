@@ -1,13 +1,13 @@
 import * as React from 'react';
 
 import {connect} from "react-redux";
-import {Button, Modal} from "semantic-ui-react";
+import {Button, Modal, Form} from "semantic-ui-react";
 
-import {DefaultProps, Store} from "evml-redux";
+import {DefaultProps, Store, BaseAccount} from "evml-redux";
 
 
 export interface LocalAccountsEditProps extends DefaultProps {
-    error?: string
+    account: BaseAccount
 }
 
 interface State {
@@ -27,13 +27,31 @@ class AccountTransfer extends React.Component<LocalAccountsEditProps, any & Stat
     };
 
     public render() {
+        const {config} = this.props;
         return (
             <React.Fragment>
                 <Modal trigger={<Button basic={false} color='green'>Transfer</Button>}>
-                    <Modal.Header>Transfer</Modal.Header>
+                    <Modal.Header>Transfer From: {this.props.account.address}</Modal.Header>
                     <Modal.Content>
                         <Modal.Description>
-                            Transfer modal
+                            <Form>
+                                <Form.Field>
+                                    <label>To</label>
+                                    <input/>
+                                </Form.Field>
+                                <Form.Field>
+                                    <label>Value</label>
+                                    <input/>
+                                </Form.Field>
+                                <Form.Field>
+                                    <label>Gas</label>
+                                    <input defaultValue={config && config.defaults.gas}/>
+                                </Form.Field>
+                                <Form.Field>
+                                    <label>Gas Price</label>
+                                    <input defaultValue={config && config.defaults.gasprice}/>
+                                </Form.Field>
+                            </Form>
                         </Modal.Description>
                     </Modal.Content>
                     <Modal.Actions>
@@ -45,7 +63,9 @@ class AccountTransfer extends React.Component<LocalAccountsEditProps, any & Stat
     }
 }
 
-const mapStoreToProps = (store: Store) => ({});
+const mapStoreToProps = (store: Store) => ({
+    config: store.config.readConfig.readConfigResponse
+});
 
 const mapDispatchToProps = (dispatch: any) => ({});
 

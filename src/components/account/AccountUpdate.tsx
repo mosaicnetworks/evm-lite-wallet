@@ -3,9 +3,7 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {BaseAccount} from 'evml-cli';
-
-import {AccountsActions, DefaultProps, Store} from "evml-redux";
+import {AccountsActions, DefaultProps, Store, BaseAccount} from "evml-redux";
 
 import './styles/Account.css'
 
@@ -135,7 +133,7 @@ const mapStoreToProps = (store: Store) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     handleUpdatePassword: (a: string, o: string, n: string) => {
-        return dispatch(AccountsActions.handleUpdateAccountPassword(a, o, n));
+        return dispatch(AccountsActions.handleAccountUpdate(a, o, n));
     }
 });
 

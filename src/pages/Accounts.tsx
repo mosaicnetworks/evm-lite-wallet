@@ -3,10 +3,9 @@ import * as React from 'react';
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {connect} from 'react-redux';
-import {BaseAccount} from 'evml-cli';
 import {Divider, Header} from "semantic-ui-react";
 
-import {AccountsActions, DefaultProps, Store} from "evml-redux";
+import {AccountsActions, DefaultProps, Store, BaseAccount} from "evml-redux";
 
 import Account from '../components/account/Account';
 import AccountCreate from "../components/account/AccountCreate";

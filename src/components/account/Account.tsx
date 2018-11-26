@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {Button, Card, Icon, Image, Label} from 'semantic-ui-react'
 
-import AccountEdit from "./AccountUpdate";
+import AccountUpdate from "./AccountUpdate";
 import AccountExport from "./AccountExport";
 import AccountTransfer from "./AccountTransfer";
 import AccountHistory from "./AccountHistory";
@@ -45,8 +45,8 @@ class Account extends React.Component<any, any> {
                         <Button primary={true} onClick={this.onTXHistoryClick}>
                             <Icon name="list"/> Transaction History
                         </Button>
-                        <AccountTransfer/>
-                        <AccountEdit account={this.props.account}/>
+                        <AccountTransfer account={this.props.account}/>
+                        <AccountUpdate account={this.props.account}/>
                         <AccountExport account={this.props.account}/>
                     </div>
                 </Card.Content>
