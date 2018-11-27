@@ -133,7 +133,11 @@ const mapStoreToProps = (store: Store) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     handleUpdatePassword: (a: string, o: string, n: string) => {
-        return dispatch(AccountsActions.handleAccountUpdate(a, o, n));
+        return dispatch(AccountsActions.handleAccountUpdate({
+            newPassword: n,
+            oldPassword: o,
+            address: a,
+        }));
     }
 });
 
