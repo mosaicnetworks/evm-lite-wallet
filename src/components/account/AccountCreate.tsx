@@ -31,6 +31,14 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
     public open = () => this.setState({open: true});
     public close = () => this.setState({open: false});
 
+    public handleChangeVerifyPassword = (e: any) => {
+        this.setState({password: e.target.value});
+    };
+
+    public handleChangePassword = (e: any) => {
+        this.setState({verifyPassword: e.target.value});
+    };
+
     public handleCreate = () => {
         this.setState({errorState: ''});
 
@@ -92,11 +100,11 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
                             <Form>
                                 <Form.Field>
                                     <label>Password: </label>
-                                    <input onChange={(e) => this.setState({password: e.target.value})}/>
+                                    <input onChange={this.handleChangePassword}/>
                                 </Form.Field>
                                 <Form.Field>
                                     <label>Verify Password: </label>
-                                    <input onChange={(e) => this.setState({verifyPassword: e.target.value})}/>
+                                    <input onChange={this.handleChangeVerifyPassword}/>
                                 </Form.Field>
                             </Form>
                         </Modal.Description>

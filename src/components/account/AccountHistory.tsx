@@ -19,21 +19,21 @@ class AccountHistory extends React.Component<any, any> {
                     <Table.Body>
                         <Table.Row>
                             <Table.Cell>
-0X925601AFA301AA0E6480A5227450521048F5BBBD
+                                0X925601AFA301AA0E6480A5227450521048F5BBBD
                             </Table.Cell>
                             <Table.Cell>10000</Table.Cell>
                             <Table.Cell><Label color={"green"}>Successful</Label></Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>
-0X925601AFA301AA0E6480A5227450521048F5BBBD
+                                0X925601AFA301AA0E6480A5227450521048F5BBBD
                             </Table.Cell>
                             <Table.Cell>10000</Table.Cell>
                             <Table.Cell><Label color={"red"}>Failed</Label></Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>
-0X925601AFA301AA0E6480A5227450521048F5BBBD
+                                0X925601AFA301AA0E6480A5227450521048F5BBBD
                             </Table.Cell>
                             <Table.Cell>10000</Table.Cell>
                             <Table.Cell><Label color={"yellow"}>Pending</Label></Table.Cell>

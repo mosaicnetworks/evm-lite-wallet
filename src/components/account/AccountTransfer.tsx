@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import {connect} from "react-redux";
-import {Button, Modal, Form} from "semantic-ui-react";
+import {Button, Form, Modal} from "semantic-ui-react";
 
-import {DefaultProps, Store, BaseAccount} from "evml-redux";
+import {BaseAccount, DefaultProps, Store} from "evml-redux";
 
 
 export interface LocalAccountsEditProps extends DefaultProps {
@@ -12,21 +12,46 @@ export interface LocalAccountsEditProps extends DefaultProps {
 
 interface State {
     open: boolean;
+    toAddress: string;
+    value: string;
+    gas: string;
+    gasPrice: string;
 }
 
 class AccountTransfer extends React.Component<LocalAccountsEditProps, any & State> {
     public state = {
         open: false,
+        toAddress: '',
+        value: '',
+        gas: '',
+        gasPrice: '',
     };
 
     public open = () => this.setState({open: true});
     public close = () => this.setState({open: false});
 
+    public handleOnChangeToAddress = (e: any) => {
+        this.setState({toAddress: e.target.value});
+    };
+
+    public handleOnChangeValue = (e: any) => {
+        this.setState({value: e.target.value});
+    };
+
+    public handleOnChangeGas = (e: any) => {
+        this.setState({gas: e.target.value});
+    };
+
+    public handleOnChangeGasPrice = (e: any) => {
+        this.setState({gasPrice: e.target.value});
+    };
+
     public handleTransfer = () => {
-        // pass
+        console.log(this.state);
     };
 
     public render() {
+        console.log('render');
         const {config} = this.props;
         return (
             <React.Fragment>
@@ -37,19 +62,21 @@ class AccountTransfer extends React.Component<LocalAccountsEditProps, any & Stat
                             <Form>
                                 <Form.Field>
                                     <label>To</label>
-                                    <input/>
+                                    <input onChange={this.handleOnChangeToAddress}/>
                                 </Form.Field>
                                 <Form.Field>
                                     <label>Value</label>
-                                    <input/>
+                                    <input onChange={this.handleOnChangeValue}/>
                                 </Form.Field>
                                 <Form.Field>
                                     <label>Gas</label>
-                                    <input defaultValue={config && config.defaults.gas}/>
+                                    <input onChange={this.handleOnChangeGas}
+                                           defaultValue={config && config.defaults.gas}/>
                                 </Form.Field>
                                 <Form.Field>
                                     <label>Gas Price</label>
-                                    <input defaultValue={config && config.defaults.gasprice}/>
+                                    <input onChange={this.handleOnChangeGasPrice}
+                                        defaultValue={config && config.defaults.gasprice}/>
                                 </Form.Field>
                             </Form>
                         </Modal.Description>

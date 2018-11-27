@@ -53,6 +53,18 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
         }
     };
 
+    public handleChangeOldPassword = (e: any) => {
+        this.setState({oldPassword: e.target.value});
+    };
+
+    public handleChangeNewPassword = (e: any) => {
+        this.setState({newPassword: e.target.value});
+    };
+
+    public handleChangeVerifyNewPassword = (e: any) => {
+        this.setState({verifyNewPassword: e.target.value});
+    };
+
     public render() {
         const {isLoading, error, response} = this.props;
         return (
@@ -96,17 +108,17 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
                                 <Form.Field>
                                     <label>Old Password: </label>
                                     <input type={"password"} placeholder='Old Password'
-                                           onChange={(e) => this.setState({oldPassword: e.target.value})}/>
+                                           onChange={this.handleChangeOldPassword}/>
                                 </Form.Field>
                                 <Form.Field>
                                     <label>New Password</label>
                                     <input type={"password"} placeholder='New Password'
-                                           onChange={(e) => this.setState({newPassword: e.target.value})}/>
+                                           onChange={this.handleChangeNewPassword}/>
                                 </Form.Field>
                                 <Form.Field>
                                     <label>Verify New Password</label>
                                     <input type={"password"} placeholder='Verify New Password'
-                                           onChange={(e) => this.setState({verifyNewPassword: e.target.value})}
+                                           onChange={this.handleChangeVerifyNewPassword}
                                     />
                                 </Form.Field>
                             </Form>

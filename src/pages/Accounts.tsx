@@ -21,16 +21,15 @@ export interface AccountsLocalProps extends DefaultProps {
 }
 
 class Accounts extends React.Component<AccountsLocalProps, any> {
-    public componentWillMount = () => {
+
+    public componentDidMount = () => {
         this.props.handleFetchLocalAccounts();
     };
 
     public render() {
-        const {accounts, error} = this.props;
-
+        const {error, accounts} = this.props;
         return (
             <React.Fragment>
-
                 <Header as={"h2"}>
                     Accounts
                     <Header.Subheader>
@@ -50,6 +49,7 @@ class Accounts extends React.Component<AccountsLocalProps, any> {
             </React.Fragment>
         );
     }
+
 }
 
 const mapStoreToProps = (store: Store) => ({
