@@ -18,7 +18,6 @@ export interface AppLocalProps extends DefaultProps {
 }
 
 class App extends React.Component<AppLocalProps, any> {
-
     public componentDidMount = () => {
         this.props.handleReadConfig()
             .then(() => this.props.handleFetchLocalAccounts())

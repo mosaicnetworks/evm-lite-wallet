@@ -12,7 +12,6 @@ interface LoadingButtonLocalProps {
 class LoadingButton extends React.Component<LoadingButtonLocalProps, any> {
     public render() {
         const {isLoading, onClickHandler, right} = this.props;
-
         return (
             <React.Fragment>
                 <Button className={right ? "right" : ""} onClick={onClickHandler}

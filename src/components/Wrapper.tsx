@@ -4,7 +4,6 @@ import {Container} from "semantic-ui-react";
 
 import Header from "./Header";
 
-
 class Wrapper extends React.Component<any, any> {
     public render() {
         return (

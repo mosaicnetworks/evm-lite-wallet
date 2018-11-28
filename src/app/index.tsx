@@ -12,7 +12,6 @@ import './styles/index.css';
 
 import registerServiceWorker from './server';
 
-
 ReactDOM.render(<Provider store={store}><App/></Provider>, document.getElementById('root') as HTMLElement);
 
 registerServiceWorker();

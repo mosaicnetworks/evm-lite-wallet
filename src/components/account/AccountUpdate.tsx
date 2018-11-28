@@ -7,7 +7,6 @@ import {AccountsActions, DefaultProps, Store, BaseAccount} from "../../redux";
 
 import './styles/Account.css'
 
-
 export interface LocalAccountsEditProps extends DefaultProps {
     handleUpdatePassword: (a: string, o: string, n: string) => void;
     error: string;

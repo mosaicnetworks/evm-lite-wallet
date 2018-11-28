@@ -5,7 +5,6 @@ import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semant
 
 import {AccountsActions, DefaultProps, Store, EVMLDispatch} from "../../redux";
 
-
 export interface LocalAccountsEditProps extends DefaultProps {
     handleCreateAccount: (password: string) => void;
     isLoading: boolean;

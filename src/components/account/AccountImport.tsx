@@ -5,7 +5,6 @@ import {Button, Form, Icon, Message, Modal, TextArea} from "semantic-ui-react";
 
 import {AccountsActions, DefaultProps, Store} from "../../redux";
 
-
 export interface LocalAccountsEditProps extends DefaultProps {
     handleImportAccount: (v3JSONKeystore: string) => void;
 }

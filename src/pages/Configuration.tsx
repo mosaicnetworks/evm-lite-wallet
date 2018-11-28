@@ -8,7 +8,6 @@ import {ConfigActions, DefaultProps, Store} from "../redux";
 
 import LoadingButton from "../components/LoadingButton";
 
-
 export interface ConfigurationLocalProps extends DefaultProps {
     config: {
         read: {

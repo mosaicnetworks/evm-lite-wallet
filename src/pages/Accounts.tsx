@@ -12,7 +12,6 @@ import AccountImport from "../components/account/AccountImport";
 import './styles/Accounts.css';
 import LoadingButton from "../components/LoadingButton";
 
-
 export interface AccountsLocalProps extends DefaultProps {
     accounts: BaseAccount[],
     error: string
@@ -21,7 +20,6 @@ export interface AccountsLocalProps extends DefaultProps {
 }
 
 class Accounts extends React.Component<AccountsLocalProps, any> {
-
     public handleRefreshAccounts = () => {
         this.props.handleFetchLocalAccounts();
     };
@@ -50,7 +48,6 @@ class Accounts extends React.Component<AccountsLocalProps, any> {
             </React.Fragment>
         );
     }
-
 }
 
 const mapStoreToProps = (store: Store) => ({

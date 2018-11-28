@@ -5,7 +5,6 @@ import {Button, Form, Modal} from "semantic-ui-react";
 
 import {BaseAccount, DefaultProps, Store} from "../../redux";
 
-
 export interface LocalAccountsEditProps extends DefaultProps {
     account: BaseAccount
 }

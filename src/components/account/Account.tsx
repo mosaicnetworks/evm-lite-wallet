@@ -9,7 +9,6 @@ import AccountHistory from "./AccountHistory";
 
 import './styles/Account.css'
 
-
 class Account extends React.Component<any, any> {
     public state = {
         showTxHistory: false,

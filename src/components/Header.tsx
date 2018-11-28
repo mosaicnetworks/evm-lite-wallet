@@ -8,13 +8,11 @@ import {DefaultProps, Store} from "../redux";
 
 import './styles/Header.css';
 
-
 export interface HeaderLocalProps extends DefaultProps {
     total: number,
 }
 
 class Header extends React.Component<HeaderLocalProps, any> {
-
     public render() {
         const {total} = this.props;
 
