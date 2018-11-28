@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {AccountsActions, DefaultProps, Store, BaseAccount} from "evml-redux";
+import {AccountsActions, DefaultProps, Store, BaseAccount} from "../../redux";
 
 import './styles/Account.css'
 

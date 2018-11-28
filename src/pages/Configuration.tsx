@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 
 import {Button, Divider, Form, Header, Icon, Label} from "semantic-ui-react";
 
-import {ConfigActions, DefaultProps, Store} from "evml-redux";
+import {ConfigActions, DefaultProps, Store} from "../redux";
 
 
 export interface ConfigurationLocalProps extends DefaultProps {
@@ -58,7 +58,6 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
             <React.Fragment>
                 <Header as={"h2"}>
                     Configuration
-
                     <Header.Subheader>
                         Note: To save you must press the save button!
                         <Label>

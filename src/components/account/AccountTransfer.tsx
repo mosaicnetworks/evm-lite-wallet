@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Form, Modal} from "semantic-ui-react";
 
-import {BaseAccount, DefaultProps, Store} from "evml-redux";
+import {BaseAccount, DefaultProps, Store} from "../../redux";
 
 
 export interface LocalAccountsEditProps extends DefaultProps {

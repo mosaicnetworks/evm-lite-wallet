@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {Container, Icon} from "semantic-ui-react";
 
-import {DefaultProps, Store} from "evml-redux";
+import {DefaultProps, Store} from "../redux";
 
 import './styles/Header.css';
 

@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 .idea
+package-lock.json
 # testing
 /coverage
 
