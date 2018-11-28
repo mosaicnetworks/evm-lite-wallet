@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
-import {Container, Icon} from "semantic-ui-react";
+import {Button, Container, Icon} from "semantic-ui-react";
 
 import {DefaultProps, Store} from "../redux";
 
@@ -26,9 +26,14 @@ class Header extends React.Component<HeaderLocalProps, any> {
                             <Link to="/accounts">
                                 <Icon size={"big"} color={"black"} name="list alternate outline"/>
                             </Link>
+                        </li>
+                        <li>
                             <Link to="/configuration">
                                 <Icon size={"big"} color={"black"} name="cog"/>
                             </Link>
+                        </li>
+                        <li>
+                            <Button icon={true} color="blue" basic={false}><Icon name={"folder"}/></Button>
                         </li>
                     </div>
                 </Container>

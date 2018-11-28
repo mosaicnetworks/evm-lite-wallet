@@ -1,33 +1,33 @@
 import * as React from 'react';
 
-import {ThunkDispatch} from "redux-thunk";
-import {AnyAction} from "redux";
 import {connect} from 'react-redux';
 import {Divider, Header} from "semantic-ui-react";
 
-import {AccountsActions, DefaultProps, Store, BaseAccount} from "../redux";
+import {AccountsActions, BaseAccount, DefaultProps, Store} from "../redux";
 
 import Account from '../components/account/Account';
 import AccountCreate from "../components/account/AccountCreate";
 import AccountImport from "../components/account/AccountImport";
 
 import './styles/Accounts.css';
+import LoadingButton from "../components/LoadingButton";
 
 
 export interface AccountsLocalProps extends DefaultProps {
     accounts: BaseAccount[],
     error: string
     handleFetchLocalAccounts: () => void,
+    isLoading: boolean;
 }
 
 class Accounts extends React.Component<AccountsLocalProps, any> {
 
-    public componentDidMount = () => {
+    public handleRefreshAccounts = () => {
         this.props.handleFetchLocalAccounts();
     };
 
     public render() {
-        const {error, accounts} = this.props;
+        const {error, accounts, isLoading} = this.props;
         return (
             <React.Fragment>
                 <Header as={"h2"}>
@@ -35,8 +35,9 @@ class Accounts extends React.Component<AccountsLocalProps, any> {
                     <Header.Subheader>
                         These accounts are read from the keystore specified in the config file.
                         <br/><br/>
-                        <AccountCreate />
-                        <AccountImport />
+                        <AccountCreate/>
+                        <AccountImport/>
+                        <LoadingButton isLoading={isLoading} onClickHandler={this.handleRefreshAccounts} right={true}/>
                     </Header.Subheader>
                 </Header>
                 <Divider hidden={true}/>
@@ -53,10 +54,11 @@ class Accounts extends React.Component<AccountsLocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store) => ({
-    accounts: store.accounts.fetchEvents.fetchLocalResponse,
-    error: store.accounts.fetchEvents.fetchLocalError,
+    isLoading: store.accounts.fetch.isLoading,
+    accounts: store.accounts.fetch.response,
+    error: store.accounts.fetch.error,
 });
-const mapsDispatchToProps = (dispatch: ThunkDispatch<Store, any, AnyAction>) => ({
+const mapsDispatchToProps = (dispatch: any) => ({
     handleFetchLocalAccounts: () => dispatch(AccountsActions.handleFetchLocalAccounts()),
 });
 

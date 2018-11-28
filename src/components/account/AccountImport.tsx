@@ -97,9 +97,9 @@ class AccountImport extends React.Component<LocalAccountsEditProps, any & State>
 }
 
 const mapStoreToProps = (store: Store) => ({
-    isLoading: store.accounts.importAccount.isLoading,
-    response: store.accounts.importAccount.importAccountResponse,
-    error: store.accounts.importAccount.importAccountError,
+    isLoading: store.accounts.import.isLoading,
+    response: store.accounts.import.response,
+    error: store.accounts.import.error,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

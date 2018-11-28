@@ -51,7 +51,6 @@ class AccountTransfer extends React.Component<LocalAccountsEditProps, any & Stat
     };
 
     public render() {
-        console.log('render');
         const {config} = this.props;
         return (
             <React.Fragment>
@@ -91,7 +90,6 @@ class AccountTransfer extends React.Component<LocalAccountsEditProps, any & Stat
 }
 
 const mapStoreToProps = (store: Store) => ({
-    config: store.config.readConfig.readConfigResponse
 });
 
 const mapDispatchToProps = (dispatch: any) => ({});

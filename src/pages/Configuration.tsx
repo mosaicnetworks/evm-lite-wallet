@@ -2,19 +2,28 @@ import * as React from 'react';
 
 import {connect} from "react-redux";
 
-import {Button, Divider, Form, Header, Icon, Label} from "semantic-ui-react";
+import {Button, Divider, Form, Header, Icon} from "semantic-ui-react";
 
 import {ConfigActions, DefaultProps, Store} from "../redux";
 
+import LoadingButton from "../components/LoadingButton";
+
 
 export interface ConfigurationLocalProps extends DefaultProps {
-    isLoading: boolean,
-    config: any,
-    error: string
-    handleReadConfig: () => Promise<any>;
+    config: {
+        read: {
+            isLoading: boolean,
+            response: any,
+            error: string
+        },
+        save: {
+            isLoading: boolean,
+            response: string,
+            error: string
+        }
+    },
     handleSaveConfig: (data: any) => void;
-    writeError: string;
-    saveResponse: string;
+    handleReadConfig: (data: any) => void;
 }
 
 interface State {
@@ -36,16 +45,18 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
         keystore: ''
     };
 
-    public componentWillMount = () => {
-        this.props.handleReadConfig()
-            .then(() => this.setState({
-                host: this.props.config.defaults.host,
-                port: this.props.config.defaults.port,
-                gas: this.props.config.defaults.gas,
-                gasprice: this.props.config.defaults.gasprice,
-                from: this.props.config.defaults.from,
-                keystore: this.props.config.defaults.keystore
-            }));
+    public componentDidMount = () => {
+        const {response} = this.props.config.read;
+        if (response) {
+            this.setState({
+                host: response.defaults.host,
+                port: response.defaults.port,
+                from: response.defaults.from,
+                gas: response.defaults.gas,
+                gasprice: response.defaults.gasprice,
+                keystore: response.defaults.keystore
+            });
+        }
     };
 
     public handleConfigSave = () => {
@@ -53,21 +64,19 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
     };
 
     public render() {
-        const {config, isLoading, saveResponse} = this.props;
+        const {config} = this.props;
         return (
             <React.Fragment>
                 <Header as={"h2"}>
                     Configuration
                     <Header.Subheader>
-                        Note: To save you must press the save button!
-                        <Label>
-                            Location
-                            <Label.Detail>/Users/danu/.evmlc/config.toml</Label.Detail>
-                        </Label>
+                        /Users/danu/.evmlc/config.toml
+                        <br/><br/>
+                        <LoadingButton right={false} isLoading={config.read.isLoading} onClickHandler={this.props.handleReadConfig}/>
                     </Header.Subheader>
                 </Header>
                 <Divider hidden={true}/>
-                {config &&
+                {config.read.response &&
                 (<div className={'page'}>
                     <Header as={"h3"}>
                         Connection
@@ -76,12 +85,12 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                     <Form>
                         <Form.Field>
                             <label>Host</label>
-                            <input defaultValue={config.defaults.host}
+                            <input defaultValue={config.read.response.defaults.host}
                                    onChange={(e) => this.setState({host: e.target.value})}/>
                         </Form.Field>
                         <Form.Field>
                             <label>Port</label>
-                            <input defaultValue={config.defaults.port}
+                            <input defaultValue={config.read.response.defaults.port}
                                    onChange={(e) => this.setState({port: e.target.value})}/>
                         </Form.Field>
                     </Form>
@@ -92,17 +101,17 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                     <Form>
                         <Form.Field>
                             <label>From</label>
-                            <input defaultValue={config.defaults.from}
+                            <input defaultValue={config.read.response.defaults.from}
                                    onChange={(e) => this.setState({from: e.target.value})}/>
                         </Form.Field>
                         <Form.Field>
                             <label>Gas</label>
-                            <input defaultValue={config.defaults.gas}
+                            <input defaultValue={config.read.response.defaults.gas}
                                    onChange={(e) => this.setState({gas: e.target.value})}/>
                         </Form.Field>
                         <Form.Field>
                             <label>Gas Price</label>
-                            <input defaultValue={config.defaults.gasprice}
+                            <input defaultValue={config.read.response.defaults.gasprice}
                                    onChange={(e) => this.setState({gasprice: e.target.value})}/>
                         </Form.Field>
                     </Form>
@@ -113,30 +122,21 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                     <Form>
                         <Form.Field>
                             <label>Keystore</label>
-                            <input defaultValue={config.defaults.keystore}
+                            <input defaultValue={config.read.response.defaults.keystore}
                                    onChange={(e) => this.setState({keystore: e.target.value})}/>
                         </Form.Field>
                     </Form>
                     <Divider hidden={true}/>
                     <Form>
                         <Form.Field>
-                            {isLoading &&
-                            (
-                                <span className={"m-2"}>
-                                        <Icon color={"green"} name={"circle notch"} loading={true}/> Saving...
-                                    <br /><br />
-                                    </span>
-                            )
-                            }
-                            {!isLoading && saveResponse &&
-                            (
-                                <span className={"m-2"}>
-                                        <Icon color={"green"} name={"thumbs up"} loading={false}/>
-                                    {saveResponse}
-                                    <br /><br />
-                                    </span>
-                            )
-                            }
+                            {config.save.isLoading &&
+                            (<span className={"m-2"}>
+                                <Icon color={"green"} name={"circle notch"}
+                                      loading={true}/> Saving...<br/><br/></span>)}
+                            {!config.save.isLoading && config.save.response &&
+                            (<span className={"m-2"}>
+                                    <Icon color={"green"} name={"thumbs up"}
+                                          loading={false}/>{config.save.response}<br/><br/></span>)}
                             <Button onClick={this.handleConfigSave} color={'green'}>Save</Button>
                         </Form.Field>
                     </Form>
@@ -147,16 +147,15 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
 }
 
 const mapStoreToProps = (store: Store) => ({
-    isLoading: store.config.readConfig.isLoading,
-    config: store.config.readConfig.readConfigResponse,
-    readError: store.config.readConfig.readConfigError,
-    writeError: store.config.saveConfig.saveConfigError,
-    saveResponse: store.config.saveConfig.saveConfigResponse
+    config: {
+        read: store.config.read,
+        save: store.config.save
+    },
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
+    handleSaveConfig: (data: any) => dispatch(ConfigActions.handleSaveConfig(data)),
     handleReadConfig: () => dispatch(ConfigActions.handleReadConfig()),
-    handleSaveConfig: (data: any) => dispatch(ConfigActions.handleSaveConfig(data))
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(Configuration);

@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import {connect} from "react-redux";
 import {BrowserRouter, Route} from "react-router-dom";
 
 import Accounts from "../pages/Accounts";
@@ -7,10 +8,22 @@ import Index from "../pages/Index";
 import Configuration from "../pages/Configuration";
 import Wrapper from "../components/Wrapper";
 
+import {AccountsActions, ConfigActions, DefaultProps, Store} from "../redux";
+
 import './styles/App.css';
 
+export interface AppLocalProps extends DefaultProps {
+    handleFetchLocalAccounts: () => void;
+    handleReadConfig: () => void;
+}
 
-class App extends React.Component<any, any> {
+class App extends React.Component<AppLocalProps, any> {
+
+    public componentDidMount = () => {
+        this.props.handleFetchLocalAccounts();
+        this.props.handleReadConfig()
+    };
+
     public render() {
         return (
             <BrowserRouter>
@@ -26,4 +39,11 @@ class App extends React.Component<any, any> {
     }
 }
 
-export default App;
+const mapStoreToProps = (store: Store) => ({});
+
+const mapsDispatchToProps = (dispatch: any) => ({
+    handleFetchLocalAccounts: () => dispatch(AccountsActions.handleFetchLocalAccounts()),
+    handleReadConfig: () => dispatch(ConfigActions.handleReadConfig()),
+});
+
+export default connect(mapStoreToProps, mapsDispatchToProps)(App);

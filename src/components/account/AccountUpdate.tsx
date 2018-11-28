@@ -138,9 +138,7 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
 }
 
 const mapStoreToProps = (store: Store) => ({
-    isLoading: store.accounts.updateAccount.isLoading,
-    error: store.accounts.updateAccount.updateAccountError,
-    response: store.accounts.updateAccount.updateAccountResponse
+    ...store.accounts.update,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -47,11 +47,13 @@ class AccountsActions extends Actions {
             AccountsActions.keystore
                 .all(true, AccountsActions.connection)
                 .then((response: BaseAccount[]) => {
-                    if (response.length) {
-                        dispatch(success<BaseAccount[]>(response));
-                    } else {
-                        dispatch(failure<string>('No accounts.'));
-                    }
+                    setTimeout(() => {
+                        if (response.length) {
+                            dispatch(success<BaseAccount[]>(response));
+                        } else {
+                            dispatch(failure<string>('No accounts.'));
+                        }
+                    }, 1000)
                 })
                 .catch(() => dispatch(failure<string>('Fetch local accounts promise failed.')))
         }
@@ -68,8 +70,9 @@ class AccountsActions extends Actions {
             AccountsActions.keystore
                 .createWithPromise(data)
                 .then((account) => {
-                    setTimeout(() => dispatch(success<string>(account)), 1000);
+                    setTimeout(() => dispatch(success<string>(account)), 500);
                 })
+                .then(() => dispatch(AccountsActions.handleFetchLocalAccounts()))
                 .catch(() => dispatch(failure<string>('Account creation unsuccessful.')));
         };
     };
@@ -85,7 +88,7 @@ class AccountsActions extends Actions {
             AccountsActions.keystore
                 .update(data.address, data.oldPassword, data.newPassword)
                 .then(() => {
-                    setTimeout(() => dispatch(success<string>('Updated account!')), 1000);
+                    setTimeout(() => dispatch(success<string>('Updated account!')), 500);
                 })
                 .catch((err: string) => dispatch(failure<string>(err)))
         };
@@ -102,8 +105,9 @@ class AccountsActions extends Actions {
             AccountsActions.keystore
                 .importV3JSONKeystore(data)
                 .then((address: string) => {
-                    setTimeout(() => dispatch(success<string>(address)), 1000);
+                    setTimeout(() => dispatch(success<string>(address)), 500);
                 })
+                .then(() => dispatch(AccountsActions.handleFetchLocalAccounts()))
                 .catch(() => dispatch(failure<string>('Something went wrong while importing an account')));
         };
     };
@@ -115,7 +119,7 @@ class AccountsActions extends Actions {
             AccountsActions.keystore
                 .getWithPromise(data)
                 .then((v3JSONKeystoreString: string) => {
-                    setTimeout(() => dispatch(success<string>(v3JSONKeystoreString)), 1000);
+                    setTimeout(() => dispatch(success<string>(v3JSONKeystoreString)), 500);
                 })
                 .catch(() => dispatch(failure<string>('Something went wrong while exporting an account')));
         };

@@ -26,10 +26,11 @@ class ConfigurationActions extends Actions {
 
         return (dispatch) => {
             dispatch(init());
-            return ConfigurationActions.config
+            ConfigurationActions.config
                 .read()
                 .then((config: any) => {
-                    dispatch(success<any>(config));
+                    setTimeout(() => dispatch(success<any>(config)), 1000);
+                    return config;
                 })
                 .catch(() => dispatch(failure<string>('Something went wrong reading config.')));
         }
@@ -45,6 +46,9 @@ class ConfigurationActions extends Actions {
                 .write(data)
                 .then(() => {
                     setTimeout(() => dispatch(success<string>('Configuration successfully saved!')), 2000);
+                })
+                .then(() => {
+                    dispatch(ConfigurationActions.handleReadConfig());
                 })
                 .catch(() => dispatch(failure<string>('Something went wrong reading config.')));
         }

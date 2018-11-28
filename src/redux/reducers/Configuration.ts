@@ -1,95 +1,28 @@
-import {InitialReducerState} from "../common/Reducer";
-
-import ConfigurationActions from "../actions/Configuration";
 import {combineReducers} from "redux";
+
+import BasicReducerFactory, {ReducerState} from "../common/Reducer";
+
+import {default as Actions} from "../actions/Configuration";
 
 
 export interface ConfigReducer {
-    readConfig: ReadConfigReducerState,
-    saveConfig: SaveConfigReducerState
+    read: ReducerState<any, string>,
+    save: ReducerState<string, string>
 }
 
-interface ReadConfigReducerState extends InitialReducerState {
-    readConfigResponse: any,
-    readConfigError: string,
-}
-
-interface SaveConfigReducerState extends InitialReducerState {
-    saveConfigResponse: string,
-    saveConfigError: string,
-}
-
-const readConfigInitialState: ReadConfigReducerState = {
-    isLoading: false,
-    readConfigResponse: null,
-    readConfigError: '',
-};
-
-const saveConfigInitialState: SaveConfigReducerState = {
-    isLoading: false,
-    saveConfigResponse: '',
-    saveConfigError: ''
-};
-
-const ReadConfigReducer = (state = readConfigInitialState, action: any) => {
-    switch (action.type) {
-        case ConfigurationActions.TYPES.READ_CONFIG_INIT:
-            return {
-                ...state,
-                isLoading: true,
-                readConfigResponse: null,
-                readConfigError: ''
-            };
-        case ConfigurationActions.TYPES.READ_CONFIG_SUCCESS:
-            return {
-                ...state,
-                isLoading: false,
-                readConfigResponse: action.data,
-                readConfigError: ''
-            };
-        case ConfigurationActions.TYPES.READ_CONFIG_FAILURE:
-            return {
-                ...state,
-                isLoading: false,
-                readConfigResponse: null,
-                readConfigError: action.data
-            };
-        default:
-            return state;
-    }
-};
-
-const SaveConfigReducer = (state = saveConfigInitialState, action: any) => {
-    switch (action.type) {
-        case ConfigurationActions.TYPES.SAVE_CONFIG_INIT:
-            return {
-                ...state,
-                isLoading: true,
-                saveConfigResponse: '',
-                saveConfigError: ''
-            };
-        case ConfigurationActions.TYPES.SAVE_CONFIG_SUCCESS:
-            return {
-                ...state,
-                isLoading: false,
-                saveConfigResponse: action.data,
-                saveConfigError: ''
-            };
-        case ConfigurationActions.TYPES.SAVE_CONFIG_FAILURE:
-            return {
-                ...state,
-                isLoading: false,
-                saveConfigResponse: '',
-                saveConfigError: action.data
-            };
-        default:
-            return state;
-    }
-};
+const SimpleReducer = <T1, T2>(prefix: string, initial: ReducerState<T1, T2>) => BasicReducerFactory<Actions, T1, T2>(Actions, prefix, initial);
 
 const ConfigReducer = combineReducers({
-    readConfig: ReadConfigReducer,
-    saveConfig: SaveConfigReducer,
+    read: SimpleReducer<any, string>('READ_CONFIG', {
+        isLoading: false,
+        response: null,
+        error: '',
+    }),
+    save: SimpleReducer<string, string>('SAVE_CONFIG', {
+        isLoading: false,
+        response: '',
+        error: ''
+    }),
 });
 
 export default ConfigReducer;

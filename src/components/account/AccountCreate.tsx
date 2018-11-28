@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {AccountsActions, DefaultProps, Store} from "../../redux";
+import {AccountsActions, DefaultProps, Store, EVMLDispatch} from "../../redux";
 
 
 export interface LocalAccountsEditProps extends DefaultProps {
@@ -76,7 +76,7 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
                             <Label.Detail>/Users/danu/.evmlc/keystore</Label.Detail>
                         </Label><br/><br/>
                         <Divider/>
-                        {(errorState || error) && (<Modal.Content>
+                        {!isLoading && (errorState || error) && (<Modal.Content>
                             <Message icon={true} error={true}>
                                 <Icon name={"times"}/>
                                 <Message.Content>
@@ -110,9 +110,8 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
                         </Modal.Description>
                     </Modal.Content>
                     <Modal.Actions>
-                        {isLoading && (
-                            <span className={"m-2"}>
-                                <Icon color={"green"} name={"circle notch"} loading={true}/> Creating...</span>)}
+                        {isLoading && (<span className={"m-2"}>
+                            <Icon color={"green"} name={"circle notch"} loading={true}/> Creating...</span>)}
                         <Button onClick={this.handleCreate} color={"green"} type='submit'>Create</Button>
                     </Modal.Actions>
                 </Modal>
@@ -122,12 +121,10 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
 }
 
 const mapStoreToProps = (store: Store) => ({
-    response: store.accounts.createAccount.createAccountResponse,
-    error: store.accounts.createAccount.createAccountError,
-    isLoading: store.accounts.createAccount.isLoading
+    ...store.accounts.create
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>) => ({
     handleCreateAccount: (password: string) => dispatch(AccountsActions.handleCreateAccount(password)),
 });
 
