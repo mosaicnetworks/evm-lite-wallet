@@ -26,10 +26,10 @@ class ConfigurationActions extends Actions {
 
         return (dispatch) => {
             dispatch(init());
-            ConfigurationActions.config
+            return ConfigurationActions.config
                 .read()
                 .then((config: any) => {
-                    setTimeout(() => dispatch(success<any>(config)), 1000);
+                    dispatch(success<any>(config));
                     return config;
                 })
                 .catch(() => dispatch(failure<string>('Something went wrong reading config.')));

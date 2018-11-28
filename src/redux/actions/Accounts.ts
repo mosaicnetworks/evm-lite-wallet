@@ -4,6 +4,7 @@ import {BaseAccount, Controller, Keystore} from 'evm-lite-lib';
 
 import Actions from "../common/Actions";
 import getHandlers, {EVMLActionHandler} from '../common/Handlers';
+import {Store} from "..";
 
 
 export interface HandlePasswordUpdateParams {
@@ -42,9 +43,10 @@ class AccountsActions extends Actions {
 
     public static handleFetchLocalAccounts: EVMLActionHandler<void, BaseAccount[], string> = () => {
         const {init, success, failure} = AccountsActions.handlers('FETCH_LOCAL');
-        return (dispatch) => {
+        return (dispatch, getState: () => Store) => {
             dispatch(init());
-            AccountsActions.keystore
+            const keystore = new Keystore(getState().config.read.response.defaults.keystore);
+            keystore
                 .all(true, AccountsActions.connection)
                 .then((response: BaseAccount[]) => {
                     setTimeout(() => {

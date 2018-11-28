@@ -23,7 +23,7 @@ export interface ConfigurationLocalProps extends DefaultProps {
         }
     },
     handleSaveConfig: (data: any) => void;
-    handleReadConfig: (data: any) => void;
+    handleReadConfig: () => Promise<any>;
 }
 
 interface State {
@@ -48,22 +48,34 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
     public componentDidMount = () => {
         const {response} = this.props.config.read;
         if (response) {
-            this.setState({
-                host: response.defaults.host,
-                port: response.defaults.port,
-                from: response.defaults.from,
-                gas: response.defaults.gas,
-                gasprice: response.defaults.gasprice,
-                keystore: response.defaults.keystore
-            });
+            this.setVars(response)
+        } else {
+            this.handleReadConfig();
         }
     };
+
+    public setVars(response: any) {
+        this.setState({
+            host: response.defaults.host,
+            port: response.defaults.port,
+            from: response.defaults.from,
+            gas: response.defaults.gas,
+            gasprice: response.defaults.gasprice,
+            keystore: response.defaults.keystore
+        });
+    }
 
     public handleConfigSave = () => {
         this.props.handleSaveConfig(this.state);
     };
 
+    public handleReadConfig = () => {
+        this.props.handleReadConfig()
+            .then(() => this.setVars(this.props.config.read.response));
+    };
+
     public render() {
+        console.log(this.state);
         const {config} = this.props;
         return (
             <React.Fragment>
@@ -72,7 +84,8 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                     <Header.Subheader>
                         /Users/danu/.evmlc/config.toml
                         <br/><br/>
-                        <LoadingButton right={false} isLoading={config.read.isLoading} onClickHandler={this.props.handleReadConfig}/>
+                        <LoadingButton right={false} isLoading={config.read.isLoading}
+                                       onClickHandler={this.handleReadConfig}/>
                     </Header.Subheader>
                 </Header>
                 <Divider hidden={true}/>

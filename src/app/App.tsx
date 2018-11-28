@@ -14,14 +14,14 @@ import './styles/App.css';
 
 export interface AppLocalProps extends DefaultProps {
     handleFetchLocalAccounts: () => void;
-    handleReadConfig: () => void;
+    handleReadConfig: () => Promise<any>;
 }
 
 class App extends React.Component<AppLocalProps, any> {
 
     public componentDidMount = () => {
-        this.props.handleFetchLocalAccounts();
         this.props.handleReadConfig()
+            .then(() => this.props.handleFetchLocalAccounts())
     };
 
     public render() {

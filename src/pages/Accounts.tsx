@@ -42,10 +42,10 @@ class Accounts extends React.Component<AccountsLocalProps, any> {
                 </Header>
                 <Divider hidden={true}/>
                 <div className={'page'}>
-                    {accounts && accounts.map((account: BaseAccount) => {
+                    {!isLoading && !error && accounts && accounts.map((account: BaseAccount) => {
                         return <Account key={account.address} account={account}/>
                     })}
-                    {error && <div className={"error_message"}>{error}</div>}
+                    {!isLoading && error && <div className={"error_message"}>{error}</div>}
                 </div>
             </React.Fragment>
         );
