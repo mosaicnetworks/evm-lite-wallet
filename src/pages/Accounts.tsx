@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {Divider, Header} from "semantic-ui-react";
 
-import {AccountsActions, BaseAccount, DefaultProps, Store} from "../redux";
+import {accounts, BaseAccount, DefaultProps, Store} from "../redux";
 
 import Account from '../components/account/Account';
 import AccountCreate from "../components/account/AccountCreate";
@@ -56,7 +56,7 @@ const mapStoreToProps = (store: Store) => ({
     error: store.accounts.fetch.error,
 });
 const mapsDispatchToProps = (dispatch: any) => ({
-    handleFetchLocalAccounts: () => dispatch(AccountsActions.handleFetchLocalAccounts()),
+    handleFetchLocalAccounts: () => dispatch(accounts.handleFetchLocalAccounts()),
 });
 
 export default connect(mapStoreToProps, mapsDispatchToProps)(Accounts);

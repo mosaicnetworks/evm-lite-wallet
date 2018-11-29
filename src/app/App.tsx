@@ -8,19 +8,22 @@ import Index from "../pages/Index";
 import Configuration from "../pages/Configuration";
 import Wrapper from "../components/Wrapper";
 
-import {AccountsActions, ConfigActions, DefaultProps, Store} from "../redux";
+import {accounts, app, configuration, DataDirectoryParams, DefaultProps, Store} from "../redux";
+
+import Defaults from "../classes/Defaults";
 
 import './styles/App.css';
+
 
 export interface AppLocalProps extends DefaultProps {
     handleFetchLocalAccounts: () => void;
     handleReadConfig: () => Promise<any>;
+    handleDataDirectoryInit: (data: DataDirectoryParams) => void;
 }
 
 class App extends React.Component<AppLocalProps, any> {
     public componentDidMount = () => {
-        this.props.handleReadConfig()
-            .then(() => this.props.handleFetchLocalAccounts())
+        this.props.handleDataDirectoryInit({path: Defaults.dataDirectory});
     };
 
     public render() {
@@ -41,8 +44,9 @@ class App extends React.Component<AppLocalProps, any> {
 const mapStoreToProps = (store: Store) => ({});
 
 const mapsDispatchToProps = (dispatch: any) => ({
-    handleFetchLocalAccounts: () => dispatch(AccountsActions.handleFetchLocalAccounts()),
-    handleReadConfig: () => dispatch(ConfigActions.handleReadConfig()),
+    handleFetchLocalAccounts: () => dispatch(accounts.handleFetchLocalAccounts()),
+    handleReadConfig: () => dispatch(configuration.handleReadConfig()),
+    handleDataDirectoryInit: (data: DataDirectoryParams) => dispatch(app.handleDataDirectoryInit(data)),
 });
 
 export default connect(mapStoreToProps, mapsDispatchToProps)(App);

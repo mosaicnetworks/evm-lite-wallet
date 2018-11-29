@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {AccountsActions, DefaultProps, Store, BaseAccount} from "../../redux";
+import {accounts, DefaultProps, Store, BaseAccount} from "../../redux";
 
 import './styles/Account.css'
 
@@ -142,7 +142,7 @@ const mapStoreToProps = (store: Store) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     handleUpdatePassword: (a: string, o: string, n: string) => {
-        return dispatch(AccountsActions.handleAccountUpdate({
+        return dispatch(accounts.handleAccountUpdate({
             newPassword: n,
             oldPassword: o,
             address: a,

@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Form, Icon, Message, Modal, TextArea} from "semantic-ui-react";
 
-import {AccountsActions, DefaultProps, Store} from "../../redux";
+import {accounts, DefaultProps, Store} from "../../redux";
 
 export interface LocalAccountsEditProps extends DefaultProps {
     handleImportAccount: (v3JSONKeystore: string) => void;
@@ -102,7 +102,7 @@ const mapStoreToProps = (store: Store) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    handleImportAccount: (v3JSONKeystore: string) => dispatch(AccountsActions.handleImportAccount(v3JSONKeystore)),
+    handleImportAccount: (v3JSONKeystore: string) => dispatch(accounts.handleImportAccount(v3JSONKeystore)),
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(AccountImport);

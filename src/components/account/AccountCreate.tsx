@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {AccountsActions, DefaultProps, Store, EVMLDispatch} from "../../redux";
+import {accounts, DefaultProps, Store, EVMLDispatch} from "../../redux";
 
 export interface LocalAccountsEditProps extends DefaultProps {
     handleCreateAccount: (password: string) => void;
@@ -124,7 +124,7 @@ const mapStoreToProps = (store: Store) => ({
 });
 
 const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>) => ({
-    handleCreateAccount: (password: string) => dispatch(AccountsActions.handleCreateAccount(password)),
+    handleCreateAccount: (password: string) => dispatch(accounts.handleCreateAccount(password)),
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(AccountCreate);

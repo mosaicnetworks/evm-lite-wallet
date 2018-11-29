@@ -4,9 +4,10 @@ import {connect} from "react-redux";
 
 import {Button, Divider, Form, Header, Icon} from "semantic-ui-react";
 
-import {ConfigActions, DefaultProps, Store} from "../redux";
+import {configuration, DefaultProps, Store} from "../redux";
 
 import LoadingButton from "../components/LoadingButton";
+import {ReadConfigParams, SaveConfigParams} from "../redux/actions/Configuration";
 
 export interface ConfigurationLocalProps extends DefaultProps {
     config: {
@@ -21,8 +22,9 @@ export interface ConfigurationLocalProps extends DefaultProps {
             error: string
         }
     },
-    handleSaveConfig: (data: any) => void;
-    handleReadConfig: () => Promise<any>;
+    handleSaveConfig: (data: SaveConfigParams) => void;
+    handleReadConfig: (data: ReadConfigParams) => Promise<any>;
+    dataDirectory: string;
 }
 
 interface State {
@@ -65,12 +67,15 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
     }
 
     public handleConfigSave = () => {
-        this.props.handleSaveConfig(this.state);
+        this.props.handleSaveConfig({
+            dataDirectoryPath: this.props.dataDirectory,
+            defaults: this.state
+        });
     };
 
     public handleReadConfig = () => {
-        this.props.handleReadConfig()
-            .then(() => this.setVars(this.props.config.read.response));
+        this.props.handleReadConfig({dataDirectoryPath: this.props.dataDirectory})
+            .then((config) => this.setVars(config));
     };
 
     public render() {
@@ -159,15 +164,13 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
 }
 
 const mapStoreToProps = (store: Store) => ({
-    config: {
-        read: store.config.read,
-        save: store.config.save
-    },
+    config: store.config,
+    dataDirectory: store.app.dataDirectory.response,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    handleSaveConfig: (data: any) => dispatch(ConfigActions.handleSaveConfig(data)),
-    handleReadConfig: () => dispatch(ConfigActions.handleReadConfig()),
+    handleSaveConfig: (data: SaveConfigParams) => dispatch(configuration.handleSaveConfig(data)),
+    handleReadConfig: (data: ReadConfigParams) => dispatch(configuration.handleReadConfig(data)),
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(Configuration);

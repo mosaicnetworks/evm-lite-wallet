@@ -1,61 +1,83 @@
-import {ThunkAction} from "redux-thunk";
-import {AnyAction} from "redux";
-
 import {Config} from 'evm-lite-lib';
-
-import {Store} from "..";
+import getHandlers, {EVMLActionHandler} from '../common/Handlers';
 
 import Actions from "../common/Actions";
-import getHandlers from '../common/Handlers';
+import Defaults from "../../classes/Defaults";
 
+
+export interface ReadConfigParams {
+    dataDirectoryPath: string;
+}
+
+export interface SaveConfigParams {
+    defaults: any;
+    dataDirectoryPath: string;
+}
 
 class ConfigurationActions extends Actions {
+    constructor() {
+        super();
+        this.TYPES = {
+            READ_CONFIG_INIT: 'READ_CONFIG_INIT',
+            READ_CONFIG_SUCCESS: 'READ_CONFIG_SUCCESS',
+            READ_CONFIG_FAILURE: 'READ_CONFIG_FAILURE',
 
-    public static TYPES = {
-        READ_CONFIG_INIT: 'READ_CONFIG_INIT',
-        READ_CONFIG_SUCCESS: 'READ_CONFIG_SUCCESS',
-        READ_CONFIG_FAILURE: 'READ_CONFIG_FAILURE',
+            SAVE_CONFIG_INIT: 'SAVE_CONFIG_INIT',
+            SAVE_CONFIG_SUCCESS: 'SAVE_CONFIG_SUCCESS',
+            SAVE_CONFIG_FAILURE: 'SAVE_CONFIG_FAILURE',
+        };
 
-        SAVE_CONFIG_INIT: 'SAVE_CONFIG_INIT',
-        SAVE_CONFIG_SUCCESS: 'SAVE_CONFIG_SUCCESS',
-        SAVE_CONFIG_FAILURE: 'SAVE_CONFIG_FAILURE',
-    };
+        this.handlers = <S, F>(prefix: string) => getHandlers<ConfigurationActions, S, F>(this, prefix);
+    }
 
-    public static handleReadConfig = (): ThunkAction<void, Store, any, AnyAction> => {
-        const {init, success, failure} = ConfigurationActions.handlers('READ_CONFIG');
+    public handleReadConfig: EVMLActionHandler<ReadConfigParams, any, string, void> = (data) => {
+        const {init, success, failure} = this.handlers<any, string>('READ_CONFIG');
+
+        if (!data) {
+            throw new Error('Provide `data` parameter.');
+        }
 
         return (dispatch) => {
             dispatch(init());
-            return ConfigurationActions.config
+
+            data.dataDirectoryPath = data.dataDirectoryPath || Defaults.dataDirectory;
+            const config = new Config(data.dataDirectoryPath, 'config.toml');
+
+            return config
                 .read()
                 .then((config: any) => {
-                    dispatch(success<any>(config));
+                    dispatch(success(config));
                     return config;
                 })
-                .catch(() => dispatch(failure<string>('Something went wrong reading config.')));
+                .catch(() => dispatch(failure('Something went wrong reading config.')));
         }
     };
 
-    public static handleSaveConfig = (configState: any): ThunkAction<void, Store, any, AnyAction> => {
-        const {init, success, failure} = ConfigurationActions.handlers('SAVE_CONFIG');
+    public handleSaveConfig: EVMLActionHandler<SaveConfigParams, any, string, void> = (data) => {
+        const {init, success, failure} = this.handlers<string, string>('SAVE_CONFIG');
+
+        if (!data) {
+            throw new Error('Provide `data` parameter.');
+        }
 
         return (dispatch) => {
             dispatch(init());
-            const data = {defaults: configState};
-            return ConfigurationActions.config
-                .write(data)
+
+            const newConfig = {defaults: data.defaults};
+            const dataDirectory = data.dataDirectoryPath || Defaults.dataDirectory;
+            const config = new Config(dataDirectory, 'config.toml');
+
+            return config
+                .write(newConfig)
                 .then(() => {
-                    setTimeout(() => dispatch(success<string>('Configuration successfully saved!')), 2000);
+                    setTimeout(() => dispatch(success('Configuration successfully saved!')), 2000);
                 })
                 .then(() => {
-                    dispatch(ConfigurationActions.handleReadConfig());
+                    dispatch(this.handleReadConfig({dataDirectoryPath: dataDirectory}));
                 })
-                .catch(() => dispatch(failure<string>('Something went wrong reading config.')));
+                .catch(() => dispatch(failure('Something went wrong reading config.')));
         }
     };
-
-    private static config = new Config('/Users/danu/.evmlc', 'config.toml');
-    private static handlers = (prefix: string) => getHandlers<ConfigurationActions>(ConfigurationActions, prefix)
 
 }
 

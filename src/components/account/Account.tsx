@@ -49,8 +49,8 @@ class Account extends React.Component<any, any> {
                         <AccountExport account={this.props.account}/>
                     </div>
                 </Card.Content>
-                {(this.state.showTxHistory) ? (
-                    <Card.Content><AccountHistory account={this.props.account}/></Card.Content>) : null}
+                {(this.state.showTxHistory) ?
+                    (<Card.Content><AccountHistory account={this.props.account}/></Card.Content>) : null}
             </Card>
         );
     }

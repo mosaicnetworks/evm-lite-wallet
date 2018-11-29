@@ -3,7 +3,7 @@ import {BaseAccount} from "evm-lite-lib";
 
 import {default as Actions} from "../actions/Accounts";
 
-import BasicReducerFactory, {BasicReducerState} from "../common/Reducer";
+import BasicReducerFactory, {BasicReducerState} from "../common/BasicReducer";
 
 
 export interface AccountsReducer {
@@ -15,8 +15,9 @@ export interface AccountsReducer {
     transfer: BasicReducerState<string, string>;
 }
 
+const accounts = new Actions();
 const SimpleReducer = <T1, T2>(prefix: string, initial?: BasicReducerState<T1, T2>) => {
-    return BasicReducerFactory<Actions, T1, T2>(Actions, prefix, initial);
+    return BasicReducerFactory<Actions, T1, T2>(accounts, prefix, initial);
 };
 
 const AccountsReducer = combineReducers({
@@ -29,6 +30,3 @@ const AccountsReducer = combineReducers({
 });
 
 export default AccountsReducer;
-
-
-

@@ -2,9 +2,11 @@ import * as React from 'react';
 
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
-import {Button, Container, Icon, Label} from "semantic-ui-react";
+import {Container, Icon, Label} from "semantic-ui-react";
 
 import {DefaultProps, Store} from "../redux";
+
+import DataDirectoryButton from "./DataDirectoryButton";
 
 import './styles/Header.css';
 
@@ -35,7 +37,7 @@ class Header extends React.Component<HeaderLocalProps, any> {
                             </Link>
                         </li>
                         <li>
-                            <a><Button icon={true} color="blue" basic={false}><Icon name={"folder"}/></Button></a>
+                            <a><DataDirectoryButton color={"teal"}/></a>
                         </li>
                     </div>
                 </Container>
