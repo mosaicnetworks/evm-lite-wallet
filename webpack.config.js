@@ -1,0 +1,197 @@
+const path = require('path');
+const fs = require('fs');
+
+const Webpack = require('webpack');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ForkTSCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
+
+const autoprefixer = require('autoprefixer');
+
+
+const gui = [];
+let memo = {};
+
+const resolveApp = relativePath => {
+    return path.resolve(fs.realpathSync(process.cwd()), relativePath);
+};
+
+const paths = {
+    dist: resolveApp('dist'),
+    indexHTML: resolveApp('src/index.html'),
+    indexJS: resolveApp('src/app/index.tsx'),
+    nodeModules: resolveApp('node_modules'),
+    packageJSON: resolveApp('package.json'),
+    src: resolveApp('src'),
+    tsConfig: resolveApp('tsconfig.json'),
+    tsLint: resolveApp('tslint.json'),
+};
+
+function getTSXFiles(initial) {
+    fs.readdirSync(initial)
+        .map((p) => {
+            const fullPath = path.join(initial, p);
+            if (fs.lstatSync(fullPath).isDirectory()) {
+                getTSXFiles(fullPath);
+            } else {
+                if (p.match(/.*\.tsx$/)) {
+                    gui.push(fullPath);
+                }
+            }
+        });
+}
+
+function mapTSXFiles(initial) {
+    getTSXFiles(initial);
+    memo = gui.reduce((obj, file) => {
+        obj[path.basename(file, path.extname(file))] = path.resolve(file);
+
+        return obj
+    }, {});
+}
+
+mapTSXFiles('src');
+
+const config = {
+    externals: {
+        fs: "commonjs fs",
+        module: "commonjs module",
+        path: "commonjs path",
+    },
+    module: {
+        rules: [
+            {
+                enforce: 'pre',
+                include: paths.src,
+                loader: require.resolve('source-map-loader'),
+                test: /\.(js|jsx|mjs)$/,
+            },
+            {
+                oneOf: [
+                    {
+                        loader: require.resolve('url-loader'),
+                        options: {
+                            limit: 10000,
+                            name: 'static/media/[name].[hash:8].[ext]',
+                        },
+                        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/]
+                    },
+                    {
+                        include: paths.src,
+                        loader: require.resolve('babel-loader'),
+                        options: {
+                            compact: true,
+                        },
+                        test: /\.(js|jsx|mjs)$/
+                    },
+                    {
+                        exclude: paths.nodeModules,
+                        include: paths.src,
+                        test: /\.(ts|tsx)$/,
+                        use: [
+                            {
+                                loader: require.resolve('ts-loader'),
+                                options: {
+                                    transpileOnly: true,
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        test: /\.css$/,
+                        use: [
+                            require.resolve('style-loader'),
+                            {
+                                loader: require.resolve('css-loader'),
+                                options: {
+                                    importLoaders: 1,
+                                },
+                            },
+                            {
+                                loader: require.resolve('postcss-loader'),
+                                options: {
+                                    ident: 'postcss',
+                                    plugins: () => [
+                                        require('postcss-flexbugs-fixes'),
+                                        autoprefixer({
+                                            browsers: [
+                                                '>1%',
+                                                'last 4 versions',
+                                                'Firefox ESR',
+                                                'not ie < 9',
+                                            ],
+                                            flexbox: 'no-2009',
+                                        }),
+                                    ],
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        exclude: [/\.(js|jsx|mjs)$/, /\.html$/, /\.json$/],
+                        loader: require.resolve('file-loader'),
+                        options: {
+                            name: 'static/media/[name].[hash:8].[ext]',
+                        },
+                    },
+                ],
+            }
+        ]
+    },
+    node: {
+        __dirname: false
+    },
+    resolve: {
+        extensions: ['.js', '.ts', '.tsx', '.jsx', '.json']
+    },
+    performance: {
+        hints: false,
+    },
+};
+
+module.exports = [
+    Object.assign({
+        entry: {main: './src/main.ts'},
+        mode: 'development',
+        output: {
+            filename: '[name].js',
+            path: paths.dist,
+        },
+        plugins: [new Webpack.SourceMapDevToolPlugin({filename: '[name].js.map'})],
+        target: 'electron-main',
+    }, config),
+    Object.assign({
+        devServer: {
+            compress: true,
+            contentBase: paths.dist,
+            hotOnly: true,
+            port: 9000,
+            quiet: true,
+            hot: true,
+        },
+        entry: [paths.indexJS],
+        mode: 'development',
+        output: {
+            chunkFilename: 'static/js/[name].chunk.js',
+            filename: 'static/js/bundle.js',
+            path: paths.dist,
+        },
+        plugins: [
+            new CleanWebpackPlugin(['dist'], {exclude: ['main.js']}),
+            new HTMLWebpackPlugin({
+                inject: true,
+                template: paths.indexHTML,
+            }),
+            new ForkTSCheckerWebpackPlugin({
+                async: false,
+                tsconfigPath: paths.tsConfig,
+                tslintPath: paths.tsLint,
+                watch: paths.src,
+            }),
+            new Webpack.HotModuleReplacementPlugin(),
+            new WatchMissingNodeModulesPlugin(paths.nodeModules),
+        ],
+        target: 'electron-renderer',
+    }, config)
+];
