@@ -152,7 +152,7 @@ const config = {
 
 module.exports = [
     Object.assign({
-        entry: {main: './src/main.ts'},
+        entry: {index: './src/index.ts'},
         mode: 'development',
         output: {
             filename: '[name].js',
@@ -178,7 +178,7 @@ module.exports = [
             path: paths.dist,
         },
         plugins: [
-            new CleanWebpackPlugin(['dist'], {exclude: ['main.js']}),
+            new CleanWebpackPlugin(['dist'], {exclude: ['index.js']}),
             new HTMLWebpackPlugin({
                 inject: true,
                 template: paths.indexHTML,

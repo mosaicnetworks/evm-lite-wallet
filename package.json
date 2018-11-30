@@ -9,9 +9,9 @@
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "start:dev": "webpack-dev-server --config webpack.config.js",
-    "start:electron": "electron ./dist/main.js",
+    "start:electron": "electron ./dist",
     "start:evml": "cd /Users/danu/code/src/github.com/mosaicnetworks/evm-lite/cmd/evml/ && ./main solo",
-    "bin": "webpack --config webpack.config.js electron -p && electron-packager ./dist/main.js --out ./bin --platform darwin --arch x64 --overwrite --ignore=\"ignore|bin|node_modules\""
+    "bin": "electron-packager ./dist EVM-Lite-Wallet --out ./bin --overwrite"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",
