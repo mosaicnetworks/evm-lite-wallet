@@ -2,10 +2,12 @@ const path = require('path');
 const fs = require('fs');
 
 const Webpack = require('webpack');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ForkTSCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+
+const HTMLWebpackPlugin = require('html-webpack-plugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
+
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const autoprefixer = require('autoprefixer');
 
@@ -46,7 +48,6 @@ function mapTSXFiles(initial) {
     getTSXFiles(initial);
     memo = gui.reduce((obj, file) => {
         obj[path.basename(file, path.extname(file))] = path.resolve(file);
-
         return obj
     }, {});
 }
@@ -54,6 +55,13 @@ function mapTSXFiles(initial) {
 mapTSXFiles('src');
 
 const config = {
+    devServer: {
+        compress: true,
+        contentBase: paths.dist,
+        port: 8081,
+        historyApiFallback: true,
+        publicPath: '/'
+    },
     externals: {
         fs: "commonjs fs",
         module: "commonjs module",
@@ -162,14 +170,7 @@ module.exports = [
         target: 'electron-main',
     }, config),
     Object.assign({
-        devServer: {
-            compress: true,
-            contentBase: paths.dist,
-            hotOnly: true,
-            port: 9000,
-            quiet: true,
-            hot: true,
-        },
+
         entry: [paths.indexJS],
         mode: 'development',
         output: {
@@ -189,7 +190,6 @@ module.exports = [
                 tslintPath: paths.tsLint,
                 watch: paths.src,
             }),
-            new Webpack.HotModuleReplacementPlugin(),
             new WatchMissingNodeModulesPlugin(paths.nodeModules),
         ],
         target: 'electron-renderer',
