@@ -1,15 +1,16 @@
 import * as electron from 'electron';
 
 const app = electron.app;
-let mainWindow: electron.BrowserWindow | null;
+let main: electron.BrowserWindow | null;
 
 function createWindow() {
-    mainWindow = new electron.BrowserWindow({width: 1000, height: 600});
-    mainWindow.loadURL(`file://${__dirname}/index.html`);
-    mainWindow.webContents.openDevTools();
+    main = new electron.BrowserWindow({width: 1200, height: 820});
+    // main.loadURL(`file://${__dirname}/index.html`);
+    main.loadURL(`http://localhost:8081`);
+    main.webContents.openDevTools();
 
-    mainWindow.on('closed', () => {
-        mainWindow = null
+    main.on('closed', () => {
+        main = null
     })
 }
 
@@ -22,7 +23,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-    if (mainWindow === null) {
+    if (main === null) {
         createWindow()
     }
 });

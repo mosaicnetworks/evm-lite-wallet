@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "start:dev": "webpack-dev-server --config webpack.config.js",
+    "start:dev": "webpack-dev-server --config webpack.config.js --hot --inline",
     "start:electron": "electron ./dist",
     "start:evml": "cd /Users/danu/code/src/github.com/mosaicnetworks/evm-lite/cmd/evml/ && ./main solo",
     "bin": "electron-packager ./dist EVM-Lite-Wallet --out ./bin --overwrite"
