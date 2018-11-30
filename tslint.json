@@ -8,8 +8,7 @@
     "exclude": [
       "config/**/*.js",
       "node_modules/**/*.ts",
-      "coverage/lcov-report/*.js",
-      "/Users/danu/code/src/github.com/mosaicnetworks/evml-client/**/*.*"
+      "coverage/lcov-report/*.js"
     ]
   },
   "rules": {

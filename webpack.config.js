@@ -4,6 +4,8 @@ const fs = require('fs');
 const Webpack = require('webpack');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ForkTSCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 
 const autoprefixer = require('autoprefixer');
 
@@ -19,9 +21,9 @@ const paths = {
     dist: resolveApp('dist'),
     indexHTML: resolveApp('src/index.html'),
     indexJS: resolveApp('src/app/index.tsx'),
+    nodeModules: resolveApp('node_modules'),
     packageJSON: resolveApp('package.json'),
     src: resolveApp('src'),
-    nodeModules: resolveApp('node_modules'),
     tsConfig: resolveApp('tsconfig.json'),
     tsLint: resolveApp('tslint.json'),
 };
@@ -42,40 +44,51 @@ function getTSXFiles(initial) {
 
 function mapTSXFiles(initial) {
     getTSXFiles(initial);
-    memo = gui.reduce((memo, file) => {
-        memo[path.basename(file, path.extname(file))] = path.resolve(file);
+    memo = gui.reduce((obj, file) => {
+        obj[path.basename(file, path.extname(file))] = path.resolve(file);
 
-        return memo
+        return obj
     }, {});
 }
 
 mapTSXFiles('src');
 
-const commonConfig = {
+const config = {
+    externals: {
+        fs: "commonjs fs",
+        module: "commonjs module",
+        path: "commonjs path",
+    },
     module: {
         rules: [
             {
+                enforce: 'pre',
+                include: paths.src,
+                loader: require.resolve('source-map-loader'),
+                test: /\.(js|jsx|mjs)$/,
+            },
+            {
                 oneOf: [
                     {
-                        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
                         loader: require.resolve('url-loader'),
                         options: {
                             limit: 10000,
                             name: 'static/media/[name].[hash:8].[ext]',
                         },
+                        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/]
                     },
                     {
-                        test: /\.(js|jsx|mjs)$/,
                         include: paths.src,
                         loader: require.resolve('babel-loader'),
                         options: {
                             compact: true,
                         },
+                        test: /\.(js|jsx|mjs)$/
                     },
                     {
-                        test: /\.(ts|tsx)$/,
-                        include: paths.src,
                         exclude: paths.nodeModules,
+                        include: paths.src,
+                        test: /\.(ts|tsx)$/,
                         use: [
                             {
                                 loader: require.resolve('ts-loader'),
@@ -132,11 +145,6 @@ const commonConfig = {
     resolve: {
         extensions: ['.js', '.ts', '.tsx', '.jsx', '.json']
     },
-    externals: {
-        fs: "commonjs fs",
-        path: "commonjs path",
-        module: "commonjs module"
-    },
     performance: {
         hints: false,
     },
@@ -144,21 +152,30 @@ const commonConfig = {
 
 module.exports = [
     Object.assign({
-        target: 'electron-main',
         entry: {main: './src/main.ts'},
+        mode: 'development',
         output: {
-            path: paths.dist,
             filename: '[name].js',
-        },
-        plugins: [new Webpack.SourceMapDevToolPlugin({filename: '[name].js.map'})]
-    }, commonConfig),
-    Object.assign({
-        target: 'electron-renderer',
-        entry: [paths.indexJS],
-        output: {
             path: paths.dist,
-            filename: 'static/js/bundle.js',
+        },
+        plugins: [new Webpack.SourceMapDevToolPlugin({filename: '[name].js.map'})],
+        target: 'electron-main',
+    }, config),
+    Object.assign({
+        devServer: {
+            compress: true,
+            contentBase: paths.dist,
+            hotOnly: true,
+            port: 9000,
+            quiet: true,
+            hot: true,
+        },
+        entry: [paths.indexJS],
+        mode: 'development',
+        output: {
             chunkFilename: 'static/js/[name].chunk.js',
+            filename: 'static/js/bundle.js',
+            path: paths.dist,
         },
         plugins: [
             new CleanWebpackPlugin(['dist'], {exclude: ['main.js']}),
@@ -166,6 +183,15 @@ module.exports = [
                 inject: true,
                 template: paths.indexHTML,
             }),
-        ]
-    }, commonConfig)
+            new ForkTSCheckerWebpackPlugin({
+                async: false,
+                tsconfigPath: paths.tsConfig,
+                tslintPath: paths.tsLint,
+                watch: paths.src,
+            }),
+            new Webpack.HotModuleReplacementPlugin(),
+            new WatchMissingNodeModulesPlugin(paths.nodeModules),
+        ],
+        target: 'electron-renderer',
+    }, config)
 ];
