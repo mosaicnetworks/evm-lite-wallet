@@ -4,10 +4,8 @@ import {connect} from "react-redux";
 
 import {Button, Divider, Form, Header, Icon} from "semantic-ui-react";
 
-import {configuration, DefaultProps, Store} from "../redux";
-
-import LoadingButton from "../components/LoadingButton";
-import {ReadConfigParams, SaveConfigParams} from "../redux/actions/Configuration";
+import {ConfigSchema, configuration, DefaultProps, Store} from "../redux";
+import {SaveConfigParams} from "../redux/actions/Configuration";
 
 export interface ConfigurationLocalProps extends DefaultProps {
     config: {
@@ -23,7 +21,7 @@ export interface ConfigurationLocalProps extends DefaultProps {
         }
     },
     handleSaveConfig: (data: SaveConfigParams) => void;
-    handleReadConfig: (data: ReadConfigParams) => Promise<any>;
+    handleReadConfig: () => Promise<ConfigSchema>;
     dataDirectory: string;
 }
 
@@ -67,75 +65,72 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
     }
 
     public handleConfigSave = () => {
-        this.props.handleSaveConfig({
-            dataDirectoryPath: this.props.dataDirectory,
-            defaults: this.state
-        });
+        const config: ConfigSchema = {
+            defaults: {
+                host: this.state.host,
+                port: this.state.port,
+                keystore: this.state.keystore,
+                gas: this.state.gas,
+                from: this.state.from,
+                gasprice: this.state.gasprice,
+            }
+        };
+        this.props.handleSaveConfig({config});
     };
 
     public handleReadConfig = () => {
-        this.props.handleReadConfig({dataDirectoryPath: this.props.dataDirectory})
+        this.props.handleReadConfig()
             .then((config) => this.setVars(config));
     };
 
     public render() {
-        console.log(this.state);
-        const {config} = this.props;
+        const {config, dataDirectory} = this.props;
         return (
             <React.Fragment>
-                <Header as={"h2"}>
-                    Configuration
-                    <Header.Subheader>
-                        /Users/danu/.evmlc/config.toml
-                        <br/><br/>
-                        <LoadingButton right={false} isLoading={config.read.isLoading}
-                                       onClickHandler={this.handleReadConfig}/>
-                    </Header.Subheader>
+                <Header as='h2'>
+                    <Icon name='cog'/>
+                    <Header.Content>
+                        Configuration
+                        <Header.Subheader>Location: {dataDirectory}/config.toml</Header.Subheader>
+                    </Header.Content>
+                    <Divider/>
                 </Header>
                 <Divider hidden={true}/>
                 {config.read.response &&
                 (<div className={'page'}>
-                    <Header as={"h3"}>
-                        Connection
-                    </Header>
-                    <Divider/>
                     <Form>
-                        <Form.Field>
-                            <label>Host</label>
-                            <input defaultValue={config.read.response.defaults.host}
-                                   onChange={(e) => this.setState({host: e.target.value})}/>
-                        </Form.Field>
-                        <Form.Field>
-                            <label>Port</label>
-                            <input defaultValue={config.read.response.defaults.port}
-                                   onChange={(e) => this.setState({port: e.target.value})}/>
-                        </Form.Field>
+                        <Form.Group widths='equal'>
+                            <Form.Field>
+                                <label>Host</label>
+                                <input defaultValue={config.read.response.defaults.host}
+                                       onChange={(e) => this.setState({host: e.target.value})}/>
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Port</label>
+                                <input defaultValue={config.read.response.defaults.port}
+                                       onChange={(e) => this.setState({port: e.target.value})}/>
+                            </Form.Field>
+                        </Form.Group>
                     </Form>
-                    <Header as={"h3"}>
-                        Defaults
-                    </Header>
-                    <Divider/>
                     <Form>
-                        <Form.Field>
-                            <label>From</label>
-                            <input defaultValue={config.read.response.defaults.from}
-                                   onChange={(e) => this.setState({from: e.target.value})}/>
-                        </Form.Field>
-                        <Form.Field>
-                            <label>Gas</label>
-                            <input defaultValue={config.read.response.defaults.gas}
-                                   onChange={(e) => this.setState({gas: e.target.value})}/>
-                        </Form.Field>
-                        <Form.Field>
-                            <label>Gas Price</label>
-                            <input defaultValue={config.read.response.defaults.gasprice}
-                                   onChange={(e) => this.setState({gasprice: e.target.value})}/>
-                        </Form.Field>
+                        <Form.Group widths='equal'>
+                            <Form.Field>
+                                <label>From</label>
+                                <input defaultValue={config.read.response.defaults.from}
+                                       onChange={(e) => this.setState({from: e.target.value})}/>
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Gas</label>
+                                <input defaultValue={config.read.response.defaults.gas}
+                                       onChange={(e) => this.setState({gas: e.target.value})}/>
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Gas Price</label>
+                                <input defaultValue={config.read.response.defaults.gasprice}
+                                       onChange={(e) => this.setState({gasprice: e.target.value})}/>
+                            </Form.Field>
+                        </Form.Group>
                     </Form>
-                    <Header as={"h3"}>
-                        Directory
-                    </Header>
-                    <Divider/>
                     <Form>
                         <Form.Field>
                             <label>Keystore</label>
@@ -154,7 +149,7 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                             (<span className={"m-2"}>
                                     <Icon color={"green"} name={"thumbs up"}
                                           loading={false}/>{config.save.response}<br/><br/></span>)}
-                            <Button onClick={this.handleConfigSave} color={'green'}>Save</Button>
+                            <Button icon={true} onClick={this.handleConfigSave} color={'green'}><Icon name='save'/> Save</Button>
                         </Form.Field>
                     </Form>
                 </div>)}
@@ -170,7 +165,7 @@ const mapStoreToProps = (store: Store) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     handleSaveConfig: (data: SaveConfigParams) => dispatch(configuration.handleSaveConfig(data)),
-    handleReadConfig: (data: ReadConfigParams) => dispatch(configuration.handleReadConfig(data)),
+    handleReadConfig: () => dispatch(configuration.handleReadConfig()),
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(Configuration);

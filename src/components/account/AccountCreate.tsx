@@ -3,13 +3,14 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {accounts, DefaultProps, Store, EVMLDispatch} from "../../redux";
+import {keystore, DefaultProps, Store, EVMLDispatch, ConfigSchema} from "../../redux";
 
 export interface LocalAccountsEditProps extends DefaultProps {
     handleCreateAccount: (password: string) => void;
     isLoading: boolean;
     response: string;
-    error: string
+    error: string,
+    config: ConfigSchema
 }
 
 interface State {
@@ -57,7 +58,7 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
 
     public render() {
         const {errorState} = this.state;
-        const {error, isLoading, response} = this.props;
+        const {error, isLoading, response, config} = this.props;
         return (
             <React.Fragment>
                 <Modal trigger={<Button color={"green"} basic={false}><Icon name="plus"/>Create</Button>}>
@@ -72,7 +73,7 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
                         directory, update the configuration for keystore. <br/><br/>
                         <Label>
                             Keystore
-                            <Label.Detail>/Users/danu/.evmlc/keystore</Label.Detail>
+                            <Label.Detail>{config && config.defaults.keystore}</Label.Detail>
                         </Label><br/><br/>
                         <Divider/>
                         {!isLoading && (errorState || error) && (<Modal.Content>
@@ -120,11 +121,12 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
 }
 
 const mapStoreToProps = (store: Store) => ({
-    ...store.accounts.create
+    ...store.keystore.create,
+    config: store.config.read.response
 });
 
 const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>) => ({
-    handleCreateAccount: (password: string) => dispatch(accounts.handleCreateAccount(password)),
+    handleCreateAccount: (password: string) => dispatch(keystore.handleCreateAccount(password)),
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(AccountCreate);

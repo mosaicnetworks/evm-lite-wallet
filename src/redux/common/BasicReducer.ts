@@ -12,21 +12,21 @@ const BasicReducerFactory = <T1 extends Actions, T2, T3>(object: T1, prefix: str
 
     return (state = start, action: any): BasicReducerState<T2, T3> => {
         switch (action.type) {
-            case object.TYPES[`${prefix}_INIT`]:
+            case object.types[`${prefix}_INIT`]:
                 return {
                     ...state,
                     isLoading: true,
                     response: null,
                     error: null
                 };
-            case object.TYPES[`${prefix}_SUCCESS`]:
+            case object.types[`${prefix}_SUCCESS`]:
                 return {
                     ...state,
                     isLoading: false,
                     response: action.data,
                     error: null
                 };
-            case object.TYPES[`${prefix}_FAILURE`]:
+            case object.types[`${prefix}_FAILURE`]:
                 return {
                     ...state,
                     isLoading: false,

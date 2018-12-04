@@ -28,11 +28,12 @@ export interface EVMLAction<S, F> {
 
 export type EVMLDispatch<S, F> = ThunkDispatch<Store, any, EVMLAction<S, F>>;
 export type EVMLActionHandler<D, S, F, R> = (data?: D) => ThunkAction<R, Store, any, EVMLAction<S, F>>
+export type EVMLThunkAction<S, F, R> = ThunkAction<R, Store, any, EVMLAction<S, F>>
 
 const getHandlers = <A extends Actions, S, F>(object: A, prefix: string): ActionCreatorHandlers<S, F> => ({
-    init: () => ({type: object.TYPES[`${prefix}_INIT`]}),
-    success: (data: S) => ({type: object.TYPES[`${prefix}_SUCCESS`], data}),
-    failure: (data: F) => ({type: object.TYPES[`${prefix}_FAILURE`], data}),
+    init: () => ({type: object.types[`${prefix}_INIT`]}),
+    success: (data: S) => ({type: object.types[`${prefix}_SUCCESS`], data}),
+    failure: (data: F) => ({type: object.types[`${prefix}_FAILURE`], data}),
 });
 
 export default getHandlers

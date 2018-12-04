@@ -8,7 +8,7 @@ import Index from "../pages/Index";
 import Configuration from "../pages/Configuration";
 import Wrapper from "../components/Wrapper";
 
-import {accounts, app, configuration, DataDirectoryParams, DefaultProps, Store} from "../redux";
+import {keystore, app, configuration, DataDirectoryParams, DefaultProps, Store} from "../redux";
 
 import Defaults from "../classes/Defaults";
 
@@ -44,7 +44,7 @@ class App extends React.Component<AppLocalProps, any> {
 const mapStoreToProps = (store: Store) => ({});
 
 const mapsDispatchToProps = (dispatch: any) => ({
-    handleFetchLocalAccounts: () => dispatch(accounts.handleFetchLocalAccounts()),
+    handleFetchLocalAccounts: () => dispatch(keystore.handleFetchLocalAccounts()),
     handleReadConfig: () => dispatch(configuration.handleReadConfig()),
     handleDataDirectoryInit: (data: DataDirectoryParams) => dispatch(app.handleDataDirectoryInit(data)),
 });

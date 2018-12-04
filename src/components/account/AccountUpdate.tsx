@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {accounts, DefaultProps, Store, BaseAccount} from "../../redux";
+import {keystore, DefaultProps, Store, BaseAccount, ConfigSchema} from "../../redux";
 
 import './styles/Account.css'
 
@@ -13,6 +13,7 @@ export interface LocalAccountsEditProps extends DefaultProps {
     response: string;
     account: BaseAccount;
     isLoading: boolean;
+    config: ConfigSchema
 }
 
 interface State {
@@ -65,7 +66,7 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
     };
 
     public render() {
-        const {isLoading, error, response} = this.props;
+        const {isLoading, error, response, config} = this.props;
         return (
             <React.Fragment>
                 <Modal trigger={<Button basic={false} color='yellow'>Change Password</Button>}>
@@ -79,7 +80,7 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
                         <br/><br/>
                         <Label>
                             Keystore
-                            <Label.Detail>/Users/danu/.evmlc/keystore</Label.Detail>
+                            <Label.Detail>{config && config.defaults.keystore}</Label.Detail>
                         </Label><br/><br/>
                         <Divider/>
                         {(this.state.matchingPasswordError || error) && (<Modal.Content>
@@ -137,12 +138,13 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
 }
 
 const mapStoreToProps = (store: Store) => ({
-    ...store.accounts.update,
+    ...store.keystore.update,
+    config: store.config.read.response
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     handleUpdatePassword: (a: string, o: string, n: string) => {
-        return dispatch(accounts.handleAccountUpdate({
+        return dispatch(keystore.handleAccountUpdate({
             newPassword: n,
             oldPassword: o,
             address: a,

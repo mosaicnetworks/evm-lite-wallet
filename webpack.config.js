@@ -170,7 +170,6 @@ module.exports = [
         target: 'electron-main',
     }, config),
     Object.assign({
-
         entry: [paths.indexJS],
         mode: 'development',
         output: {

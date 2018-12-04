@@ -1,82 +1,64 @@
-import {Config} from 'evm-lite-lib';
-import getHandlers, {EVMLActionHandler} from '../common/Handlers';
+import {Config as Configuration, ConfigSchema} from 'evm-lite-lib';
+
+import getHandlers, {EVMLThunkAction} from '../common/Handlers';
 
 import Actions from "../common/Actions";
 import Defaults from "../../classes/Defaults";
+import {keystore} from "../index";
 
-
-export interface ReadConfigParams {
-    dataDirectoryPath: string;
-}
 
 export interface SaveConfigParams {
-    defaults: any;
-    dataDirectoryPath: string;
+    config: ConfigSchema;
 }
 
 class ConfigurationActions extends Actions {
+
+    public config: Configuration;
+
     constructor() {
         super();
-        this.TYPES = {
-            READ_CONFIG_INIT: 'READ_CONFIG_INIT',
-            READ_CONFIG_SUCCESS: 'READ_CONFIG_SUCCESS',
-            READ_CONFIG_FAILURE: 'READ_CONFIG_FAILURE',
 
-            SAVE_CONFIG_INIT: 'SAVE_CONFIG_INIT',
-            SAVE_CONFIG_SUCCESS: 'SAVE_CONFIG_SUCCESS',
-            SAVE_CONFIG_FAILURE: 'SAVE_CONFIG_FAILURE',
-        };
+        this.config = new Configuration(Defaults.dataDirectory, 'config.toml');
 
+        // set handler function
         this.handlers = <S, F>(prefix: string) => getHandlers<ConfigurationActions, S, F>(this, prefix);
+
+        // add simple action handlers
+        this.addSimpleActionType('CONFIGURATION', 'READ_CONFIG');
+        this.addSimpleActionType('CONFIGURATION', 'SAVE_CONFIG');
     }
 
-    public handleReadConfig: EVMLActionHandler<ReadConfigParams, any, string, void> = (data) => {
-        const {init, success, failure} = this.handlers<any, string>('READ_CONFIG');
+    public setConfigurationDataDirectory(path: string): void {
+        this.config = new Configuration(path, 'config.toml');
+    }
 
-        if (!data) {
-            throw new Error('Provide `data` parameter.');
-        }
-
-        return (dispatch) => {
-            dispatch(init());
-
-            data.dataDirectoryPath = data.dataDirectoryPath || Defaults.dataDirectory;
-            const config = new Config(data.dataDirectoryPath, 'config.toml');
-
-            return config
-                .read()
-                .then((config: any) => {
-                    dispatch(success(config));
-                    return config;
-                })
-                .catch(() => dispatch(failure('Something went wrong reading config.')));
-        }
+    public handleReadConfig = (): EVMLThunkAction<ConfigSchema, string, ConfigSchema> => dispatch => {
+        const {init, success, failure} = this.handlers<ConfigSchema, string>('READ_CONFIG');
+        dispatch(init());
+        return this.config
+            .read()
+            .then((config: ConfigSchema) => {
+                dispatch(success(config));
+                return config
+            })
+            .catch(() => dispatch(failure('Something went wrong reading config.')));
     };
 
-    public handleSaveConfig: EVMLActionHandler<SaveConfigParams, any, string, void> = (data) => {
+    public handleSaveConfig = (data: SaveConfigParams): EVMLThunkAction<string, string, void> => (dispatch) => {
         const {init, success, failure} = this.handlers<string, string>('SAVE_CONFIG');
-
-        if (!data) {
-            throw new Error('Provide `data` parameter.');
-        }
-
-        return (dispatch) => {
-            dispatch(init());
-
-            const newConfig = {defaults: data.defaults};
-            const dataDirectory = data.dataDirectoryPath || Defaults.dataDirectory;
-            const config = new Config(dataDirectory, 'config.toml');
-
-            return config
-                .write(newConfig)
-                .then(() => {
-                    setTimeout(() => dispatch(success('Configuration successfully saved!')), 2000);
-                })
-                .then(() => {
-                    dispatch(this.handleReadConfig({dataDirectoryPath: dataDirectory}));
-                })
-                .catch(() => dispatch(failure('Something went wrong reading config.')));
-        }
+        dispatch(init());
+        const oldKeystore = keystore.path;
+        this.config
+            .write(data.config)
+            .then(() => dispatch(success('Configuration successfully saved!')))
+            .then(() => dispatch(this.handleReadConfig()))
+            .then(() => {
+                if (data.config.defaults.keystore !== oldKeystore) {
+                    keystore.setKeystorePath(data.config.defaults.keystore);
+                    dispatch(keystore.handleFetchLocalAccounts());
+                }
+            })
+            .catch(() => dispatch(failure('Something went wrong reading config.')));
     };
 
 }
