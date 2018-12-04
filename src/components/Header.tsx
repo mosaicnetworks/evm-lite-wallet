@@ -47,7 +47,7 @@ class Header extends React.Component<HeaderLocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store) => ({
-    total: (store.accounts.fetch.response ? store.accounts.fetch.response.length : 0),
+    total: (store.keystore.fetch.response ? store.keystore.fetch.response.length : 0),
 });
 
 export default connect(mapStoreToProps)(Header);

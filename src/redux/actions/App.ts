@@ -1,6 +1,6 @@
 import {DataDirectory} from 'evm-lite-lib';
 
-import {configuration} from "../index";
+import {configuration, keystore} from "../index";
 
 import getHandlers, {EVMLActionHandler} from "../common/Handlers";
 import Actions from "../common/Actions";
@@ -14,12 +14,12 @@ export default class AppActions extends Actions {
 
     constructor() {
         super();
-        this.handlers = <S, F>(prefix: string) => getHandlers<AppActions, S, F>(this, prefix)
-        this.TYPES = {
-            DATA_DIRECTORY_INIT: "APP_DATA_DIRECTORY_INIT",
-            DATA_DIRECTORY_SUCCESS: "APP_DATA_DIRECTORY_SUCCESS",
-            DATA_DIRECTORY_FAILURE: "APP_DATA_DIRECTORY_FAILURE",
-        }
+
+        // set handler function
+        this.handlers = <S, F>(prefix: string) => getHandlers<AppActions, S, F>(this, prefix);
+
+        // add simple action handlers
+        this.addSimpleActionType('APPLICATION', 'DATA_DIRECTORY');
     }
 
     public handleDataDirectoryInit: EVMLActionHandler<DataDirectoryParams, string, string, void> = data => {
@@ -34,7 +34,14 @@ export default class AppActions extends Actions {
             const directory = new DataDirectory(data.path);
             directory.checkInitialisation()
                 .then(() => dispatch(success(data.path)))
-                .then(() => dispatch(configuration.handleReadConfig({dataDirectoryPath: data.path})))
+                .then(() => {
+                    configuration.setConfigurationDataDirectory(data.path);
+                    return dispatch(configuration.handleReadConfig());
+                })
+                .then((config) => {
+                    keystore.setKeystorePath(config.defaults.keystore);
+                    dispatch(keystore.handleFetchLocalAccounts())
+                })
                 .catch(() => dispatch(failure('Initialisation of data directory failed.')));
         }
     };

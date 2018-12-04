@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import {connect} from 'react-redux';
-import {Divider, Header} from "semantic-ui-react";
+import {Divider, Header, Icon} from "semantic-ui-react";
 
-import {accounts, BaseAccount, DefaultProps, Store} from "../redux";
+import {BaseAccount, DefaultProps, keystore, Store} from "../redux";
 
 import Account from '../components/account/Account';
 import AccountCreate from "../components/account/AccountCreate";
@@ -13,34 +13,35 @@ import './styles/Accounts.css';
 import LoadingButton from "../components/LoadingButton";
 
 export interface AccountsLocalProps extends DefaultProps {
-    accounts: BaseAccount[],
     error: string
-    handleFetchLocalAccounts: () => void,
     isLoading: boolean;
+    response: BaseAccount[],
+    handleFetchLocalAccounts: () => void,
 }
 
 class Accounts extends React.Component<AccountsLocalProps, any> {
-    public handleRefreshAccounts = () => {
-        this.props.handleFetchLocalAccounts();
-    };
+    public handleRefreshAccounts = () => this.props.handleFetchLocalAccounts();
 
     public render() {
-        const {error, accounts, isLoading} = this.props;
+        const {error, response, isLoading} = this.props;
         return (
             <React.Fragment>
-                <Header as={"h2"}>
-                    Accounts
-                    <Header.Subheader>
-                        These accounts are read from the keystore specified in the config file.
-                        <br/><br/>
+                <Header as='h2'>
+                    <Icon name='users'/>
+                    <Header.Content>
+                        Accounts
+                        <Header.Subheader>These accounts are read from the keystore specified in the config file.</Header.Subheader>
+                    </Header.Content>
+                    <Divider />
+                    <Header.Content>
                         <AccountCreate/>
                         <AccountImport/>
                         <LoadingButton isLoading={isLoading} onClickHandler={this.handleRefreshAccounts} right={true}/>
-                    </Header.Subheader>
+                    </Header.Content>
                 </Header>
                 <Divider hidden={true}/>
                 <div className={'page'}>
-                    {!isLoading && !error && accounts && accounts.map((account: BaseAccount) => {
+                    {!isLoading && !error && response && response.map((account: BaseAccount) => {
                         return <Account key={account.address} account={account}/>
                     })}
                     {!isLoading && error && <div className={"error_message"}>{error}</div>}
@@ -51,12 +52,10 @@ class Accounts extends React.Component<AccountsLocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store) => ({
-    isLoading: store.accounts.fetch.isLoading,
-    accounts: store.accounts.fetch.response,
-    error: store.accounts.fetch.error,
+    ...store.keystore.fetch,
 });
 const mapsDispatchToProps = (dispatch: any) => ({
-    handleFetchLocalAccounts: () => dispatch(accounts.handleFetchLocalAccounts()),
+    handleFetchLocalAccounts: () => dispatch(keystore.handleFetchLocalAccounts()),
 });
 
 export default connect(mapStoreToProps, mapsDispatchToProps)(Accounts);
