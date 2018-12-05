@@ -1,15 +1,16 @@
 import * as React from 'react';
 
+import {withAlert} from 'react-alert';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Modal} from "semantic-ui-react";
 
-import {DefaultProps, Store, DataDirectoryParams, app} from "../redux";
+import {app, BaseAccount, DataDirectoryParams, DefaultProps, Store} from "../redux";
 
 
-export interface DataDirectoryButtonLocalState extends DefaultProps {
+export interface DataDirectoryButtonLocalProps extends DefaultProps {
     color: "teal" | "blue";
     dataDirectory: string;
-    handleDataDirectoryChange: (data: DataDirectoryParams) =>  void;
+    handleDataDirectoryChange: (data: DataDirectoryParams) => Promise<BaseAccount[]>;
 }
 
 interface State {
@@ -17,7 +18,7 @@ interface State {
     dataDirectory: string;
 }
 
-class DataDirectoryButton extends React.Component<DataDirectoryButtonLocalState, State> {
+class DataDirectoryButton extends React.Component<DataDirectoryButtonLocalProps, State> {
     public state = {
         open: false,
         dataDirectory: "/Users/danu/.evmlc/",
@@ -31,13 +32,23 @@ class DataDirectoryButton extends React.Component<DataDirectoryButtonLocalState,
     };
 
     public handleOnSubmit = () => {
-        this.props.handleDataDirectoryChange({path: this.state.dataDirectory});
+        this.props.handleDataDirectoryChange({path: this.state.dataDirectory})
+            .then(() => {
+                this.close();
+                this.props.alert.success('Data directory successfully changed!');
+                if (this.props.accounts) {
+                    this.props.alert.success('Accounts reloaded!');
+                } else {
+                    this.props.alert.error('No Accounts detected!');
+                }
+            })
     };
 
     public render() {
         return (
             <Modal
-                trigger={<Button icon={true} color={this.props.color} basic={false}> <Icon name={"folder"}/></Button>}>
+                   trigger={<Button icon={true} onClick={this.open} color={this.props.color} basic={false}><Icon
+                       name={"folder"}/></Button>} open={this.state.open}onClose={this.close}>
                 <Modal.Header>Change Data Directory</Modal.Header>
                 <Modal.Content>
                     <Header as={"h4"}>
@@ -63,7 +74,9 @@ class DataDirectoryButton extends React.Component<DataDirectoryButtonLocalState,
                     </Modal.Description>
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button color={"green"} onClick={this.handleOnSubmit} type='submit'>Set</Button>
+                    <Button onClick={this.close}>Close</Button>
+                    <Button color={"green"} disabled={(this.props.dataDirectory === this.state.dataDirectory)}
+                            onClick={this.handleOnSubmit} type='submit'>Set</Button>
                 </Modal.Actions>
             </Modal>
         );
@@ -71,11 +84,12 @@ class DataDirectoryButton extends React.Component<DataDirectoryButtonLocalState,
 }
 
 const mapStoreToProps = (store: Store) => ({
-    dataDirectory: store.app.dataDirectory.response
+    dataDirectory: store.app.dataDirectory.response,
+    accounts: store.keystore.fetch.response
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    handleDataDirectoryChange: (data: DataDirectoryParams) => dispatch(app.handleDataDirectoryInit(data)),
+    handleDataDirectoryChange: (data: DataDirectoryParams) => dispatch(app.handleDataDirInitThenPopulateApp(data)),
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(DataDirectoryButton);
+export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(DataDirectoryButton));

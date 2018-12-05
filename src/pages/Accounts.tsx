@@ -11,16 +11,24 @@ import AccountImport from "../components/account/AccountImport";
 
 import './styles/Accounts.css';
 import LoadingButton from "../components/LoadingButton";
+import {withAlert} from "react-alert";
 
 export interface AccountsLocalProps extends DefaultProps {
     error: string
     isLoading: boolean;
     response: BaseAccount[],
-    handleFetchLocalAccounts: () => void,
+    handleFetchLocalAccounts: () => Promise<BaseAccount[]>,
 }
 
 class Accounts extends React.Component<AccountsLocalProps, any> {
-    public handleRefreshAccounts = () => this.props.handleFetchLocalAccounts();
+    public handleRefreshAccounts = () => {
+        this.props.handleFetchLocalAccounts()
+            .then(accounts => {
+                accounts.length ?
+                    this.props.alert.success('Accounts refresh successful!') :
+                    this.props.alert.error('No Accounts detected!')
+            })
+    };
 
     public render() {
         const {error, response, isLoading} = this.props;
@@ -55,7 +63,7 @@ const mapStoreToProps = (store: Store) => ({
     ...store.keystore.fetch,
 });
 const mapsDispatchToProps = (dispatch: any) => ({
-    handleFetchLocalAccounts: () => dispatch(keystore.handleFetchLocalAccounts()),
+    handleFetchLocalAccounts: () => dispatch(keystore.handleFetch()),
 });
 
-export default connect(mapStoreToProps, mapsDispatchToProps)(Accounts);
+export default connect(mapStoreToProps, mapsDispatchToProps)(withAlert(Accounts));

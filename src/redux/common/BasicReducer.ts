@@ -33,6 +33,8 @@ const BasicReducerFactory = <T1 extends Actions, T2, T3>(object: T1, prefix: str
                     response: null,
                     error: action.data
                 };
+            case object.types[`${prefix}_RESET`]:
+                return start;
             default:
                 return state;
         }

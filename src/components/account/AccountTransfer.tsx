@@ -1,17 +1,21 @@
 import * as React from 'react';
 
 import {connect} from "react-redux";
-import {Button, Form, Message, Modal} from "semantic-ui-react";
+import {Button, Form, Icon, Message, Modal} from "semantic-ui-react";
 
-import {Account} from 'evm-lite-lib';
-
-import {accounts, BaseAccount, DefaultProps, keystore, Store, ConfigSchema} from "../../redux";
-import {TransferParams} from "../../redux/actions/Accounts";
+import {accounts, BaseAccount, ConfigSchema, DefaultProps, keystore, Store} from "../../redux";
+import {DecryptionParams, TransferParams} from "../../redux/actions/Accounts";
 
 export interface LocalAccountTransferProps extends DefaultProps {
     account: BaseAccount;
     handleTransfer: (data: TransferParams) => void;
+    handleDecryption: (data: DecryptionParams) => void;
     config: ConfigSchema;
+    decrypt: {
+        response: string,
+        error: string,
+        isLoading: boolean
+    }
 }
 
 interface State {
@@ -59,13 +63,12 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
     };
 
     public onBlurPassword = (e: any) => {
-        this.setState({decryptionError: ''});
-        const v3JSONKeystore = keystore.keystore.get(this.props.account.address);
-        try {
-            Account.decrypt(v3JSONKeystore, this.state.password)
-        } catch (e) {
-            console.log('error');
-            this.setState({decryptionError: 'Unable to decrypt account with password provided.'})
+        if (!this.props.decrypt.response) {
+            const v3JSONKeystore = keystore.keystore.get(this.props.account.address);
+            this.props.handleDecryption({
+                v3JSONKeystore,
+                password: this.state.password
+            })
         }
     };
 
@@ -86,8 +89,47 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
         console.log(this.state);
     };
 
+    public getDecryptIcon = (): ('circle notched' | 'info circle' | 'times' | 'thumbs up') => {
+        const {decrypt} = this.props;
+        let icon: ('circle notched' | 'info circle' | 'times' | 'thumbs up') = decrypt.isLoading ? 'circle notched' : 'info circle';
+
+        if (!decrypt.isLoading && decrypt.response) {
+            icon = 'thumbs up'
+        }
+
+        if (!decrypt.isLoading && decrypt.error) {
+            icon = 'times'
+        }
+
+        return icon
+    };
+
+    public getDecryptMessage = () => {
+        const {decrypt} = this.props;
+        let header = decrypt.isLoading ? 'Decrypting...' :
+            'Password is required to decrypt the account before a transfer.';
+        let message = decrypt.isLoading ? 'Please wait while we try to decrypt the account' :
+            `Please enter the password for the account: ${this.props.account.address}`;
+
+        if (!decrypt.isLoading && decrypt.response) {
+            header = 'Decryption Successful';
+            message = 'The account was successfully decrypted with the password provided!';
+        }
+
+        if (!decrypt.isLoading && decrypt.error) {
+            header = 'Decryption Failed';
+            message = 'The account was could not be decrypted with the password provided!';
+        }
+
+        return {
+            header,
+            message
+        }
+    };
+
     public render() {
-        const {config} = this.props;
+        const {config, decrypt} = this.props;
+        const decryptMessage = this.getDecryptMessage();
         return (
             <React.Fragment>
                 <Modal trigger={<Button basic={false} color='green'>Transfer</Button>}>
@@ -97,12 +139,18 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                             <Form>
                                 <Form.Field>
                                     <label>Password</label>
-                                    <input type={"password"} onChange={this.handlePasswordChange} onBlur={this.onBlurPassword}/>
+                                    <input type={"password"} onChange={this.handlePasswordChange}
+                                           onBlur={this.onBlurPassword}/>
                                 </Form.Field>
-                                {this.state.decryptionError && (<Message info={true}>
-                                    <Message.Header>An error was detected</Message.Header>
-                                    <p>{this.state.decryptionError}</p>
-                                </Message>)}
+                                <Message icon={true} info={decrypt.isLoading} negative={!!(decrypt.error)} positive={!!(decrypt.response)}>
+                                    <Icon name={this.getDecryptIcon()} loading={decrypt.isLoading}/>
+                                    <Message.Content>
+                                        <Message.Header>
+                                            {decryptMessage.header}
+                                        </Message.Header>
+                                        <p>{decryptMessage.message}</p>
+                                    </Message.Content>
+                                </Message>
                                 <Form.Group widths={"two"}>
                                     <Form.Field>
                                         <label>To</label>
@@ -139,10 +187,12 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
 
 const mapStoreToProps = (store: Store) => ({
     config: store.config.read.response,
+    decrypt: store.accounts.decrypt
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     handleTransfer: (data: TransferParams) => dispatch(accounts.handleTransfer(data)),
+    handleDecryption: (data: DecryptionParams) => dispatch(accounts.handleDecryption(data))
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(AccountTransfer);
