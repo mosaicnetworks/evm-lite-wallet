@@ -86,7 +86,10 @@ const config = {
                         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/]
                     },
                     {
-                        include: paths.src,
+                        include: [
+                            paths.src,
+                        ],
+                        exclude: paths.nodeModules,
                         loader: require.resolve('babel-loader'),
                         options: {
                             compact: true,
@@ -95,7 +98,9 @@ const config = {
                     },
                     {
                         exclude: paths.nodeModules,
-                        include: paths.src,
+                        include: [
+                            paths.src,
+                        ],
                         test: /\.(ts|tsx)$/,
                         use: [
                             {

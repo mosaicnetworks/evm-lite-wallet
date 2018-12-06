@@ -1,6 +1,6 @@
 import {Account, V3JSONKeyStore} from 'evm-lite-lib';
 
-import getHandlers, {EVMLThunkAction} from '../common/Handlers';
+import {EVMLThunkAction} from '..';
 import Actions from "../common/Actions";
 
 
@@ -20,11 +20,10 @@ export interface DecryptionParams {
     password: string;
 }
 
-class Accounts extends Actions {
+export default class Accounts extends Actions {
 
     constructor() {
-        super(Accounts.name);
-        this.handlers = <S, F>(prefix: string) => getHandlers<Accounts, S, F>(this, prefix);
+        super('asdasdasdasdasd');
         this.prefixes = [
             'transfer',
             'decrypt'
@@ -55,4 +54,3 @@ class Accounts extends Actions {
 
 }
 
-export default Accounts

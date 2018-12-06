@@ -142,7 +142,8 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                                     <input type={"password"} onChange={this.handlePasswordChange}
                                            onBlur={this.onBlurPassword}/>
                                 </Form.Field>
-                                <Message icon={true} info={decrypt.isLoading} negative={!!(decrypt.error)} positive={!!(decrypt.response)}>
+                                <Message icon={true} info={decrypt.isLoading} negative={!!(decrypt.error)}
+                                         positive={!!(decrypt.response)}>
                                     <Icon name={this.getDecryptIcon()} loading={decrypt.isLoading}/>
                                     <Message.Content>
                                         <Message.Header>

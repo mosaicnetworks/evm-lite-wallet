@@ -1,10 +1,9 @@
 import {Config as Configuration, ConfigSchema} from 'evm-lite-lib';
 
-import {keystore} from "../index";
-import {EVMLThunkAction} from '../common/Handlers';
+import {keystore, EVMLThunkAction} from "../index";
 
-import Actions from "../common/Actions";
 import Defaults from "../../classes/Defaults";
+import Actions from "../common/Actions";
 
 
 export interface SaveConfigParams {

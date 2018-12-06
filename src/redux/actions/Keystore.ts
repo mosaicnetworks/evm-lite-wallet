@@ -1,7 +1,6 @@
 import {Controller as Connection, Keystore} from 'evm-lite-lib';
 
-import {BaseAccount} from "../"
-import {EVMLThunkAction} from "../common/Handlers";
+import {BaseAccount, EVMLThunkAction} from "../index"
 
 import Defaults from "../../classes/Defaults"
 import Actions from "../common/Actions";

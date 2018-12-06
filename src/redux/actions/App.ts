@@ -1,7 +1,6 @@
 import {BaseAccount, DataDirectory} from 'evm-lite-lib';
 
-import {configuration, keystore} from "../index";
-import {EVMLThunkAction} from "../common/Handlers";
+import {configuration, keystore, EVMLThunkAction} from "../index";
 
 import Actions from "../common/Actions";
 

@@ -1,15 +1,40 @@
-import {ActionCreatorHandlers} from "./Handlers";
+import BasicReducerFactory, {BasicReducerState} from "./reducers/BasicReducerFactory";
 
 
 interface ActionTypes {
     [key: string]: string
 }
 
-type Prefixes = string[];
+type ActionsPrefixes = string[];
+
+type InitHandler = () => {
+    type: string;
+}
+
+type ResetHandler = () => {
+    type: string;
+}
+
+type SuccessHandler<S> = (data: S) => {
+    type: string,
+    data: S
+}
+
+type FailureHandler<F> = (data: F) => {
+    type: string,
+    data: F
+}
+
+interface ActionCreatorHandlers<S, F> {
+    init: InitHandler,
+    success: SuccessHandler<S>,
+    failure: FailureHandler<F>
+    reset: ResetHandler
+}
 
 export default class Actions {
 
-    private readonly prefixCollection: Prefixes;
+    protected readonly prefixCollection: ActionsPrefixes;
     private readonly typeCollection: ActionTypes;
 
     constructor(protected identifier: string) {
@@ -21,15 +46,23 @@ export default class Actions {
         return this.typeCollection;
     }
 
-    protected get prefixes(): Prefixes {
-        return this.prefixCollection;
-    }
-
-    protected set prefixes(value: Prefixes) {
+    protected set prefixes(value: ActionsPrefixes) {
+        const {typeCollection, identifier} = this;
         for (const prefix of value) {
-            this.addSimpleActionType(prefix);
+            typeCollection[`${prefix.toUpperCase()}_INIT`] =
+                `${identifier.toUpperCase()}_${prefix.toUpperCase()}_INIT`;
+            typeCollection[`${prefix.toUpperCase()}_SUCCESS`] =
+                `${identifier.toUpperCase()}_${prefix.toUpperCase()}_SUCCESS`;
+            typeCollection[`${prefix.toUpperCase()}_FAILURE`] =
+                `${identifier.toUpperCase()}_${prefix.toUpperCase()}_FAILURE`;
+            typeCollection[`${prefix.toUpperCase()}_RESET`] =
+                `${identifier.toUpperCase()}_${prefix.toUpperCase()}_RESET`;
         }
     }
+
+    public SimpleReducer = <S, F>(prefix: string, initial?: BasicReducerState<S, F>) => {
+        return BasicReducerFactory<Actions, S, F>(this, prefix, initial);
+    };
 
     protected handlers = <S, F>(prefix: string): ActionCreatorHandlers<S, F> => ({
         init: () => ({type: this.types[`${prefix.toUpperCase()}_INIT`]}),
@@ -37,13 +70,5 @@ export default class Actions {
         failure: (data: F) => ({type: this.types[`${prefix.toUpperCase()}_FAILURE`], data}),
         reset: () => ({type: this.types[`${prefix.toUpperCase()}_RESET`]}),
     });
-
-    private addSimpleActionType(prefix: string) {
-        const {typeCollection, identifier} = this;
-        typeCollection[`${prefix.toUpperCase()}_INIT`] = `${identifier.toUpperCase()}_${prefix.toUpperCase()}_INIT`;
-        typeCollection[`${prefix.toUpperCase()}_SUCCESS`] = `${identifier.toUpperCase()}_${prefix.toUpperCase()}_SUCCESS`;
-        typeCollection[`${prefix.toUpperCase()}_FAILURE`] = `${identifier.toUpperCase()}_${prefix.toUpperCase()}_FAILURE`;
-        typeCollection[`${prefix.toUpperCase()}_RESET`] = `${identifier.toUpperCase()}_${prefix.toUpperCase()}_RESET`;
-    }
 
 }
