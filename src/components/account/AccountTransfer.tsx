@@ -10,6 +10,7 @@ export interface LocalAccountTransferProps extends DefaultProps {
     account: BaseAccount;
     handleTransfer: (data: TransferParams) => void;
     handleDecryption: (data: DecryptionParams) => void;
+    handleDecryptionReset: () => void;
     config: ConfigSchema;
     decrypt: {
         response: string,
@@ -40,7 +41,12 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
     };
 
     public open = () => this.setState({open: true});
-    public close = () => this.setState({open: false});
+    public close = () => {
+        if (this.props.decrypt.response || this.props.decrypt.error) {
+            this.props.handleDecryptionReset();
+        }
+        this.setState({open: false});
+    };
 
     public handleOnChangeToAddress = (e: any) => {
         this.setState({toAddress: e.target.value});
@@ -132,7 +138,7 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
         const decryptMessage = this.getDecryptMessage();
         return (
             <React.Fragment>
-                <Modal trigger={<Button basic={false} color='green'>Transfer</Button>}>
+                <Modal onClose={this.close} open={this.state.open} trigger={<Button onClick={this.open} basic={false} color='green'>Transfer</Button>}>
                     <Modal.Header>Transfer From: {this.props.account.address}</Modal.Header>
                     <Modal.Content>
                         <Modal.Description>
@@ -178,6 +184,7 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                         </Modal.Description>
                     </Modal.Content>
                     <Modal.Actions>
+                        <Button onClick={this.close}>Close</Button>
                         <Button onClick={this.handleTransfer} color={"green"} type='submit'>Transfer</Button>
                     </Modal.Actions>
                 </Modal>
@@ -193,7 +200,8 @@ const mapStoreToProps = (store: Store) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     handleTransfer: (data: TransferParams) => dispatch(accounts.handleTransfer(data)),
-    handleDecryption: (data: DecryptionParams) => dispatch(accounts.handleDecryption(data))
+    handleDecryption: (data: DecryptionParams) => dispatch(accounts.handleDecryption(data)),
+    handleDecryptionReset: () => dispatch(accounts.handlers<string, string>('decrypt').reset())
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(AccountTransfer);

@@ -23,7 +23,7 @@ export interface DecryptionParams {
 export default class Accounts extends Actions {
 
     constructor() {
-        super('asdasdasdasdasd');
+        super(Accounts.name);
         this.prefixes = [
             'transfer',
             'decrypt'
