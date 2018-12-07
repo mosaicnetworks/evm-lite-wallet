@@ -10,7 +10,7 @@ import {accounts, BaseAccount, ConfigSchema, DefaultProps, keystore, Store} from
 
 import './styles/Account.css'
 
-export interface LocalAccountsEditProps extends DefaultProps {
+export interface AccountUpdateLocalProps extends DefaultProps {
     account: BaseAccount;
 
     // redux states
@@ -41,7 +41,7 @@ interface State {
     matchingPasswordError: string;
 }
 
-class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State> {
+class AccountUpdate extends React.Component<AccountUpdateLocalProps, any & State> {
     public state = {
         open: false,
         oldPassword: '',

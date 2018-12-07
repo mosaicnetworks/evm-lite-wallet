@@ -6,9 +6,9 @@ import {Button, Icon} from "semantic-ui-react";
 import {DefaultProps} from "../redux";
 
 interface LoadingButtonLocalProps extends DefaultProps {
-    isLoading: boolean
-    onClickHandler: any;
     right: boolean;
+    onClickHandler: any;
+    isLoading: boolean
 }
 
 class LoadingButton extends React.Component<LoadingButtonLocalProps, any> {

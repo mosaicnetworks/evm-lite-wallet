@@ -15,9 +15,12 @@ import './styles/Accounts.css';
 
 
 export interface AccountsLocalProps extends DefaultProps {
+    // redux states
     error: string
     isLoading: boolean;
     response: BaseAccount[],
+
+    // thunk action handlers
     handleFetchLocalAccounts: () => Promise<BaseAccount[]>,
 }
 

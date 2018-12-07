@@ -12,7 +12,7 @@ export interface IndexLocalProps extends DefaultProps {
     currentDataDirectory: string
 }
 
-class Index extends React.Component<any, any> {
+class Index extends React.Component<IndexLocalProps, any> {
     public render() {
         const {currentDataDirectory} = this.props;
         return (

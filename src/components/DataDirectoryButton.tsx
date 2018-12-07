@@ -9,7 +9,11 @@ import {app, BaseAccount, DataDirectoryParams, DefaultProps, Store} from "../red
 
 export interface DataDirectoryButtonLocalProps extends DefaultProps {
     color: "teal" | "blue";
+
+    // redux states
     dataDirectory: string;
+
+    // thunk action handlers
     handleDataDirectoryChange: (data: DataDirectoryParams) => Promise<BaseAccount[]>;
 }
 
@@ -47,8 +51,8 @@ class DataDirectoryButton extends React.Component<DataDirectoryButtonLocalProps,
     public render() {
         return (
             <Modal
-                   trigger={<Button icon={true} onClick={this.open} color={this.props.color} basic={false}><Icon
-                       name={"folder"}/></Button>} open={this.state.open}onClose={this.close}>
+                trigger={<Button icon={true} onClick={this.open} color={this.props.color} basic={false}><Icon
+                    name={"folder"}/></Button>} open={this.state.open} onClose={this.close}>
                 <Modal.Header>Change Data Directory</Modal.Header>
                 <Modal.Content>
                     <Header as={"h4"}>
