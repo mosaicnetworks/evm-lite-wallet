@@ -11,7 +11,7 @@ export interface AppReducer {
 const app = new Application();
 
 const AppReducer = combineReducers({
-    dataDirectory: app.SimpleReducer<string, string>('DATA_DIRECTORY'),
+    dataDirectory: app.SimpleReducer<string, string>('Directory'),
 });
 
 export default AppReducer;

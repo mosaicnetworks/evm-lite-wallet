@@ -66,17 +66,17 @@ export default class Accounts extends Actions {
                 gasPrice: data.tx.gasprice,
                 nonce: data.tx.nonce,
                 chainId: 1
-            }
+            };
 
             account.signTransaction(tx)
                 .then((response: any) => {
                     this.connection.api.sendRawTx(response.rawTransaction)
                         .then((response: any) => {
-                            dispatch(success('Transaction submitted: ' + response.txHash))
+                            dispatch(success('Transaction submitted: ' + response.txHash));
                             resolve();
                         })
                         .catch(() => {
-                            dispatch(failure('Something went wrong while submitting transaction.'))
+                            dispatch(failure('Something went wrong while submitting transaction.'));
                             reject()
                         })
                 })

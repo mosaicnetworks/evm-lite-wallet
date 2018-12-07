@@ -49,7 +49,7 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
         password: '',
         decryptionError: '',
         v3JSONKeystore: keystore.keystore.get(this.props.account.address),
-        transferDisable: !(this.props.decryption.response),
+        transferDisable: true,
     };
 
     public componentDidMount = () => {
@@ -113,9 +113,6 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                         this.setState({transferDisable: false})
                     }
                 })
-                .then(() => {
-                   console.log(accounts.types);
-                });
         }
     };
 
@@ -141,7 +138,7 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                 })
                 .catch(() => {
                     this.props.alert.error('Error transacting!');
-                })
+                });
 
             this.close();
         }

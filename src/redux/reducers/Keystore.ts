@@ -17,11 +17,11 @@ export interface KeystoreReducer {
 const keystore = new Keystore();
 
 const KeystoreReducer = combineReducers({
-    fetch: keystore.SimpleReducer<BaseAccount[], string>('FETCH_LOCAL'),
-    update: keystore.SimpleReducer<string, string>('UPDATE_PASSWORD'),
-    create: keystore.SimpleReducer<string, string>('CREATE'),
-    import: keystore.SimpleReducer<string, string>('IMPORT'),
-    export: keystore.SimpleReducer<string, string>('EXPORT'),
+    fetch: keystore.SimpleReducer<BaseAccount[], string>('List'),
+    update: keystore.SimpleReducer<string, string>('Update'),
+    create: keystore.SimpleReducer<string, string>('Create'),
+    import: keystore.SimpleReducer<string, string>('Import'),
+    export: keystore.SimpleReducer<string, string>('Export'),
 });
 
 export default KeystoreReducer;
