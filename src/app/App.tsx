@@ -16,13 +16,14 @@ import Defaults from "../classes/Defaults";
 import './styles/App.css';
 
 
-export interface AppLocalProps extends DefaultProps {
+export interface ApplicationLocalProps extends DefaultProps {
+    // thunk action handlers
     handleFetchLocalAccounts: () => void;
     handleReadConfig: () => Promise<any>;
     handleDataDirectoryInit: (data: DataDirectoryParams) => void;
 }
 
-class App extends React.Component<AppLocalProps, any> {
+class App extends React.Component<ApplicationLocalProps, any> {
     public componentDidMount = () => {
         this.props.handleDataDirectoryInit({path: Defaults.dataDirectory});
     };

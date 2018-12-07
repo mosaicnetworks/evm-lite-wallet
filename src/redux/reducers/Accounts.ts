@@ -12,8 +12,8 @@ export interface AccountsReducer {
 const accounts = new Accounts();
 
 const AccountsReducer = combineReducers({
-    transfer: accounts.SimpleReducer<string, string>('TRANSFER'),
-    decrypt: accounts.SimpleReducer<string, string>('DECRYPT'),
+    transfer: accounts.SimpleReducer<string, string>('Transfer'),
+    decrypt: accounts.SimpleReducer<string, string>('Decrypt'),
 });
 
 export default AccountsReducer;

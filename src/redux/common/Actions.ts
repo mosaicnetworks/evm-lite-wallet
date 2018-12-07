@@ -2,7 +2,7 @@ import BasicReducerFactory, {BasicReducerState} from "./reducers/BasicReducerFac
 
 
 interface ActionTypes {
-    [key: string]: string;
+    [key: string]: string
 }
 
 type ActionsPrefixes = string[];
@@ -34,50 +34,62 @@ interface ActionCreatorHandlers<S, F> {
 
 export default class Actions {
 
-    public get types(): ActionTypes {
-        return this.typeCollection;
-    }
+    private readonly delimiter = '_';
+    private readonly suffixes: string[] = ['INIT', 'SUCCESS', 'FAILURE', 'RESET'];
 
-    protected set prefixes(value: ActionsPrefixes) {
-        const {typeCollection, identifier} = this;
-        for (const prefix of value) {
-            typeCollection[`${prefix.toUpperCase()}_INIT`] =
-                `${identifier.toUpperCase()}_${prefix.toUpperCase()}_INIT`;
-            typeCollection[`${prefix.toUpperCase()}_SUCCESS`] =
-                `${identifier.toUpperCase()}_${prefix.toUpperCase()}_SUCCESS`;
-            typeCollection[`${prefix.toUpperCase()}_FAILURE`] =
-                `${identifier.toUpperCase()}_${prefix.toUpperCase()}_FAILURE`;
-            typeCollection[`${prefix.toUpperCase()}_RESET`] =
-                `${identifier.toUpperCase()}_${prefix.toUpperCase()}_RESET`;
-
-            this.handlerFunctions[prefix.toUpperCase()] = <S, F>() => ({
-                init: () => ({type: this.types[`${prefix.toUpperCase()}_INIT`]}),
-                success: (data) => ({type: this.types[`${prefix.toUpperCase()}_SUCCESS`], data}),
-                failure: (data) => ({type: this.types[`${prefix.toUpperCase()}_FAILURE`], data}),
-                reset: () => ({type: this.types[`${prefix.toUpperCase()}_RESET`]}),
-            });
-        }
-    }
-    protected readonly prefixCollection: ActionsPrefixes;
-
-    private readonly typeCollection: ActionTypes;
+    private readonly prefixCollection: ActionsPrefixes;
+    private readonly actionTypes: ActionTypes;
     private readonly handlerFunctions: {
         [key: string]: <S, F>() => ActionCreatorHandlers<S, F>
     };
 
     constructor(protected identifier: string) {
-        this.typeCollection = {};
+        this.actionTypes = {};
         this.prefixCollection = [];
         this.handlerFunctions = {};
     }
 
+    public get types(): ActionTypes {
+        return this.actionTypes;
+    }
+
+    protected get prefixes(): ActionsPrefixes {
+        return this.prefixCollection;
+    }
+
+    protected set prefixes(value: ActionsPrefixes) {
+        const {actionTypes, identifier} = this;
+
+        for (const prefix of value) {
+            for (const suffix of this.suffixes) {
+                const key = this.joinWithUpperCase(prefix, suffix);
+                const val = this.joinWithUpperCase(identifier, key);
+
+                actionTypes[`${key}`] = `${val}`;
+            }
+
+            this.handlerFunctions[prefix.toUpperCase()] = <S, F>() => ({
+                init: () => ({type: this.types[this.joinWithUpperCase(prefix, this.suffixes[0])]}),
+                success: (data) => ({type: this.types[this.joinWithUpperCase(prefix, this.suffixes[1])], data}),
+                failure: (data) => ({type: this.types[this.joinWithUpperCase(prefix, this.suffixes[2])], data}),
+                reset: () => ({type: this.types[this.joinWithUpperCase(prefix, this.suffixes[3])]}),
+            });
+
+            this.prefixCollection.push(prefix);
+        }
+    }
+
+
+    public SimpleReducer<S, F>(prefix: string, initial?: BasicReducerState<S, F>) {
+        return BasicReducerFactory<Actions, S, F>(this, prefix, initial);
+    }
+
     public handlers<S, F>(prefix: string): ActionCreatorHandlers<S, F> {
-        console.log(this.handlerFunctions[prefix.toUpperCase()]<S, F>());
         return this.handlerFunctions[prefix.toUpperCase()]<S, F>();
     }
 
-    public SimpleReducer = <S, F>(prefix: string, initial?: BasicReducerState<S, F>) => {
-        return BasicReducerFactory<Actions, S, F>(this, prefix, initial);
-    };
+    private joinWithUpperCase(...words: string[]) {
+        return words.join(this.delimiter).toUpperCase();
+    }
 
 }

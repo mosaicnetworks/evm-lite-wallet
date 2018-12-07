@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import {connect} from 'react-redux';
+import {withAlert} from "react-alert";
 import {Divider, Header, Icon} from "semantic-ui-react";
 
 import {BaseAccount, DefaultProps, keystore, Store} from "../redux";
@@ -8,15 +9,18 @@ import {BaseAccount, DefaultProps, keystore, Store} from "../redux";
 import Account from '../components/account/Account';
 import AccountCreate from "../components/account/AccountCreate";
 import AccountImport from "../components/account/AccountImport";
+import LoadingButton from "../components/LoadingButton";
 
 import './styles/Accounts.css';
-import LoadingButton from "../components/LoadingButton";
-import {withAlert} from "react-alert";
+
 
 export interface AccountsLocalProps extends DefaultProps {
+    // redux states
     error: string
     isLoading: boolean;
     response: BaseAccount[],
+
+    // thunk action handlers
     handleFetchLocalAccounts: () => Promise<BaseAccount[]>,
 }
 
@@ -49,7 +53,7 @@ class Accounts extends React.Component<AccountsLocalProps, any> {
                 </Header>
                 <Divider hidden={true}/>
                 <div className={'page'}>
-                    {!isLoading && !error && response && response.map((account: BaseAccount) => {
+                    {response && response.map((account: BaseAccount) => {
                         return <Account key={account.address} account={account}/>
                     })}
                     {!isLoading && error && <div className={"error_message"}>{error}</div>}

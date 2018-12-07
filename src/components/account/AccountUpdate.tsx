@@ -3,18 +3,32 @@ import * as React from 'react';
 import {withAlert} from "react-alert";
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
+import {V3JSONKeyStore} from 'evm-lite-lib';
 
-import {BaseAccount, ConfigSchema, DefaultProps, keystore, Store} from "../../redux";
+import {DecryptionParams} from "../../redux/actions/Accounts";
+import {accounts, BaseAccount, ConfigSchema, DefaultProps, keystore, Store} from "../../redux";
 
 import './styles/Account.css'
 
-export interface LocalAccountsEditProps extends DefaultProps {
-    handleUpdatePassword: (a: string, o: string, n: string) => Promise<BaseAccount[]>;
+export interface AccountUpdateLocalProps extends DefaultProps {
+    account: BaseAccount;
+
+    // redux states
     error: string;
     response: string;
-    account: BaseAccount;
     isLoading: boolean;
     config: ConfigSchema
+    decryption: {
+        response: string,
+        error: string,
+        isLoading: boolean
+    }
+
+    // thunk action handlers
+    handleUpdatePassword: (a: string, o: string, n: string) => Promise<BaseAccount[]>;
+    handleUpdateReset: () => void;
+    handleDecryptionReset: () => void;
+    handleDecryption: (data: DecryptionParams) => Promise<string>;
 }
 
 interface State {
@@ -22,20 +36,34 @@ interface State {
     oldPassword: string;
     newPassword: string;
     verifyNewPassword: string;
+    v3JSONKeystore: V3JSONKeyStore;
+    updateDisable: boolean;
     matchingPasswordError: string;
 }
 
-class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State> {
+class AccountUpdate extends React.Component<AccountUpdateLocalProps, any & State> {
     public state = {
-        open: (!this.props.response && !!this.props.error),
+        open: false,
         oldPassword: '',
         verifyNewPassword: '',
         newPassword: '',
-        matchingPasswordError: ''
+        matchingPasswordError: '',
+        v3JSONKeystore: keystore.keystore.get(this.props.account.address),
+        updateDisable: true
     };
 
     public open = () => this.setState({open: true});
-    public close = () => this.setState({open: false});
+    public close = () => {
+        if (this.props.decryption.response || this.props.decryption.error) {
+            this.props.handleDecryptionReset();
+        }
+
+        if (this.props.response || this.props.error) {
+            this.props.handleUpdateReset();
+        }
+
+        this.setState({open: false});
+    };
 
     public handleSave = () => {
         this.setState({matchingPasswordError: ''});
@@ -54,16 +82,56 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
                 .then(() => {
                     if (this.props.response) {
                         this.props.alert.success('Account password successfully updated!');
-                        this.close();
                     } else {
                         this.props.alert.error(this.props.error);
                     }
+                })
+                .then(() => {
+                    this.close();
                 })
         }
     };
 
     public handleChangeOldPassword = (e: any) => {
         this.setState({oldPassword: e.target.value});
+    };
+
+    public getDecryptIcon = (): ('circle notched' | 'info circle' | 'times' | 'thumbs up') => {
+        const {decryption} = this.props;
+        let icon: ('circle notched' | 'info circle' | 'times' | 'thumbs up') = decryption.isLoading ? 'circle notched' : 'info circle';
+
+        if (!decryption.isLoading && decryption.response) {
+            icon = 'thumbs up'
+        }
+
+        if (!decryption.isLoading && decryption.error) {
+            icon = 'times'
+        }
+
+        return icon
+    };
+
+    public getMessageHeaderAndContent = () => {
+        const {decryption} = this.props;
+        let header = decryption.isLoading ? 'Decrypting...' :
+            'Password is required to decryption the account before a transfer.';
+        let message = decryption.isLoading ? 'Please wait while we try to decryption the account' :
+            `Please enter the password for the account: ${this.props.account.address}`;
+
+        if (!decryption.isLoading && decryption.response) {
+            header = 'Decryption Successful';
+            message = 'The account was successfully decrypted with the password provided!';
+        }
+
+        if (!decryption.isLoading && decryption.error) {
+            header = 'Decryption Failed';
+            message = 'The account was could not be decrypted with the password provided!';
+        }
+
+        return {
+            header,
+            message
+        }
     };
 
     public handleChangeNewPassword = (e: any) => {
@@ -74,11 +142,26 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
         this.setState({verifyNewPassword: e.target.value});
     };
 
+    public onBlurPassword = () => {
+        if (!this.props.decryption.response) {
+            this.props.handleDecryption({
+                v3JSONKeystore: this.state.v3JSONKeystore,
+                password: this.state.oldPassword
+            })
+                .then(() => {
+                    if (this.props.decryption.response) {
+                        this.setState({updateDisable: false})
+                    }
+                })
+        }
+    };
+
     public render() {
-        const {isLoading, error, response, config} = this.props;
+        const {isLoading, error, config, decryption} = this.props;
+        const decryptMessage = this.getMessageHeaderAndContent();
         return (
             <React.Fragment>
-                <Modal open={this.state.open}
+                <Modal open={this.state.open} onClose={this.close}
                        trigger={<Button basic={false} onClick={this.open} color='yellow'>Change Password</Button>}>
                     <Modal.Header>Update: {this.props.account.address}</Modal.Header>
                     <Modal.Content>
@@ -108,9 +191,19 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
                             <Form>
                                 <Form.Field>
                                     <label>Old Password: </label>
-                                    <input type={"password"} placeholder='Old Password'
+                                    <input onBlur={this.onBlurPassword} type={"password"} placeholder='Old Password'
                                            onChange={this.handleChangeOldPassword}/>
                                 </Form.Field>
+                                <Message icon={true} info={decryption.isLoading} negative={!!(decryption.error)}
+                                         positive={!!(decryption.response)}>
+                                    <Icon name={this.getDecryptIcon()} loading={decryption.isLoading}/>
+                                    <Message.Content>
+                                        <Message.Header>
+                                            {decryptMessage.header}
+                                        </Message.Header>
+                                        <p>{decryptMessage.message}</p>
+                                    </Message.Content>
+                                </Message>
                                 <Form.Field>
                                     <label>New Password</label>
                                     <input type={"password"} placeholder='New Password'
@@ -126,12 +219,13 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
                         </Modal.Description>
                     </Modal.Content>
                     <Modal.Actions>
-                        {isLoading && !response &&
-                        (<span className={"m-2"}>
-                            <Icon color={"green"} name={"circle notch"} loading={true}/> Saving...
+                        {isLoading && (<span className={"m-2"}>
+                            <Icon color={"green"} name={"circle notch"} loading={true}/>
+                            Saving...
                         </span>)}
                         <Button onClick={this.close}>Close</Button>
-                        <Button onClick={this.handleSave} color={"green"} type='submit'>Update</Button>
+                        <Button disabled={this.state.updateDisable} onClick={this.handleSave} color={"green"}
+                                type='submit'>Update</Button>
                     </Modal.Actions>
                 </Modal>
             </React.Fragment>
@@ -141,7 +235,8 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
 
 const mapStoreToProps = (store: Store) => ({
     ...store.keystore.update,
-    config: store.config.read.response
+    config: store.config.read.response,
+    decryption: store.accounts.decrypt,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -151,7 +246,10 @@ const mapDispatchToProps = (dispatch: any) => ({
             oldPassword: o,
             address: a,
         }));
-    }
+    },
+    handleUpdateReset: () => dispatch(keystore.handlers<string, string>('Update').reset()),
+    handleDecryptionReset: () => dispatch(accounts.handlers<string, string>('Decrypt').reset()),
+    handleDecryption: (data: DecryptionParams) => dispatch(accounts.handleDecryption(data)),
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountUpdate));

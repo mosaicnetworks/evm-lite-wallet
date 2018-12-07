@@ -17,8 +17,8 @@ class ConfigurationActions extends Actions {
     constructor() {
         super(ConfigurationActions.name);
         this.prefixes = [
-            'READ_CONFIG',
-            'SAVE_CONFIG'
+            'Detail',
+            'Update'
         ];
     }
 
@@ -27,7 +27,7 @@ class ConfigurationActions extends Actions {
     }
 
     public handleRead = (): EVMLThunkAction<ConfigSchema, string> => dispatch => {
-        const {init, success, failure} = this.handlers<ConfigSchema, string>('READ_CONFIG');
+        const {init, success, failure} = this.handlers<ConfigSchema, string>('Detail');
         dispatch(init());
 
         return this.config
@@ -43,7 +43,7 @@ class ConfigurationActions extends Actions {
     };
 
     public handleSave = (data: SaveConfigParams): EVMLThunkAction<string, string> => (dispatch) => {
-        const {init, success, failure} = this.handlers<string, string>('SAVE_CONFIG');
+        const {init, success, failure} = this.handlers<string, string>('Update');
         dispatch(init());
 
         return this.config

@@ -9,6 +9,8 @@ import {ConfigSchema, configuration, DefaultProps, Store} from "../redux";
 import {SaveConfigParams} from "../redux/actions/Configuration";
 
 export interface ConfigurationLocalProps extends DefaultProps {
+    // redux states
+    dataDirectory: string;
     config: {
         read: {
             isLoading: boolean,
@@ -21,9 +23,10 @@ export interface ConfigurationLocalProps extends DefaultProps {
             error: string
         }
     },
+
+    // thunk action handlers
     handleSaveConfig: (data: SaveConfigParams) => Promise<ConfigSchema>;
     handleReadConfig: () => Promise<ConfigSchema>;
-    dataDirectory: string;
 }
 
 interface State {

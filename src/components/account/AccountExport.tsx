@@ -7,16 +7,15 @@ import {DefaultProps, Store, BaseAccount} from "../../redux";
 
 import './styles/AccountExport.css'
 
-export interface LocalAccountsEditProps extends DefaultProps {
+export interface AccountExportLocalProps extends DefaultProps {
     account: BaseAccount;
-    error?: string;
 }
 
 interface State {
     open: boolean;
 }
 
-class AccountExport extends React.Component<LocalAccountsEditProps, any & State> {
+class AccountExport extends React.Component<AccountExportLocalProps, any & State> {
     public state = {
         open: false,
     };
@@ -24,7 +23,7 @@ class AccountExport extends React.Component<LocalAccountsEditProps, any & State>
     public open = () => this.setState({open: true});
     public close = () => this.setState({open: false});
 
-    public handleCopy = (e: any) => {
+    public handleCopy = () => {
         // pass
     };
 

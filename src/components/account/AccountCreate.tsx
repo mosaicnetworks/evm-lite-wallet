@@ -6,12 +6,15 @@ import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semant
 import {BaseAccount, ConfigSchema, DefaultProps, EVMLDispatch, keystore, Store} from "../../redux";
 import {withAlert} from "react-alert";
 
-export interface LocalAccountsEditProps extends DefaultProps {
-    handleCreateAccount: (password: string) => Promise<BaseAccount[]>;
+export interface AccountCreateLocalProps extends DefaultProps {
+    // redux states
     isLoading: boolean;
     response: string;
     error: string,
     config: ConfigSchema
+
+    // thunk action handlers
+    handleCreateAccount: (password: string) => Promise<BaseAccount[]>;
 }
 
 interface State {
@@ -21,7 +24,7 @@ interface State {
     errorState: string;
 }
 
-class AccountCreate extends React.Component<LocalAccountsEditProps, any & State> {
+class AccountCreate extends React.Component<AccountCreateLocalProps, any & State> {
     public state = {
         open: false,
         password: '',

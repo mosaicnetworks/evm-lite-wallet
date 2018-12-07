@@ -11,6 +11,8 @@ import DataDirectoryButton from "./DataDirectoryButton";
 import './styles/Header.css';
 
 export interface HeaderLocalProps extends DefaultProps {
+
+    // redux states
     total: number,
 }
 

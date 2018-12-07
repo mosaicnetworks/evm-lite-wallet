@@ -6,11 +6,14 @@ import {Button, Form, Icon, Message, Modal, TextArea} from "semantic-ui-react";
 
 import {DefaultProps, keystore, Store, BaseAccount} from "../../redux";
 
-export interface LocalAccountsEditProps extends DefaultProps {
-    handleImportAccount: (v3JSONKeystore: string) => Promise<BaseAccount[]>;
+export interface AccountImportLocalProps extends DefaultProps {
+    // redux states
     response: string,
     error: string,
     isLoading: boolean
+
+    // thunk action handlers
+    handleImportAccount: (v3JSONKeystore: string) => Promise<BaseAccount[]>;
 }
 
 interface State {
@@ -19,7 +22,7 @@ interface State {
     parseError: string;
 }
 
-class AccountImport extends React.Component<LocalAccountsEditProps, any & State> {
+class AccountImport extends React.Component<AccountImportLocalProps, any & State> {
     public state = {
         open: false,
         v3JSONKeystore: '',

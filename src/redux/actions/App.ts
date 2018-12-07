@@ -13,11 +13,11 @@ export default class Application extends Actions {
 
     constructor() {
         super(Application.name);
-        this.prefixes = ['DATA_DIRECTORY'];
+        this.prefixes = ['Directory'];
     }
 
     public handleDataDirectoryInit = (data: DataDirectoryParams): EVMLThunkAction<string, string> => dispatch => {
-        const {init, success, failure} = this.handlers<string, string>('DATA_DIRECTORY');
+        const {init, success, failure} = this.handlers<string, string>('Directory');
         const directory = new DataDirectory(data.path);
         dispatch(init());
 

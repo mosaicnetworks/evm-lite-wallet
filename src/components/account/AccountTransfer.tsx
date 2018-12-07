@@ -9,12 +9,10 @@ import {DecryptionParams, TransferParams} from "../../redux/actions/Accounts";
 import {withAlert} from "react-alert";
 
 
-export interface LocalAccountTransferProps extends DefaultProps {
+export interface AccountTransferLocalProps extends DefaultProps {
     account: BaseAccount;
-    handleTransfer: (data: TransferParams) => Promise<void>;
-    handleDecryption: (data: DecryptionParams) => Promise<string>;
-    handleDecryptionReset: () => void;
-    handleReadConfig: () => Promise<ConfigSchema>;
+
+    // redux states
     config: {
         response: ConfigSchema,
         error: string,
@@ -25,6 +23,12 @@ export interface LocalAccountTransferProps extends DefaultProps {
         error: string,
         isLoading: boolean
     }
+
+    // thunk action handlers
+    handleTransfer: (data: TransferParams) => Promise<void>;
+    handleDecryption: (data: DecryptionParams) => Promise<string>;
+    handleDecryptionReset: () => void;
+    handleReadConfig: () => Promise<ConfigSchema>;
 }
 
 interface State {
@@ -39,7 +43,7 @@ interface State {
     transferDisable: boolean;
 }
 
-class AccountTransfer extends React.Component<LocalAccountTransferProps, any & State> {
+class AccountTransfer extends React.Component<AccountTransferLocalProps, any & State> {
     public state = {
         open: false,
         toAddress: '',
@@ -49,7 +53,7 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
         password: '',
         decryptionError: '',
         v3JSONKeystore: keystore.keystore.get(this.props.account.address),
-        transferDisable: !(this.props.decryption.response),
+        transferDisable: true,
     };
 
     public componentDidMount = () => {
@@ -109,13 +113,10 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                 password: this.state.password
             })
                 .then(() => {
-                    if(this.props.decryption.response) {
+                    if (this.props.decryption.response) {
                         this.setState({transferDisable: false})
                     }
                 })
-                .then(() => {
-                   console.log(accounts.types);
-                });
         }
     };
 
@@ -141,7 +142,7 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                 })
                 .catch(() => {
                     this.props.alert.error('Error transacting!');
-                })
+                });
 
             this.close();
         }
@@ -238,7 +239,8 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                     </Modal.Content>
                     <Modal.Actions>
                         <Button onClick={this.close}>Close</Button>
-                        <Button disabled={this.state.transferDisable} onClick={this.handleTransfer} color={"green"} type='submit'>Transfer</Button>
+                        <Button disabled={this.state.transferDisable} onClick={this.handleTransfer} color={"green"}
+                                type='submit'>Transfer</Button>
                     </Modal.Actions>
                 </Modal>
             </React.Fragment>

@@ -20,11 +20,11 @@ export default class KeystoreActions extends Actions {
     constructor() {
         super(KeystoreActions.name);
         this.prefixes = [
-            'FETCH_LOCAL',
-            'CREATE',
-            'UPDATE_PASSWORD',
-            'EXPORT',
-            'IMPORT'
+            'List',
+            'Create',
+            'Update',
+            'Export',
+            'Import'
         ];
     }
 
@@ -33,7 +33,7 @@ export default class KeystoreActions extends Actions {
     };
 
     public handleFetch = (): EVMLThunkAction<BaseAccount[], string> => dispatch => {
-        const {init, success, failure} = this.handlers<BaseAccount[], string>('FETCH_LOCAL');
+        const {init, success, failure} = this.handlers<BaseAccount[], string>('List');
         dispatch(init());
 
         return this.keystore
@@ -52,7 +52,7 @@ export default class KeystoreActions extends Actions {
     };
 
     public handleExport = (data: string): EVMLThunkAction<string, string> => dispatch => {
-        const {init, success, failure} = this.handlers<string, string>('IMPORT');
+        const {init, success, failure} = this.handlers<string, string>('Export');
         dispatch(init());
 
         return this.keystore
@@ -68,7 +68,7 @@ export default class KeystoreActions extends Actions {
     };
 
     public handleImport = (data: string): EVMLThunkAction<string, string> => dispatch => {
-        const {init, success, failure} = this.handlers<string, string>('IMPORT');
+        const {init, success, failure} = this.handlers<string, string>('Import');
         dispatch(init());
 
         return this.keystore
@@ -84,7 +84,7 @@ export default class KeystoreActions extends Actions {
     };
 
     public handleUpdate = (data: UpdatePasswordParams): EVMLThunkAction<string, string> => dispatch => {
-        const {init, success, failure} = this.handlers<string, string>('UPDATE_PASSWORD');
+        const {init, success, failure} = this.handlers<string, string>('Update');
         dispatch(init());
 
         return this.keystore
@@ -100,7 +100,7 @@ export default class KeystoreActions extends Actions {
     };
 
     public handleCreate = (data: string): EVMLThunkAction<string, string> => dispatch => {
-        const {init, success, failure} = this.handlers<string, string>('CREATE');
+        const {init, success, failure} = this.handlers<string, string>('Create');
         dispatch(init());
 
         return this.keystore
