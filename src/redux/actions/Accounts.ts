@@ -1,56 +1,91 @@
-import {Account, V3JSONKeyStore} from 'evm-lite-lib';
+import {Account, Controller, V3JSONKeyStore} from 'evm-lite-lib';
 
 import {EVMLThunkAction} from '..';
 import Actions from "../common/Actions";
 
-
-export interface TransferParams {
-    tx: {
-        from: string;
-        to: string;
-        value: string;
-        gas: string;
-        gasprice: string;
-    },
-    password: string;
-}
 
 export interface DecryptionParams {
     v3JSONKeystore: V3JSONKeyStore;
     password: string;
 }
 
+export interface TransferParams extends DecryptionParams {
+    tx: {
+        from: string;
+        to: string;
+        value: string;
+        gas: string;
+        gasprice: string;
+        nonce: number;
+        chainId?: number;
+    },
+}
+
 export default class Accounts extends Actions {
+
+    private connection = new Controller('127.0.0.1');
 
     constructor() {
         super(Accounts.name);
         this.prefixes = [
-            'transfer',
-            'decrypt'
+            'Transfer',
+            'Decrypt'
         ];
     }
 
-    public handleDecryption = (data: DecryptionParams): EVMLThunkAction<string, string, void> => dispatch => {
-        const {init, success, failure} = this.handlers<string, string>('DECRYPT');
+    public handleDecryption = (data: DecryptionParams): EVMLThunkAction<string, string> => dispatch => {
+        const {init, success, failure} = this.handlers<string, string>('Decrypt');
+        dispatch(init());
+        return new Promise<string>(((resolve) => {
+            setTimeout(() => {
+                try {
+                    const response = 'Account decryption successful!';
+                    Account.decrypt(data.v3JSONKeystore, data.password);
+                    dispatch(success(response));
+                    resolve(response)
+                } catch (e) {
+                    const error = 'Unable to decryption account with password provided.';
+                    dispatch(failure(error));
+                    resolve(error);
+                }
+            }, 2000);
+        }));
+    };
+
+    public handleTransfer = (data: TransferParams): EVMLThunkAction<string, string, Promise<void>> => dispatch => {
+        const {init, success, failure} = this.handlers<string, string>('Transfer');
         dispatch(init());
 
-        setTimeout(() => {
-            try {
-                Account.decrypt(data.v3JSONKeystore, data.password);
-                dispatch(success('Account decryption successful!'));
-                // setTimeout(() => dispatch(reset()), 3000)
-            } catch (e) {
-                dispatch(failure('Unable to decrypt account with password provided.'));
+        return new Promise<void>((resolve, reject) => {
+            const account = Account.decrypt(data.v3JSONKeystore, data.password);
+            const tx = {
+                from: data.tx.from,
+                to: data.tx.to,
+                value: parseInt(data.tx.value, 10),
+                gas: parseInt(data.tx.gas, 10),
+                gasPrice: data.tx.gasprice,
+                nonce: data.tx.nonce,
+                chainId: 1
             }
-        }, 2000);
-    };
 
-    public handleTransfer = (data: TransferParams): EVMLThunkAction<string, string, void> => dispatch => {
-        // Ask to decrypt account
-        // Ask for tx details
-        // Sign tx locally
-        // Send tx
-    };
+            account.signTransaction(tx)
+                .then((response: any) => {
+                    this.connection.api.sendRawTx(response.rawTransaction)
+                        .then((response: any) => {
+                            dispatch(success('Transaction submitted: ' + response.txHash))
+                            resolve();
+                        })
+                        .catch(() => {
+                            dispatch(failure('Something went wrong while submitting transaction.'))
+                            reject()
+                        })
+                })
+                .catch(() => {
+                    dispatch(failure('Something went wrong while signing your transaction.'));
+                    reject();
+                })
+        })
+    }
 
 }
 

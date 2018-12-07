@@ -50,29 +50,30 @@ export default class Actions {
             typeCollection[`${prefix.toUpperCase()}_RESET`] =
                 `${identifier.toUpperCase()}_${prefix.toUpperCase()}_RESET`;
 
-            this.handlersFunctions[prefix.toUpperCase()] = {
+            this.handlerFunctions[prefix.toUpperCase()] = <S, F>() => ({
                 init: () => ({type: this.types[`${prefix.toUpperCase()}_INIT`]}),
-                success: <S>(data: S) => ({type: this.types[`${prefix.toUpperCase()}_SUCCESS`], data}),
-                failure: <F>(data: F) => ({type: this.types[`${prefix.toUpperCase()}_FAILURE`], data}),
+                success: (data) => ({type: this.types[`${prefix.toUpperCase()}_SUCCESS`], data}),
+                failure: (data) => ({type: this.types[`${prefix.toUpperCase()}_FAILURE`], data}),
                 reset: () => ({type: this.types[`${prefix.toUpperCase()}_RESET`]}),
-            }
+            });
         }
     }
     protected readonly prefixCollection: ActionsPrefixes;
 
     private readonly typeCollection: ActionTypes;
-    private readonly handlersFunctions: {
-        [key: string]: ActionCreatorHandlers<any, any>
+    private readonly handlerFunctions: {
+        [key: string]: <S, F>() => ActionCreatorHandlers<S, F>
     };
 
     constructor(protected identifier: string) {
         this.typeCollection = {};
         this.prefixCollection = [];
-        this.handlersFunctions = {};
+        this.handlerFunctions = {};
     }
 
     public handlers<S, F>(prefix: string): ActionCreatorHandlers<S, F> {
-        return this.handlersFunctions[prefix.toUpperCase()];
+        console.log(this.handlerFunctions[prefix.toUpperCase()]<S, F>());
+        return this.handlerFunctions[prefix.toUpperCase()]<S, F>();
     }
 
     public SimpleReducer = <S, F>(prefix: string, initial?: BasicReducerState<S, F>) => {

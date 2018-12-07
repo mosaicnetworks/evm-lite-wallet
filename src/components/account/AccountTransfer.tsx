@@ -2,17 +2,25 @@ import * as React from 'react';
 
 import {connect} from "react-redux";
 import {Button, Form, Icon, Message, Modal} from "semantic-ui-react";
+import {V3JSONKeyStore} from 'evm-lite-lib';
 
-import {accounts, BaseAccount, ConfigSchema, DefaultProps, keystore, Store} from "../../redux";
+import {accounts, BaseAccount, ConfigSchema, configuration, DefaultProps, keystore, Store} from "../../redux";
 import {DecryptionParams, TransferParams} from "../../redux/actions/Accounts";
+import {withAlert} from "react-alert";
+
 
 export interface LocalAccountTransferProps extends DefaultProps {
     account: BaseAccount;
-    handleTransfer: (data: TransferParams) => void;
-    handleDecryption: (data: DecryptionParams) => void;
+    handleTransfer: (data: TransferParams) => Promise<void>;
+    handleDecryption: (data: DecryptionParams) => Promise<string>;
     handleDecryptionReset: () => void;
-    config: ConfigSchema;
-    decrypt: {
+    handleReadConfig: () => Promise<ConfigSchema>;
+    config: {
+        response: ConfigSchema,
+        error: string,
+        isLoading: boolean,
+    };
+    decryption: {
         response: string,
         error: string,
         isLoading: boolean
@@ -27,6 +35,8 @@ interface State {
     password: string;
     gasPrice: string;
     decryptionError: string;
+    v3JSONKeystore: V3JSONKeyStore;
+    transferDisable: boolean;
 }
 
 class AccountTransfer extends React.Component<LocalAccountTransferProps, any & State> {
@@ -37,16 +47,40 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
         gas: '',
         gasPrice: '',
         password: '',
-        decryptionError: ''
+        decryptionError: '',
+        v3JSONKeystore: keystore.keystore.get(this.props.account.address),
+        transferDisable: !(this.props.decryption.response),
+    };
+
+    public componentDidMount = () => {
+        const {response} = this.props.config;
+        if (response) {
+            this.setVars(response)
+        } else {
+            this.handleReadConfig();
+        }
+    };
+
+    public handleReadConfig = () => {
+        this.props.handleReadConfig()
+            .then((config) => this.setVars(config));
     };
 
     public open = () => this.setState({open: true});
     public close = () => {
-        if (this.props.decrypt.response || this.props.decrypt.error) {
+        if (this.props.decryption.response || this.props.decryption.error) {
             this.props.handleDecryptionReset();
         }
         this.setState({open: false});
     };
+
+    public setVars(response: any) {
+        const gasPrice: string = response.defaults.gasprice || '0';
+        this.setState({
+            gas: response.defaults.gas,
+            gasprice: gasPrice,
+        });
+    }
 
     public handleOnChangeToAddress = (e: any) => {
         this.setState({toAddress: e.target.value});
@@ -68,13 +102,20 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
         this.setState({password: e.target.value});
     };
 
-    public onBlurPassword = (e: any) => {
-        if (!this.props.decrypt.response) {
-            const v3JSONKeystore = keystore.keystore.get(this.props.account.address);
+    public onBlurPassword = () => {
+        if (!this.props.decryption.response) {
             this.props.handleDecryption({
-                v3JSONKeystore,
+                v3JSONKeystore: this.state.v3JSONKeystore,
                 password: this.state.password
             })
+                .then(() => {
+                    if(this.props.decryption.response) {
+                        this.setState({transferDisable: false})
+                    }
+                })
+                .then(() => {
+                   console.log(accounts.types);
+                });
         }
     };
 
@@ -84,45 +125,56 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
             to: this.state.toAddress,
             value: this.state.value,
             gas: this.state.gas,
-            gasprice: this.state.gasPrice
+            gasprice: this.state.gasPrice,
+            nonce: this.props.account.nonce
         };
         const data: TransferParams = {
             tx,
-            password: this.state.password
+            password: this.state.password,
+            v3JSONKeystore: this.state.v3JSONKeystore,
         };
 
-        this.props.handleTransfer(data);
-        console.log(this.state);
+        if (this.props.decryption.response) {
+            this.props.handleTransfer(data)
+                .then(() => {
+                    this.props.alert.success('Transaction submitted!');
+                })
+                .catch(() => {
+                    this.props.alert.error('Error transacting!');
+                })
+
+            this.close();
+        }
     };
 
     public getDecryptIcon = (): ('circle notched' | 'info circle' | 'times' | 'thumbs up') => {
-        const {decrypt} = this.props;
-        let icon: ('circle notched' | 'info circle' | 'times' | 'thumbs up') = decrypt.isLoading ? 'circle notched' : 'info circle';
+        const {decryption} = this.props;
+        let icon: ('circle notched' | 'info circle' | 'times' | 'thumbs up') = decryption.isLoading ? 'circle notched' : 'info circle';
 
-        if (!decrypt.isLoading && decrypt.response) {
+        if (!decryption.isLoading && decryption.response) {
             icon = 'thumbs up'
         }
 
-        if (!decrypt.isLoading && decrypt.error) {
+        if (!decryption.isLoading && decryption.error) {
             icon = 'times'
         }
 
         return icon
     };
 
-    public getDecryptMessage = () => {
-        const {decrypt} = this.props;
-        let header = decrypt.isLoading ? 'Decrypting...' :
-            'Password is required to decrypt the account before a transfer.';
-        let message = decrypt.isLoading ? 'Please wait while we try to decrypt the account' :
+    public getMessageHeaderAndContent = () => {
+        const {decryption} = this.props;
+        let header = decryption.isLoading ? 'Decrypting...' :
+            'Password is required to decryption the account before a transfer.';
+        let message = decryption.isLoading ? 'Please wait while we try to decryption the account' :
             `Please enter the password for the account: ${this.props.account.address}`;
 
-        if (!decrypt.isLoading && decrypt.response) {
+        if (!decryption.isLoading && decryption.response) {
             header = 'Decryption Successful';
             message = 'The account was successfully decrypted with the password provided!';
         }
 
-        if (!decrypt.isLoading && decrypt.error) {
+        if (!decryption.isLoading && decryption.error) {
             header = 'Decryption Failed';
             message = 'The account was could not be decrypted with the password provided!';
         }
@@ -134,11 +186,12 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
     };
 
     public render() {
-        const {config, decrypt} = this.props;
-        const decryptMessage = this.getDecryptMessage();
+        const {decryption} = this.props;
+        const decryptMessage = this.getMessageHeaderAndContent();
         return (
             <React.Fragment>
-                <Modal onClose={this.close} open={this.state.open} trigger={<Button onClick={this.open} basic={false} color='green'>Transfer</Button>}>
+                <Modal onClose={this.close} open={this.state.open}
+                       trigger={<Button onClick={this.open} basic={false} color='green'>Transfer</Button>}>
                     <Modal.Header>Transfer From: {this.props.account.address}</Modal.Header>
                     <Modal.Content>
                         <Modal.Description>
@@ -148,9 +201,9 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                                     <input type={"password"} onChange={this.handlePasswordChange}
                                            onBlur={this.onBlurPassword}/>
                                 </Form.Field>
-                                <Message icon={true} info={decrypt.isLoading} negative={!!(decrypt.error)}
-                                         positive={!!(decrypt.response)}>
-                                    <Icon name={this.getDecryptIcon()} loading={decrypt.isLoading}/>
+                                <Message icon={true} info={decryption.isLoading} negative={!!(decryption.error)}
+                                         positive={!!(decryption.response)}>
+                                    <Icon name={this.getDecryptIcon()} loading={decryption.isLoading}/>
                                     <Message.Content>
                                         <Message.Header>
                                             {decryptMessage.header}
@@ -172,12 +225,12 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                                     <Form.Field>
                                         <label>Gas</label>
                                         <input onChange={this.handleOnChangeGas}
-                                               defaultValue={config && config.defaults.gas}/>
+                                               defaultValue={this.state.gas}/>
                                     </Form.Field>
                                     <Form.Field>
                                         <label>Gas Price</label>
                                         <input onChange={this.handleOnChangeGasPrice}
-                                               defaultValue={config && config.defaults.gasprice}/>
+                                               defaultValue={this.state.gasPrice}/>
                                     </Form.Field>
                                 </Form.Group>
                             </Form>
@@ -185,7 +238,7 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
                     </Modal.Content>
                     <Modal.Actions>
                         <Button onClick={this.close}>Close</Button>
-                        <Button onClick={this.handleTransfer} color={"green"} type='submit'>Transfer</Button>
+                        <Button disabled={this.state.transferDisable} onClick={this.handleTransfer} color={"green"} type='submit'>Transfer</Button>
                     </Modal.Actions>
                 </Modal>
             </React.Fragment>
@@ -194,14 +247,15 @@ class AccountTransfer extends React.Component<LocalAccountTransferProps, any & S
 }
 
 const mapStoreToProps = (store: Store) => ({
-    config: store.config.read.response,
-    decrypt: store.accounts.decrypt
+    config: store.config.read,
+    decryption: store.accounts.decrypt
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
     handleTransfer: (data: TransferParams) => dispatch(accounts.handleTransfer(data)),
+    handleReadConfig: () => dispatch(configuration.handleRead()),
     handleDecryption: (data: DecryptionParams) => dispatch(accounts.handleDecryption(data)),
-    handleDecryptionReset: () => dispatch(accounts.handlers<string, string>('decrypt').reset())
+    handleDecryptionReset: () => dispatch(accounts.handlers<string, string>('Decrypt').reset())
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(AccountTransfer);
+export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountTransfer));
