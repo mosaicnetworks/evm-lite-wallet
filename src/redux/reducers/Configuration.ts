@@ -1,8 +1,7 @@
 import {combineReducers} from "redux";
+import {BasicReducerState} from "../common/reducers/BasicReducerFactory";
 
-import BasicReducerFactory, {BasicReducerState} from "../common/BasicReducer";
-
-import {default as Actions} from "../actions/Configuration";
+import Configuration from "../actions/Configuration";
 
 
 export interface ConfigReducer {
@@ -10,12 +9,11 @@ export interface ConfigReducer {
     save: BasicReducerState<string, string>
 }
 
-const configuration = new Actions();
-const SimpleReducer = <T1, T2>(prefix: string, initial?: BasicReducerState<T1, T2>) => BasicReducerFactory<Actions, T1, T2>(configuration, prefix, initial);
+const configuration = new Configuration();
 
 const ConfigReducer = combineReducers({
-    read: SimpleReducer<any, string>('READ_CONFIG'),
-    save: SimpleReducer<string, string>('SAVE_CONFIG'),
+    read: configuration.SimpleReducer<any, string>('READ_CONFIG'),
+    save: configuration.SimpleReducer<string, string>('SAVE_CONFIG'),
 });
 
 export default ConfigReducer;

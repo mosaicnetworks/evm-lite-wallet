@@ -1,12 +1,16 @@
 import * as React from 'react';
 
+import {withAlert} from "react-alert";
 import {connect} from "react-redux";
 import {Button, Form, Icon, Message, Modal, TextArea} from "semantic-ui-react";
 
-import {keystore, DefaultProps, Store} from "../../redux";
+import {DefaultProps, keystore, Store, BaseAccount} from "../../redux";
 
 export interface LocalAccountsEditProps extends DefaultProps {
-    handleImportAccount: (v3JSONKeystore: string) => void;
+    handleImportAccount: (v3JSONKeystore: string) => Promise<BaseAccount[]>;
+    response: string,
+    error: string,
+    isLoading: boolean
 }
 
 interface State {
@@ -33,7 +37,15 @@ class AccountImport extends React.Component<LocalAccountsEditProps, any & State>
             return;
         }
 
-        this.props.handleImportAccount(this.state.v3JSONKeystore);
+        this.props.handleImportAccount(this.state.v3JSONKeystore)
+            .then(() => {
+                if (this.props.response) {
+                    this.props.alert.success('Account imported!')
+                } else {
+                    this.props.alert.error('Import failed!')
+                }
+            })
+            .then(() => this.close());
     };
 
     public handleOnChange = (e: any) => {
@@ -50,7 +62,9 @@ class AccountImport extends React.Component<LocalAccountsEditProps, any & State>
 
         return (
             <React.Fragment>
-                <Modal trigger={<Button basic={false} color={"orange"}><Icon name="upload"/>Import</Button>}>
+                <Modal open={this.state.open} onClose={this.close}
+                       trigger={<Button basic={false} onClick={this.open} color={"orange"}><Icon
+                           name="upload"/>Import</Button>}>
                     <Modal.Header>Import an Account</Modal.Header>
                     {(parseError || error) && (<Modal.Content>
                         <Message icon={true} error={true}>
@@ -58,16 +72,6 @@ class AccountImport extends React.Component<LocalAccountsEditProps, any & State>
                             <Message.Content>
                                 <Message.Header>
                                     Oops! {parseError ? parseError : error}
-                                </Message.Header>
-                            </Message.Content>
-                        </Message>
-                    </Modal.Content>)}
-                    {!isLoading && response && (<Modal.Content>
-                        <Message icon={true} success={true}>
-                            <Icon name={"thumbs up"}/>
-                            <Message.Content>
-                                <Message.Header>
-                                    Success! Imported Address: {response}
                                 </Message.Header>
                             </Message.Content>
                         </Message>
@@ -100,7 +104,7 @@ const mapStoreToProps = (store: Store) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    handleImportAccount: (v3JSONKeystore: string) => dispatch(keystore.handleImportAccount(v3JSONKeystore)),
+    handleImportAccount: (v3JSONKeystore: string) => dispatch(keystore.handleImportThenFetch(v3JSONKeystore)),
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(AccountImport);
+export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountImport));

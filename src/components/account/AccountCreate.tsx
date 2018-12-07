@@ -3,10 +3,11 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {keystore, DefaultProps, Store, EVMLDispatch, ConfigSchema} from "../../redux";
+import {BaseAccount, ConfigSchema, DefaultProps, EVMLDispatch, keystore, Store} from "../../redux";
+import {withAlert} from "react-alert";
 
 export interface LocalAccountsEditProps extends DefaultProps {
-    handleCreateAccount: (password: string) => void;
+    handleCreateAccount: (password: string) => Promise<BaseAccount[]>;
     isLoading: boolean;
     response: string;
     error: string,
@@ -53,15 +54,23 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
             return;
         }
 
-        this.props.handleCreateAccount(password);
+        this.close();
+        this.props.handleCreateAccount(password)
+            .then(() => {
+                if (this.props.response) {
+                    this.props.alert.success('Account created!');
+                } else {
+                    this.props.alert.error('Error: ' + this.props.error);
+                }
+            })
     };
 
     public render() {
         const {errorState} = this.state;
-        const {error, isLoading, response, config} = this.props;
+        const {isLoading, config} = this.props;
         return (
             <React.Fragment>
-                <Modal trigger={<Button color={"green"} basic={false}><Icon name="plus"/>Create</Button>}>
+                <Modal open={this.state.open} onClose={this.close} trigger={<Button color={"green"} onClick={this.open} basic={false}><Icon name="plus"/>Create</Button>}>
                     <Modal.Header>Create an Account</Modal.Header>
                     <Modal.Content>
                         <Header as={"h4"}>
@@ -76,26 +85,16 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
                             <Label.Detail>{config && config.defaults.keystore}</Label.Detail>
                         </Label><br/><br/>
                         <Divider/>
-                        {!isLoading && (errorState || error) && (<Modal.Content>
+                        {!isLoading && (errorState) && (<Modal.Content>
                             <Message icon={true} error={true}>
                                 <Icon name={"times"}/>
                                 <Message.Content>
                                     <Message.Header>
-                                        Oops! {errorState ? errorState : error}
+                                        Oops! {errorState}
                                     </Message.Header>
                                 </Message.Content>
                             </Message>
-                        </Modal.Content>)}
-                        {!isLoading && response && (<Modal.Content>
-                            <Message icon={true} success={true}>
-                                <Icon name={"thumbs up"}/>
-                                <Message.Content>
-                                    <Message.Header>
-                                        Success! Address: {JSON.parse(response).address.toUpperCase()}
-                                    </Message.Header>
-                                </Message.Content>
-                            </Message>
-                        </Modal.Content>)}<br/>
+                        </Modal.Content>)}<br />
                         <Modal.Description>
                             <Form>
                                 <Form.Field>
@@ -110,6 +109,7 @@ class AccountCreate extends React.Component<LocalAccountsEditProps, any & State>
                         </Modal.Description>
                     </Modal.Content>
                     <Modal.Actions>
+                        <Button onClick={this.close}>Close</Button>
                         {isLoading && (<span className={"m-2"}>
                             <Icon color={"green"} name={"circle notch"} loading={true}/> Creating...</span>)}
                         <Button onClick={this.handleCreate} color={"green"} type='submit'>Create</Button>
@@ -126,7 +126,7 @@ const mapStoreToProps = (store: Store) => ({
 });
 
 const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>) => ({
-    handleCreateAccount: (password: string) => dispatch(keystore.handleCreateAccount(password)),
+    handleCreateAccount: (password: string) => dispatch(keystore.handleCreateThenFetch(password)),
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(AccountCreate);
+export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountCreate));

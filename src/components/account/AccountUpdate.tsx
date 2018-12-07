@@ -1,14 +1,15 @@
 import * as React from 'react';
 
+import {withAlert} from "react-alert";
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {keystore, DefaultProps, Store, BaseAccount, ConfigSchema} from "../../redux";
+import {BaseAccount, ConfigSchema, DefaultProps, keystore, Store} from "../../redux";
 
 import './styles/Account.css'
 
 export interface LocalAccountsEditProps extends DefaultProps {
-    handleUpdatePassword: (a: string, o: string, n: string) => void;
+    handleUpdatePassword: (a: string, o: string, n: string) => Promise<BaseAccount[]>;
     error: string;
     response: string;
     account: BaseAccount;
@@ -26,7 +27,7 @@ interface State {
 
 class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State> {
     public state = {
-        open: false,
+        open: (!this.props.response && !!this.props.error),
         oldPassword: '',
         verifyNewPassword: '',
         newPassword: '',
@@ -49,7 +50,15 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
         if (newPassword !== verifyNewPassword) {
             this.setState({matchingPasswordError: 'New password & verify password must match!'});
         } else {
-            this.props.handleUpdatePassword(this.props.account.address, oldPassword, newPassword);
+            this.props.handleUpdatePassword(this.props.account.address, oldPassword, newPassword)
+                .then(() => {
+                    if (this.props.response) {
+                        this.props.alert.success('Account password successfully updated!');
+                        this.close();
+                    } else {
+                        this.props.alert.error(this.props.error);
+                    }
+                })
         }
     };
 
@@ -69,7 +78,8 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
         const {isLoading, error, response, config} = this.props;
         return (
             <React.Fragment>
-                <Modal trigger={<Button basic={false} color='yellow'>Change Password</Button>}>
+                <Modal open={this.state.open}
+                       trigger={<Button basic={false} onClick={this.open} color='yellow'>Change Password</Button>}>
                     <Modal.Header>Update: {this.props.account.address}</Modal.Header>
                     <Modal.Content>
                         <Header as={"h4"}>
@@ -93,16 +103,7 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
                                 </Message.Content>
                             </Message>
                         </Modal.Content>)}
-                        {!isLoading && response && (<Modal.Content>
-                            <Message icon={true} success={true}>
-                                <Icon name={"thumbs up"}/>
-                                <Message.Content>
-                                    <Message.Header>
-                                        Success! {response}
-                                    </Message.Header>
-                                </Message.Content>
-                            </Message>
-                        </Modal.Content>)}<br/>
+                        <br/>
                         <Modal.Description>
                             <Form>
                                 <Form.Field>
@@ -129,6 +130,7 @@ class AccountUpdate extends React.Component<LocalAccountsEditProps, any & State>
                         (<span className={"m-2"}>
                             <Icon color={"green"} name={"circle notch"} loading={true}/> Saving...
                         </span>)}
+                        <Button onClick={this.close}>Close</Button>
                         <Button onClick={this.handleSave} color={"green"} type='submit'>Update</Button>
                     </Modal.Actions>
                 </Modal>
@@ -144,7 +146,7 @@ const mapStoreToProps = (store: Store) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     handleUpdatePassword: (a: string, o: string, n: string) => {
-        return dispatch(keystore.handleAccountUpdate({
+        return dispatch(keystore.handleUpdateThenFetch({
             newPassword: n,
             oldPassword: o,
             address: a,
@@ -152,4 +154,4 @@ const mapDispatchToProps = (dispatch: any) => ({
     }
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(AccountUpdate);
+export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountUpdate));

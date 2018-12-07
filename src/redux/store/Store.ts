@@ -1,15 +1,17 @@
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 
-import {createStore, combineReducers, applyMiddleware} from "redux";
+import {applyMiddleware, combineReducers, createStore} from "redux";
 
 import AccountsRootReducer, {AccountsReducer} from '../reducers/Accounts';
 import ConfigRootReducer, {ConfigReducer} from '../reducers/Configuration';
 import AppRootReducer, {AppReducer} from "../reducers/App";
 import KeystoreRootReducer, {KeystoreReducer} from "../reducers/Keystore";
+import {InjectedAlertProp} from "react-alert";
 
 
 export interface DefaultProps {
+    alert: InjectedAlertProp;
     [key: string]: any;
 }
 
@@ -22,7 +24,7 @@ export interface Store {
 
 const rootReducer = combineReducers({
     keystore: KeystoreRootReducer,
-    accounts:  AccountsRootReducer,
+    accounts: AccountsRootReducer,
     config: ConfigRootReducer,
     app: AppRootReducer,
 });

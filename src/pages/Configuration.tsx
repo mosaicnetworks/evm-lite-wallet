@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import {withAlert} from "react-alert";
 import {connect} from "react-redux";
 
 import {Button, Divider, Form, Header, Icon} from "semantic-ui-react";
@@ -20,7 +21,7 @@ export interface ConfigurationLocalProps extends DefaultProps {
             error: string
         }
     },
-    handleSaveConfig: (data: SaveConfigParams) => void;
+    handleSaveConfig: (data: SaveConfigParams) => Promise<ConfigSchema>;
     handleReadConfig: () => Promise<ConfigSchema>;
     dataDirectory: string;
 }
@@ -75,7 +76,8 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                 gasprice: this.state.gasprice,
             }
         };
-        this.props.handleSaveConfig({config});
+        this.props.handleSaveConfig({config})
+            .then(() => this.props.alert.success('Configuration successfully saved.'))
     };
 
     public handleReadConfig = () => {
@@ -145,10 +147,6 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                             (<span className={"m-2"}>
                                 <Icon color={"green"} name={"circle notch"}
                                       loading={true}/> Saving...<br/><br/></span>)}
-                            {!config.save.isLoading && config.save.response &&
-                            (<span className={"m-2"}>
-                                    <Icon color={"green"} name={"thumbs up"}
-                                          loading={false}/>{config.save.response}<br/><br/></span>)}
                             <Button icon={true} onClick={this.handleConfigSave} color={'green'}><Icon name='save'/> Save</Button>
                         </Form.Field>
                     </Form>
@@ -164,8 +162,8 @@ const mapStoreToProps = (store: Store) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    handleSaveConfig: (data: SaveConfigParams) => dispatch(configuration.handleSaveConfig(data)),
-    handleReadConfig: () => dispatch(configuration.handleReadConfig()),
+    handleSaveConfig: (data: SaveConfigParams) => dispatch(configuration.handleSaveThenRefreshApp(data)),
+    handleReadConfig: () => dispatch(configuration.handleRead()),
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(Configuration);
+export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(Configuration));

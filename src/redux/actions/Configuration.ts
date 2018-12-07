@@ -1,10 +1,9 @@
 import {Config as Configuration, ConfigSchema} from 'evm-lite-lib';
 
-import getHandlers, {EVMLThunkAction} from '../common/Handlers';
+import {keystore, EVMLThunkAction} from "../index";
 
-import Actions from "../common/Actions";
 import Defaults from "../../classes/Defaults";
-import {keystore} from "../index";
+import Actions from "../common/Actions";
 
 
 export interface SaveConfigParams {
@@ -13,53 +12,66 @@ export interface SaveConfigParams {
 
 class ConfigurationActions extends Actions {
 
-    public config: Configuration;
+    public config: Configuration = new Configuration(Defaults.dataDirectory, 'config.toml');
 
     constructor() {
-        super();
-
-        this.config = new Configuration(Defaults.dataDirectory, 'config.toml');
-
-        // set handler function
-        this.handlers = <S, F>(prefix: string) => getHandlers<ConfigurationActions, S, F>(this, prefix);
-
-        // add simple action handlers
-        this.addSimpleActionType('CONFIGURATION', 'READ_CONFIG');
-        this.addSimpleActionType('CONFIGURATION', 'SAVE_CONFIG');
+        super(ConfigurationActions.name);
+        this.prefixes = [
+            'READ_CONFIG',
+            'SAVE_CONFIG'
+        ];
     }
 
     public setConfigurationDataDirectory(path: string): void {
         this.config = new Configuration(path, 'config.toml');
     }
 
-    public handleReadConfig = (): EVMLThunkAction<ConfigSchema, string, ConfigSchema> => dispatch => {
+    public handleRead = (): EVMLThunkAction<ConfigSchema, string> => dispatch => {
         const {init, success, failure} = this.handlers<ConfigSchema, string>('READ_CONFIG');
         dispatch(init());
+
         return this.config
             .read()
             .then((config: ConfigSchema) => {
                 dispatch(success(config));
                 return config
             })
-            .catch(() => dispatch(failure('Something went wrong reading config.')));
+            .catch(() => {
+                dispatch(failure('Something went wrong reading config.'));
+                return {}
+            });
     };
 
-    public handleSaveConfig = (data: SaveConfigParams): EVMLThunkAction<string, string, void> => (dispatch) => {
+    public handleSave = (data: SaveConfigParams): EVMLThunkAction<string, string> => (dispatch) => {
         const {init, success, failure} = this.handlers<string, string>('SAVE_CONFIG');
         dispatch(init());
-        const oldKeystore = keystore.path;
-        this.config
+
+        return this.config
             .write(data.config)
-            .then(() => dispatch(success('Configuration successfully saved!')))
-            .then(() => dispatch(this.handleReadConfig()))
             .then(() => {
-                if (data.config.defaults.keystore !== oldKeystore) {
-                    keystore.setKeystorePath(data.config.defaults.keystore);
-                    dispatch(keystore.handleFetchLocalAccounts());
-                }
+                dispatch(success('Configuration successfully saved!'));
+                return 'Saved!';
             })
-            .catch(() => dispatch(failure('Something went wrong reading config.')));
+            .catch(() => {
+                dispatch(failure('Something went wrong reading config.'));
+                return '';
+            });
     };
+
+    public handleSaveThenRefreshApp = (data: SaveConfigParams): EVMLThunkAction<string | ConfigSchema, string> => {
+        return dispatch => {
+            return dispatch(this.handleSave(data))
+                .then(() => dispatch(this.handleRead()))
+                .then((config) => {
+                    if (config.defaults.keystore !== keystore.path) {
+                        keystore.setKeystorePath(data.config.defaults.keystore);
+                        dispatch(keystore.handleFetch());
+                    }
+
+                    return config;
+                });
+        }
+    }
 
 }
 

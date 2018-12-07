@@ -1,8 +1,7 @@
-import {DataDirectory} from 'evm-lite-lib';
+import {BaseAccount, DataDirectory} from 'evm-lite-lib';
 
-import {configuration, keystore} from "../index";
+import {configuration, keystore, EVMLThunkAction} from "../index";
 
-import getHandlers, {EVMLActionHandler} from "../common/Handlers";
 import Actions from "../common/Actions";
 
 
@@ -10,39 +9,38 @@ export interface DataDirectoryParams {
     path: string;
 }
 
-export default class AppActions extends Actions {
+export default class Application extends Actions {
 
     constructor() {
-        super();
-
-        // set handler function
-        this.handlers = <S, F>(prefix: string) => getHandlers<AppActions, S, F>(this, prefix);
-
-        // add simple action handlers
-        this.addSimpleActionType('APPLICATION', 'DATA_DIRECTORY');
+        super(Application.name);
+        this.prefixes = ['DATA_DIRECTORY'];
     }
 
-    public handleDataDirectoryInit: EVMLActionHandler<DataDirectoryParams, string, string, void> = data => {
+    public handleDataDirectoryInit = (data: DataDirectoryParams): EVMLThunkAction<string, string> => dispatch => {
         const {init, success, failure} = this.handlers<string, string>('DATA_DIRECTORY');
+        const directory = new DataDirectory(data.path);
+        dispatch(init());
 
-        if (!data) {
-            throw new Error('Parameter `data` must be provided.');
-        }
+        return directory.checkInitialisation()
+            .then(() => {
+                dispatch(success(data.path));
+                return 'Initialised';
+            })
+            .catch(() => {
+                dispatch(failure('Initialisation of data directory failed.'));
+                return '';
+            });
+    };
 
-        return dispatch => {
-            dispatch(init());
-            const directory = new DataDirectory(data.path);
-            directory.checkInitialisation()
-                .then(() => dispatch(success(data.path)))
-                .then(() => {
-                    configuration.setConfigurationDataDirectory(data.path);
-                    return dispatch(configuration.handleReadConfig());
-                })
-                .then((config) => {
-                    keystore.setKeystorePath(config.defaults.keystore);
-                    dispatch(keystore.handleFetchLocalAccounts())
-                })
-                .catch(() => dispatch(failure('Initialisation of data directory failed.')));
-        }
+    public handleDataDirInitThenPopulateApp = (data: DataDirectoryParams): EVMLThunkAction<BaseAccount[] | string, string> => dispatch => {
+        return dispatch(this.handleDataDirectoryInit(data))
+            .then(() => {
+                configuration.setConfigurationDataDirectory(data.path);
+                return dispatch(configuration.handleRead());
+            })
+            .then((config) => {
+                keystore.setKeystorePath(config.defaults.keystore);
+                return dispatch(keystore.handleFetch())
+            })
     };
 }

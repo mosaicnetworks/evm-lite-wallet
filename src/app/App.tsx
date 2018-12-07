@@ -2,13 +2,14 @@ import * as React from 'react';
 
 import {connect} from "react-redux";
 import {BrowserRouter, Route} from "react-router-dom";
+import {withAlert} from 'react-alert';
 
 import Accounts from "../pages/Accounts";
 import Index from "../pages/Index";
 import Configuration from "../pages/Configuration";
 import Wrapper from "../components/Wrapper";
 
-import {keystore, app, configuration, DataDirectoryParams, DefaultProps, Store} from "../redux";
+import {app, configuration, DataDirectoryParams, DefaultProps, keystore, Store} from "../redux";
 
 import Defaults from "../classes/Defaults";
 
@@ -44,9 +45,9 @@ class App extends React.Component<AppLocalProps, any> {
 const mapStoreToProps = (store: Store) => ({});
 
 const mapsDispatchToProps = (dispatch: any) => ({
-    handleFetchLocalAccounts: () => dispatch(keystore.handleFetchLocalAccounts()),
-    handleReadConfig: () => dispatch(configuration.handleReadConfig()),
-    handleDataDirectoryInit: (data: DataDirectoryParams) => dispatch(app.handleDataDirectoryInit(data)),
+    handleFetchLocalAccounts: () => dispatch(keystore.handleFetch()),
+    handleReadConfig: () => dispatch(configuration.handleRead()),
+    handleDataDirectoryInit: (data: DataDirectoryParams) => dispatch(app.handleDataDirInitThenPopulateApp(data)),
 });
 
-export default connect(mapStoreToProps, mapsDispatchToProps)(App);
+export default connect(mapStoreToProps, mapsDispatchToProps)(withAlert(App));

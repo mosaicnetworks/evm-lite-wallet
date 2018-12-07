@@ -1,17 +1,27 @@
-import store from './store/Store';
-import AccountsActions from './actions/Accounts';
-import KeystoreActions from './actions/Keystore';
-import ConfigActions from './actions/Configuration';
-import AppActions from './actions/App';
+import store, {Store} from './store/Store';
+import Accounts from './actions/Accounts';
+import Keystore from './actions/Keystore';
+import Configuration from './actions/Configuration';
+import Application from './actions/App';
+
+import {ThunkAction, ThunkDispatch} from "redux-thunk";
 
 
-export const accounts = new AccountsActions();
-export const configuration = new ConfigActions();
-export const app = new AppActions();
-export const keystore = new KeystoreActions();
+export interface EVMLAction<S, F> {
+    type: string,
+    data?: S | F
+}
+
+export type EVMLDispatch<S, F> = ThunkDispatch<Store, any, EVMLAction<S, F>>;
+export type EVMLThunkAction<S, F, R = Promise<S>> = ThunkAction<R, Store, any, EVMLAction<S, F>>;
+export type EVMLActionHandler<D, S, F, R> = (data?: D) => EVMLThunkAction<S, F, R>;
+
+export const accounts = new Accounts();
+export const configuration = new Configuration();
+export const app = new Application();
+export const keystore = new Keystore();
 
 export {DataDirectoryParams} from './actions/App'
-export {EVMLDispatch} from './common/Handlers';
 export {DefaultProps, Store} from './store/Store'
 
 export {BaseAccount, ConfigSchema} from 'evm-lite-lib'

@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import {withAlert} from 'react-alert';
 import {Button, Icon} from "semantic-ui-react";
 
 import {DefaultProps} from "../redux";
@@ -24,4 +25,4 @@ class LoadingButton extends React.Component<LoadingButtonLocalProps, any> {
     }
 }
 
-export default LoadingButton;
+export default withAlert(LoadingButton);
