@@ -12,47 +12,17 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 
 
-const gui = [];
-let memo = {};
-
-const resolveApp = relativePath => {
-    return path.resolve(fs.realpathSync(process.cwd()), relativePath);
-};
-
+const resolveRelativeToApp = path =>  path.resolve(fs.realpathSync(process.cwd()), path);
 const paths = {
-    dist: resolveApp('dist'),
-    indexHTML: resolveApp('src/index.html'),
-    indexJS: resolveApp('src/app/index.tsx'),
-    nodeModules: resolveApp('node_modules'),
-    packageJSON: resolveApp('package.json'),
-    src: resolveApp('src'),
-    tsConfig: resolveApp('tsconfig.json'),
-    tsLint: resolveApp('tslint.json'),
+    dist: resolveRelativeToApp('dist'),
+    indexHTML: resolveRelativeToApp('src/index.html'),
+    indexJS: resolveRelativeToApp('src/app/index.tsx'),
+    nodeModules: resolveRelativeToApp('node_modules'),
+    packageJSON: resolveRelativeToApp('package.json'),
+    src: resolveRelativeToApp('src'),
+    tsConfig: resolveRelativeToApp('tsconfig.json'),
+    tsLint: resolveRelativeToApp('tslint.json'),
 };
-
-function getTSXFiles(initial) {
-    fs.readdirSync(initial)
-        .map((p) => {
-            const fullPath = path.join(initial, p);
-            if (fs.lstatSync(fullPath).isDirectory()) {
-                getTSXFiles(fullPath);
-            } else {
-                if (p.match(/.*\.tsx$/)) {
-                    gui.push(fullPath);
-                }
-            }
-        });
-}
-
-function mapTSXFiles(initial) {
-    getTSXFiles(initial);
-    memo = gui.reduce((obj, file) => {
-        obj[path.basename(file, path.extname(file))] = path.resolve(file);
-        return obj
-    }, {});
-}
-
-mapTSXFiles('src');
 
 const config = {
     devServer: {
