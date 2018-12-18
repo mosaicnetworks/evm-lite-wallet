@@ -1,28 +1,22 @@
 import * as React from 'react';
 
 import {connect} from "react-redux";
+import {withAlert} from "react-alert";
 import {Button, Form, Icon, Message, Modal} from "semantic-ui-react";
 import {V3JSONKeyStore} from 'evm-lite-lib';
 
 import {accounts, BaseAccount, ConfigSchema, configuration, DefaultProps, keystore, Store} from "../../redux";
 import {DecryptionParams, TransferParams} from "../../redux/actions/Accounts";
-import {withAlert} from "react-alert";
+import {ReadConfigReducer} from "../../redux/reducers/Configuration";
+import {DecryptAccountsReducer} from "../../redux/reducers/Accounts";
 
 
 export interface AccountTransferLocalProps extends DefaultProps {
     account: BaseAccount;
 
     // redux states
-    config: {
-        response: ConfigSchema,
-        error: string,
-        isLoading: boolean,
-    };
-    decryption: {
-        response: string,
-        error: string,
-        isLoading: boolean
-    }
+    config: ReadConfigReducer;
+    decryption: DecryptAccountsReducer
 
     // thunk action handlers
     handleTransfer: (data: TransferParams) => Promise<void>;
@@ -106,10 +100,10 @@ class AccountTransfer extends React.Component<AccountTransferLocalProps, any & S
         this.setState({password: e.target.value});
     };
 
-    public onBlurPassword = () => {
+    public onBlurPassword = async () => {
         if (!this.props.decryption.response) {
             this.props.handleDecryption({
-                v3JSONKeystore: this.state.v3JSONKeystore,
+                v3JSONKeystore: await this.state.v3JSONKeystore,
                 password: this.state.password
             })
                 .then(() => {
@@ -120,7 +114,7 @@ class AccountTransfer extends React.Component<AccountTransferLocalProps, any & S
         }
     };
 
-    public handleTransfer = () => {
+    public handleTransfer = async () => {
         const tx = {
             from: this.props.account.address,
             to: this.state.toAddress,
@@ -132,7 +126,7 @@ class AccountTransfer extends React.Component<AccountTransferLocalProps, any & S
         const data: TransferParams = {
             tx,
             password: this.state.password,
-            v3JSONKeystore: this.state.v3JSONKeystore,
+            v3JSONKeystore: await this.state.v3JSONKeystore,
         };
 
         if (this.props.decryption.response) {

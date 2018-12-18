@@ -7,6 +7,7 @@ import {V3JSONKeyStore} from 'evm-lite-lib';
 
 import {DecryptionParams} from "../../redux/actions/Accounts";
 import {accounts, BaseAccount, ConfigSchema, DefaultProps, keystore, Store} from "../../redux";
+import {DecryptAccountsReducer} from "../../redux/reducers/Accounts";
 
 import './styles/Account.css'
 
@@ -18,11 +19,7 @@ export interface AccountUpdateLocalProps extends DefaultProps {
     response: string;
     isLoading: boolean;
     config: ConfigSchema
-    decryption: {
-        response: string,
-        error: string,
-        isLoading: boolean
-    }
+    decryption: DecryptAccountsReducer
 
     // thunk action handlers
     handleUpdatePassword: (a: string, o: string, n: string) => Promise<BaseAccount[]>;
@@ -48,7 +45,7 @@ class AccountUpdate extends React.Component<AccountUpdateLocalProps, any & State
         verifyNewPassword: '',
         newPassword: '',
         matchingPasswordError: '',
-        v3JSONKeystore: keystore.keystore.get(this.props.account.address),
+        v3JSONKeystore: {},
         updateDisable: true
     };
 
@@ -142,10 +139,10 @@ class AccountUpdate extends React.Component<AccountUpdateLocalProps, any & State
         this.setState({verifyNewPassword: e.target.value});
     };
 
-    public onBlurPassword = () => {
+    public onBlurPassword = async () => {
         if (!this.props.decryption.response) {
             this.props.handleDecryption({
-                v3JSONKeystore: this.state.v3JSONKeystore,
+                v3JSONKeystore: await keystore.keystore.get(this.props.account.address),
                 password: this.state.oldPassword
             })
                 .then(() => {
@@ -173,7 +170,7 @@ class AccountUpdate extends React.Component<AccountUpdateLocalProps, any & State
                         <br/><br/>
                         <Label>
                             Keystore
-                            <Label.Detail>{config && config.defaults.keystore}</Label.Detail>
+                            <Label.Detail>{config && config.storage.keystore}</Label.Detail>
                         </Label><br/><br/>
                         <Divider/>
                         {(this.state.matchingPasswordError || error) && (<Modal.Content>

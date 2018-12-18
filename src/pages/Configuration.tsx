@@ -50,6 +50,7 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
 
     public componentDidMount = () => {
         const {response} = this.props.config.read;
+
         if (response) {
             this.setVars(response)
         } else {
@@ -59,33 +60,38 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
 
     public setVars(response: any) {
         this.setState({
-            host: response.defaults.host,
-            port: response.defaults.port,
+            host: response.connection.host,
+            port: response.connection.port,
             from: response.defaults.from,
             gas: response.defaults.gas,
-            gasprice: response.defaults.gasprice,
-            keystore: response.defaults.keystore
+            gasprice: response.defaults.gasPrice,
+            keystore: response.storage.keystore
         });
     }
 
     public handleConfigSave = () => {
         const config: ConfigSchema = {
-            defaults: {
+            connection: {
                 host: this.state.host,
-                port: this.state.port,
+                port: parseInt(this.state.port, 10),
+            },
+            storage: {
                 keystore: this.state.keystore,
-                gas: this.state.gas,
+
+            },
+            defaults: {
+                gas: parseInt(this.state.gas, 10),
                 from: this.state.from,
-                gasprice: this.state.gasprice,
+                gasPrice: parseInt(this.state.gasprice, 10),
             }
         };
         this.props.handleSaveConfig({config})
             .then(() => this.props.alert.success('Configuration successfully saved.'))
     };
 
-    public handleReadConfig = () => {
-        this.props.handleReadConfig()
-            .then((config) => this.setVars(config));
+    public handleReadConfig = async () => {
+        const config = await this.props.handleReadConfig()
+        this.setVars(config);
     };
 
     public render() {
@@ -107,12 +113,12 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                         <Form.Group widths='equal'>
                             <Form.Field>
                                 <label>Host</label>
-                                <input defaultValue={config.read.response.defaults.host}
+                                <input defaultValue={config.read.response.connection.host}
                                        onChange={(e) => this.setState({host: e.target.value})}/>
                             </Form.Field>
                             <Form.Field>
                                 <label>Port</label>
-                                <input defaultValue={config.read.response.defaults.port}
+                                <input defaultValue={config.read.response.connection.port}
                                        onChange={(e) => this.setState({port: e.target.value})}/>
                             </Form.Field>
                         </Form.Group>
@@ -131,7 +137,7 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                             </Form.Field>
                             <Form.Field>
                                 <label>Gas Price</label>
-                                <input defaultValue={config.read.response.defaults.gasprice}
+                                <input defaultValue={config.read.response.defaults.gasPrice}
                                        onChange={(e) => this.setState({gasprice: e.target.value})}/>
                             </Form.Field>
                         </Form.Group>
@@ -139,7 +145,7 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                     <Form>
                         <Form.Field>
                             <label>Keystore</label>
-                            <input defaultValue={config.read.response.defaults.keystore}
+                            <input defaultValue={config.read.response.storage.keystore}
                                    onChange={(e) => this.setState({keystore: e.target.value})}/>
                         </Form.Field>
                     </Form>

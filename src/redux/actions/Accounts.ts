@@ -1,7 +1,7 @@
-import {Account, Controller, V3JSONKeyStore} from 'evm-lite-lib';
+import {Account, EVMLC as Connection, V3JSONKeyStore} from 'evm-lite-lib';
 
 import {EVMLThunkAction} from '..';
-import Actions from "../common/Actions";
+import Actions from "../common/BaseActions";
 
 
 export interface DecryptionParams {
@@ -23,7 +23,11 @@ export interface TransferParams extends DecryptionParams {
 
 export default class Accounts extends Actions {
 
-    private connection = new Controller('127.0.0.1');
+    private connection = new Connection('127.0.0.1', 8080, {
+        from: '',
+        gas: 0,
+        gasPrice: 1,
+    });
 
     constructor() {
         super(Accounts.name);
@@ -48,7 +52,7 @@ export default class Accounts extends Actions {
                     dispatch(failure(error));
                     resolve(error);
                 }
-            }, 2000);
+            }, 0);
         }));
     };
 
@@ -56,21 +60,25 @@ export default class Accounts extends Actions {
         const {init, success, failure} = this.handlers<string, string>('Transfer');
         dispatch(init());
 
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>(async (resolve, reject) => {
             const account = Account.decrypt(data.v3JSONKeystore, data.password);
             const tx = {
                 from: data.tx.from,
                 to: data.tx.to,
                 value: parseInt(data.tx.value, 10),
                 gas: parseInt(data.tx.gas, 10),
-                gasPrice: data.tx.gasprice,
+                gasPrice: parseInt(data.tx.gasprice, 10),
                 nonce: data.tx.nonce,
                 chainId: 1
             };
 
-            account.signTransaction(tx)
+            const transaction = (await this.connection.prepareTransfer(tx.to, tx.value, tx.from))
+                .gas(tx.gas)
+                .gasPrice(tx.gasPrice);
+
+            account.signTransaction(transaction)
                 .then((response: any) => {
-                    this.connection.api.sendRawTx(response.rawTransaction)
+                    transaction.sendRaw(response.rawTransaction)
                         .then((response: any) => {
                             dispatch(success('Transaction submitted: ' + response.txHash));
                             resolve();

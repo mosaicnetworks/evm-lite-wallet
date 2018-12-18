@@ -1,8 +1,8 @@
 import {BaseAccount, DataDirectory} from 'evm-lite-lib';
 
-import {configuration, keystore, EVMLThunkAction} from "../index";
+import {configuration, EVMLThunkAction, keystore} from "../index";
 
-import Actions from "../common/Actions";
+import Actions from "../common/BaseActions";
 
 
 export interface DataDirectoryParams {
@@ -18,12 +18,12 @@ export default class Application extends Actions {
 
     public handleDataDirectoryInit = (data: DataDirectoryParams): EVMLThunkAction<string, string> => dispatch => {
         const {init, success, failure} = this.handlers<string, string>('Directory');
-        const directory = new DataDirectory(data.path);
         dispatch(init());
 
-        return directory.checkInitialisation()
+        return Promise.resolve()
             .then(() => {
-                dispatch(success(data.path));
+                const directory = new DataDirectory(data.path);
+                dispatch(success(directory.path));
                 return 'Initialised';
             })
             .catch(() => {
@@ -39,7 +39,7 @@ export default class Application extends Actions {
                 return dispatch(configuration.handleRead());
             })
             .then((config) => {
-                keystore.setKeystorePath(config.defaults.keystore);
+                keystore.setNewDataDirectory(config.storage.keystore);
                 return dispatch(keystore.handleFetch())
             })
     };

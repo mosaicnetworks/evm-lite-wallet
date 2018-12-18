@@ -1,17 +1,17 @@
 import {combineReducers} from "redux";
 import {BaseAccount} from "evm-lite-lib";
 
-import {BasicReducerState} from "../common/reducers/BasicReducerFactory";
+import {IBasicReducer} from "../common/reducers/BasicReducerFactory";
 
 import Keystore from "../actions/Keystore";
 
 
 export interface KeystoreReducer {
-    fetch: BasicReducerState<BaseAccount[], string>;
-    update: BasicReducerState<string, string>;
-    create: BasicReducerState<string, string>;
-    export: BasicReducerState<string, string>;
-    import: BasicReducerState<string, string>;
+    fetch: IBasicReducer<BaseAccount[], string>;
+    update: IBasicReducer<string, string>;
+    create: IBasicReducer<string, string>;
+    export: IBasicReducer<string, string>;
+    import: IBasicReducer<string, string>;
 }
 
 const keystore = new Keystore();

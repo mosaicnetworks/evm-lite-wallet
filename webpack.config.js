@@ -12,7 +12,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 
 
-const resolveRelativeToApp = path =>  path.resolve(fs.realpathSync(process.cwd()), path);
+const resolveRelativeToApp = relativePath =>  path.resolve(fs.realpathSync(process.cwd()), relativePath);
 const paths = {
     dist: resolveRelativeToApp('dist'),
     indexHTML: resolveRelativeToApp('src/index.html'),
@@ -59,7 +59,6 @@ const config = {
                         include: [
                             paths.src,
                         ],
-                        exclude: paths.nodeModules,
                         loader: require.resolve('babel-loader'),
                         options: {
                             compact: true,
@@ -67,7 +66,6 @@ const config = {
                         test: /\.(js|jsx|mjs)$/
                     },
                     {
-                        exclude: paths.nodeModules,
                         include: [
                             paths.src,
                         ],

@@ -3,7 +3,7 @@ import {Config as Configuration, ConfigSchema} from 'evm-lite-lib';
 import {keystore, EVMLThunkAction} from "../index";
 
 import Defaults from "../../classes/Defaults";
-import Actions from "../common/Actions";
+import Actions from "../common/BaseActions";
 
 
 export interface SaveConfigParams {
@@ -31,14 +31,14 @@ class ConfigurationActions extends Actions {
         dispatch(init());
 
         return this.config
-            .read()
+            .load()
             .then((config: ConfigSchema) => {
                 dispatch(success(config));
                 return config
             })
             .catch(() => {
                 dispatch(failure('Something went wrong reading config.'));
-                return {}
+                return this.config.default()
             });
     };
 
@@ -47,7 +47,7 @@ class ConfigurationActions extends Actions {
         dispatch(init());
 
         return this.config
-            .write(data.config)
+            .save(data.config)
             .then(() => {
                 dispatch(success('Configuration successfully saved!'));
                 return 'Saved!';
@@ -62,10 +62,10 @@ class ConfigurationActions extends Actions {
         return dispatch => {
             return dispatch(this.handleSave(data))
                 .then(() => dispatch(this.handleRead()))
-                .then((config) => {
-                    if (config.defaults.keystore !== keystore.path) {
-                        keystore.setKeystorePath(data.config.defaults.keystore);
-                        dispatch(keystore.handleFetch());
+                .then(async (config) => {
+                    if (config.storage.keystore !== keystore.path) {
+                        keystore.setNewDataDirectory(data.config.storage.keystore);
+                        await dispatch(keystore.handleFetch());
                     }
 
                     return config;
