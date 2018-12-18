@@ -3,6 +3,7 @@ import Accounts from './actions/Accounts';
 import Keystore from './actions/Keystore';
 import Configuration from './actions/Configuration';
 import Application from './actions/App';
+import Transactions from "./actions/Transactions";
 
 import {ThunkAction, ThunkDispatch} from "redux-thunk";
 
@@ -20,6 +21,7 @@ export const accounts = new Accounts();
 export const configuration = new Configuration();
 export const app = new Application();
 export const keystore = new Keystore();
+export const transaction = new Transactions();
 
 export {DataDirectoryParams} from './actions/App'
 export {DefaultProps, Store} from './store/Store'

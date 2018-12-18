@@ -8,6 +8,9 @@ import AccountTransfer from "./AccountTransfer";
 import AccountHistory from "./AccountHistory";
 
 import './styles/Account.css'
+import {Store} from "../../redux";
+import {connect} from "react-redux";
+import {withAlert} from "react-alert";
 
 class Account extends React.Component<any, any> {
     public state = {
@@ -50,10 +53,18 @@ class Account extends React.Component<any, any> {
                     </div>
                 </Card.Content>
                 {(this.state.showTxHistory) ?
-                    (<Card.Content><AccountHistory account={this.props.account}/></Card.Content>) : null}
+                    (<Card.Content><AccountHistory
+                        account={this.props.account}
+                        txs={this.props.histories.response[this.props.account.address]}/></Card.Content>) : null}
             </Card>
         );
     }
 }
 
-export default Account;
+const mapStoreToProps = (store: Store) => ({
+    histories: store.transaction.histories
+});
+
+const mapDispatchToProps = (dispatch: any) => ({});
+
+export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(Account));
