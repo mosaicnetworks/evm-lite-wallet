@@ -1,11 +1,12 @@
 import {combineReducers} from "redux";
-import {BasicReducerState} from "../common/reducers/BasicReducerFactory";
+import {IBasicReducer} from "../common/reducers/BasicReducerFactory";
 
 import Application from "../actions/App";
 
+export type DataDirectoryAppReducer = IBasicReducer<string, string>;
 
 export interface AppReducer {
-    dataDirectory: BasicReducerState<string, string>
+    dataDirectory: DataDirectoryAppReducer;
 }
 
 const app = new Application();

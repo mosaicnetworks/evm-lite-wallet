@@ -4,7 +4,10 @@ const app = electron.app;
 let main: electron.BrowserWindow | null;
 
 function createWindow() {
-    main = new electron.BrowserWindow({width: 1200, height: 820});
+    main = new electron.BrowserWindow({
+        width: 1200,
+        height: 820,
+    });
     // main.loadURL(`file://${__dirname}/index.html`);
     main.loadURL(`http://localhost:8081`);
     main.webContents.openDevTools();

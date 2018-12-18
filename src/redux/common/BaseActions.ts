@@ -1,11 +1,11 @@
-import BasicReducerFactory, {BasicReducerState} from "./reducers/BasicReducerFactory";
+import BasicReducerFactory, {IBasicReducer} from "./reducers/BasicReducerFactory";
 
 
 interface ActionTypes {
     [key: string]: string
 }
 
-type ActionsPrefixes = string[];
+type ActionPrefixes = string[];
 
 type InitHandler = () => {
     type: string;
@@ -32,32 +32,43 @@ interface ActionCreatorHandlers<S, F> {
     reset: ResetHandler
 }
 
-export default class Actions {
+type ActionSuffixes = Readonly<'INIT' | 'SUCCESS' | 'FAILURE' | 'RESET'>;
+
+/**
+ * Base BaseActions Handler Class
+ *
+ * @remarks
+ * This class is the base actions call which all action handler classes can be built from. It provides some
+ * useful function for handling simple REST requests to an API. Also has methods to generate a simple reducer
+ * to parse the actions dispatched to redux.
+ *
+ * @alpha
+ */
+export default abstract class BaseActions {
 
     private readonly delimiter = '_';
-    private readonly suffixes: string[] = ['INIT', 'SUCCESS', 'FAILURE', 'RESET'];
-
-    private readonly prefixCollection: ActionsPrefixes;
+    private readonly suffixes: ActionSuffixes[] = ['INIT', 'SUCCESS', 'FAILURE', 'RESET'];
+    private readonly prefixCollection: ActionPrefixes;
     private readonly actionTypes: ActionTypes;
     private readonly handlerFunctions: {
-        [key: string]: <S, F>() => ActionCreatorHandlers<S, F>
+        [key: string]: <S, F>() => Readonly<ActionCreatorHandlers<S, F>>
     };
 
-    constructor(protected identifier: string) {
+    protected constructor(private identifier: string) {
         this.actionTypes = {};
-        this.prefixCollection = [];
         this.handlerFunctions = {};
+        this.prefixCollection = [];
     }
 
     public get types(): ActionTypes {
         return this.actionTypes;
     }
 
-    protected get prefixes(): ActionsPrefixes {
+    protected get prefixes(): Readonly<ActionPrefixes> {
         return this.prefixCollection;
     }
 
-    protected set prefixes(value: ActionsPrefixes) {
+    protected set prefixes(value: ActionPrefixes) {
         const {actionTypes, identifier} = this;
 
         for (const prefix of value) {
@@ -75,16 +86,15 @@ export default class Actions {
                 reset: () => ({type: this.types[this.joinWithUpperCase(prefix, this.suffixes[3])]}),
             });
 
-            this.prefixCollection.push(prefix);
+            this.prefixCollection.push(prefix.toUpperCase());
         }
     }
 
-
-    public SimpleReducer<S, F>(prefix: string, initial?: BasicReducerState<S, F>) {
-        return BasicReducerFactory<Actions, S, F>(this, prefix, initial);
+    public SimpleReducer<S, F>(prefix: string, initial?: IBasicReducer<S, F>) {
+        return BasicReducerFactory<BaseActions, S, F>(this, prefix, initial);
     }
 
-    public handlers<S, F>(prefix: string): ActionCreatorHandlers<S, F> {
+    public handlers<S, F>(prefix: string): Readonly<ActionCreatorHandlers<S, F>> {
         return this.handlerFunctions[prefix.toUpperCase()]<S, F>();
     }
 

@@ -1,14 +1,17 @@
 import {combineReducers} from "redux";
 import {ConfigSchema} from 'evm-lite-lib';
 
-import {BasicReducerState} from "../common/reducers/BasicReducerFactory";
+import {IBasicReducer} from "../common/reducers/BasicReducerFactory";
 
 import Configuration from "../actions/Configuration";
 
 
+export type ReadConfigReducer = IBasicReducer<ConfigSchema, string>;
+export type SaveConfigReducer = IBasicReducer<string, string>;
+
 export interface ConfigReducer {
-    read: BasicReducerState<ConfigSchema, string>,
-    save: BasicReducerState<string, string>
+    read: ReadConfigReducer;
+    save: SaveConfigReducer;
 }
 
 const configuration = new Configuration();

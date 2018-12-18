@@ -1,9 +1,9 @@
-import {Controller as Connection, Keystore} from 'evm-lite-lib';
+import {EVMLC as Connection, Keystore} from 'evm-lite-lib';
 
 import {BaseAccount, EVMLThunkAction} from "../index"
 
 import Defaults from "../../classes/Defaults"
-import Actions from "../common/Actions";
+import Actions from "../common/BaseActions";
 
 
 export interface UpdatePasswordParams {
@@ -14,8 +14,12 @@ export interface UpdatePasswordParams {
 
 export default class KeystoreActions extends Actions {
     public path: string = Defaults.dataDirectory;
-    public keystore: Keystore = new Keystore(this.path);
-    public connection: Connection = new Connection('127.0.0.1', 8080);
+    public keystore: Keystore = new Keystore(this.path, 'keystore');
+    private connection = new Connection('127.0.0.1', 8080, {
+        from: '',
+        gas: 0,
+        gasPrice: 1
+    });
 
     constructor() {
         super(KeystoreActions.name);
@@ -28,8 +32,12 @@ export default class KeystoreActions extends Actions {
         ];
     }
 
-    public setKeystorePath = (path: string): void => {
-        this.keystore = new Keystore(path)
+    public setNewDataDirectory = (path: string): void => {
+        const list = path.split('/');
+        list.pop();
+
+        const dataDirectory = list.join('/');
+        this.keystore = new Keystore(dataDirectory, 'keystore')
     };
 
     public handleFetch = (): EVMLThunkAction<BaseAccount[], string> => dispatch => {
@@ -37,7 +45,7 @@ export default class KeystoreActions extends Actions {
         dispatch(init());
 
         return this.keystore
-            .all(true, this.connection)
+            .list(true, this.connection)
             .then((response: BaseAccount[]) => {
                 response.length ?
                     dispatch(success(response)) :
@@ -51,12 +59,12 @@ export default class KeystoreActions extends Actions {
             })
     };
 
-    public handleExport = (data: string): EVMLThunkAction<string, string> => dispatch => {
+    public handleExport = (address: string): EVMLThunkAction<string, string> => dispatch => {
         const {init, success, failure} = this.handlers<string, string>('Export');
         dispatch(init());
 
         return this.keystore
-            .getWithPromise(data)
+            .get(address)
             .then((v3JSONKeystoreString: string) => {
                 dispatch(success(v3JSONKeystoreString));
                 return v3JSONKeystoreString
@@ -72,7 +80,7 @@ export default class KeystoreActions extends Actions {
         dispatch(init());
 
         return this.keystore
-            .importV3JSONKeystore(data)
+            .import(data)
             .then((address: string) => {
                 dispatch(success(address));
                 return address;
@@ -104,7 +112,7 @@ export default class KeystoreActions extends Actions {
         dispatch(init());
 
         return this.keystore
-            .createWithPromise(data)
+            .create(data)
             .then((account: string) => {
                 dispatch(success(account));
                 return account;

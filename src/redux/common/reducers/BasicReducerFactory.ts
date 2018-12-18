@@ -1,16 +1,16 @@
-import Actions from "../Actions";
+import Actions from "../BaseActions";
 
-export interface BasicReducerState<T1, T2> {
+export interface IBasicReducer<T1, T2> {
     isLoading: boolean,
     response: T1 | null,
     error: T2 | null
 }
 
-const BasicReducerFactory = <A extends Actions, S, F>(instance: A, prefix: string, initial?: BasicReducerState<S, F>) => {
+const BasicReducerFactory = <A extends Actions, S, F>(instance: A, prefix: string, initial?: IBasicReducer<S, F>) => {
     const start = initial || {isLoading: false, response: null, error: null};
     prefix = prefix.toUpperCase();
 
-    return (state = start, action: any): BasicReducerState<S, F> => {
+    return (state = start, action: any): IBasicReducer<S, F> => {
         switch (action.type) {
             case instance.types[`${prefix}_INIT`]:
                 return {

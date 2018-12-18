@@ -85,7 +85,7 @@ class AccountCreate extends React.Component<AccountCreateLocalProps, any & State
                         directory, update the configuration for keystore. <br/><br/>
                         <Label>
                             Keystore
-                            <Label.Detail>{config && config.defaults.keystore}</Label.Detail>
+                            <Label.Detail>{config && config.storage.keystore}</Label.Detail>
                         </Label><br/><br/>
                         <Divider/>
                         {!isLoading && (errorState) && (<Modal.Content>
