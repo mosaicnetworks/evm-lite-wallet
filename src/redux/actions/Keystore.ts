@@ -40,6 +40,14 @@ export default class KeystoreActions extends Actions {
         this.keystore = new Keystore(dataDirectory, 'keystore')
     };
 
+    public setNewConnectionInfo = (host: string, port: number): void => {
+        this.connection = new Connection(host, port, {
+            from: '',
+            gas: 0,
+            gasPrice: 1
+        })
+    };
+
     public handleFetch = (): EVMLThunkAction<BaseAccount[], string> => (dispatch, getState) => {
         const {init, success, failure} = this.handlers<BaseAccount[], string>('List');
         dispatch(init());
@@ -56,7 +64,7 @@ export default class KeystoreActions extends Actions {
             .then((response) => {
                 const datadir = getState().app.dataDirectory;
                 if (datadir.response) {
-                    dispatch(transaction.handleListTransactionHistories(datadir.response))
+                    dispatch(transaction.handleListTransactionHistories(datadir.response)).then();
                 }
                 return response
             })

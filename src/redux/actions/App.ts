@@ -33,6 +33,8 @@ export default class Application extends Actions {
     };
 
     public handleDataDirInitThenPopulateApp = (data: DataDirectoryParams): EVMLThunkAction<BaseAccount[] | string, string> => dispatch => {
+        const datadir = new DataDirectory(data.path)
+        console.log(datadir);
         return dispatch(this.handleDataDirectoryInit(data))
             .then(() => {
                 configuration.setConfigurationDataDirectory(data.path);
@@ -40,6 +42,7 @@ export default class Application extends Actions {
             })
             .then((config) => {
                 keystore.setNewDataDirectory(config.storage.keystore);
+                keystore.setNewConnectionInfo(config.connection.host, config.connection.port);
                 return dispatch(keystore.handleFetch())
             })
             .then(() => {

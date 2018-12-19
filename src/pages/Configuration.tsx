@@ -5,8 +5,9 @@ import {connect} from "react-redux";
 
 import {Button, Divider, Form, Header, Icon} from "semantic-ui-react";
 
-import {ConfigSchema, configuration, DefaultProps, Store} from "../redux";
+import {app, ConfigSchema, configuration, DataDirectoryParams, DefaultProps, Store} from "../redux";
 import {SaveConfigParams} from "../redux/actions/Configuration";
+import Defaults from "../classes/Defaults";
 
 export interface ConfigurationLocalProps extends DefaultProps {
     // redux states
@@ -27,6 +28,7 @@ export interface ConfigurationLocalProps extends DefaultProps {
     // thunk action handlers
     handleSaveConfig: (data: SaveConfigParams) => Promise<ConfigSchema>;
     handleReadConfig: () => Promise<ConfigSchema>;
+    handleDataDirectoryInit: (data: DataDirectoryParams) => void;
 }
 
 interface State {
@@ -87,6 +89,7 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
         };
         this.props.handleSaveConfig({config})
             .then(() => this.props.alert.success('Configuration successfully saved.'))
+            .then(() => this.props.handleDataDirectoryInit({path: this.props.dataDirectory || Defaults.dataDirectory}));
     };
 
     public handleReadConfig = async () => {
@@ -173,6 +176,7 @@ const mapStoreToProps = (store: Store) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     handleSaveConfig: (data: SaveConfigParams) => dispatch(configuration.handleSaveThenRefreshApp(data)),
     handleReadConfig: () => dispatch(configuration.handleRead()),
+    handleDataDirectoryInit: (data: DataDirectoryParams) => dispatch(app.handleDataDirInitThenPopulateApp(data)),
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(Configuration));
