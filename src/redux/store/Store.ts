@@ -1,6 +1,8 @@
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
+import dynamicStorage from 'redux-persist/lib/storage';
 
+import {PersistConfig, persistReducer, persistStore} from 'redux-persist'
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import {InjectedAlertProp} from "react-alert";
 
@@ -24,6 +26,12 @@ export interface Store {
     transaction: ITransactionsReducer
 }
 
+const persistConfig: PersistConfig = {
+    key: 'root',
+    storage: dynamicStorage,
+    whitelist: ['app']
+};
+
 const rootReducer = combineReducers({
     keystore: KeystoreRootReducer,
     accounts: AccountsRootReducer,
@@ -33,6 +41,11 @@ const rootReducer = combineReducers({
 });
 
 const middleware = [thunk, logger];
-const store = createStore(rootReducer, applyMiddleware(...middleware));
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export default store;
+export default () => {
+    const store = createStore(persistedReducer, applyMiddleware(...middleware));
+    const persistor = persistStore(store);
+
+    return {store, persistor}
+}

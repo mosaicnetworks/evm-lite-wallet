@@ -1,6 +1,6 @@
 import {BaseAccount, DataDirectory} from 'evm-lite-lib';
 
-import {configuration, EVMLThunkAction, keystore} from "../index";
+import {configuration, EVMLThunkAction, keystore, transaction} from "../index";
 
 import Actions from "../common/BaseActions";
 
@@ -41,6 +41,9 @@ export default class Application extends Actions {
             .then((config) => {
                 keystore.setNewDataDirectory(config.storage.keystore);
                 return dispatch(keystore.handleFetch())
+            })
+            .then(() => {
+                return dispatch(transaction.handleListTransactionHistories(data.path))
             })
     };
 }

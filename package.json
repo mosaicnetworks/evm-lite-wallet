@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "evm-lite-lib": "^0.1.5",
     "react": "^16.6.1",
     "react-alert": "^4.0.4",
     "react-alert-template-basic": "^1.0.0",
-    "react-dom": "^16.6.1"
+    "react-dom": "^16.6.1",
+    "redux-persist": "^5.10.0"
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",

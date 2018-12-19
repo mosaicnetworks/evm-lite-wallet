@@ -1,4 +1,4 @@
-import {Account, EVMLC as Connection, V3JSONKeyStore} from 'evm-lite-lib';
+import {Account, Database, EVMLC as Connection, V3JSONKeyStore} from 'evm-lite-lib';
 
 import {EVMLThunkAction} from '..';
 import Actions from "../common/BaseActions";
@@ -56,13 +56,13 @@ export default class Accounts extends Actions {
         }));
     };
 
-    public handleTransfer = (data: TransferParams): EVMLThunkAction<string, string, Promise<void>> => dispatch => {
+    public handleTransfer = (data: TransferParams): EVMLThunkAction<string, string, Promise<void>> => (dispatch, state) => {
         const {init, success, failure} = this.handlers<string, string>('Transfer');
         dispatch(init());
 
         return new Promise<void>(async (resolve, reject) => {
             const account = Account.decrypt(data.v3JSONKeystore, data.password);
-            const tx = {
+            const tx: any = {
                 from: data.tx.from,
                 to: data.tx.to,
                 value: parseInt(data.tx.value, 10),
@@ -77,10 +77,16 @@ export default class Accounts extends Actions {
                 .gasPrice(tx.gasPrice);
 
             account.signTransaction(transaction)
-                .then((response: any) => {
+                .then((response) => {
                     transaction.sendRaw(response.rawTransaction)
-                        .then((response: any) => {
+                        .then(async (response: any) => {
                             dispatch(success('Transaction submitted: ' + response.txHash));
+                            tx.txHash = response.txHash;
+                            const datadir = state().app.dataDirectory;
+                            if (datadir.response) {
+                                const db = new Database(datadir.response, 'db.json');
+                                await db.transactions.insert(tx);
+                            }
                             resolve();
                         })
                         .catch(() => {

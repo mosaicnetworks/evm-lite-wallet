@@ -21,11 +21,13 @@ export interface ApplicationLocalProps extends DefaultProps {
     handleFetchLocalAccounts: () => void;
     handleReadConfig: () => Promise<any>;
     handleDataDirectoryInit: (data: DataDirectoryParams) => void;
+
+    dataDirectory: string;
 }
 
 class App extends React.Component<ApplicationLocalProps, any> {
     public componentDidMount = () => {
-        this.props.handleDataDirectoryInit({path: Defaults.dataDirectory});
+        this.props.handleDataDirectoryInit({path: this.props.dataDirectory || Defaults.dataDirectory});
     };
 
     public render() {
@@ -43,7 +45,9 @@ class App extends React.Component<ApplicationLocalProps, any> {
     }
 }
 
-const mapStoreToProps = (store: Store) => ({});
+const mapStoreToProps = (store: Store) => ({
+    dataDirectory: store.app.dataDirectory.response
+});
 
 const mapsDispatchToProps = (dispatch: any) => ({
     handleFetchLocalAccounts: () => dispatch(keystore.handleFetch()),

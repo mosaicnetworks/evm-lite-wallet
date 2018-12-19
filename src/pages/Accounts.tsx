@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {withAlert} from "react-alert";
 import {Divider, Header, Icon} from "semantic-ui-react";
 
-import {BaseAccount, DefaultProps, keystore, Store, transaction} from "../redux";
+import {BaseAccount, DefaultProps, keystore, Store} from "../redux";
 
 import Account from '../components/account/Account';
 import AccountCreate from "../components/account/AccountCreate";
@@ -23,7 +23,6 @@ export interface AccountsLocalProps extends DefaultProps {
 
     // thunk action handlers
     handleFetchLocalAccounts: () => Promise<BaseAccount[]>,
-    handleRefreshTXHistory: (dir: string) => Promise<any>,
 }
 
 class Accounts extends React.Component<AccountsLocalProps, any> {
@@ -34,8 +33,6 @@ class Accounts extends React.Component<AccountsLocalProps, any> {
                     this.props.alert.success('Accounts refresh successful!') :
                     this.props.alert.error('No Accounts detected!')
             })
-            .then(() => this.props.handleRefreshTXHistory(this.props.dataDirectory.response))
-
     };
 
     public render() {
@@ -73,7 +70,6 @@ const mapStoreToProps = (store: Store) => ({
 });
 const mapsDispatchToProps = (dispatch: any) => ({
     handleFetchLocalAccounts: () => dispatch(keystore.handleFetch()),
-    handleRefreshTXHistory: (datadir: string) => dispatch(transaction.handleListTransactionHistories(datadir)),
 });
 
 export default connect(mapStoreToProps, mapsDispatchToProps)(withAlert(Accounts));

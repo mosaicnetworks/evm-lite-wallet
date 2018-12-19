@@ -1,6 +1,6 @@
 import {EVMLC as Connection, Keystore} from 'evm-lite-lib';
 
-import {BaseAccount, EVMLThunkAction} from "../index"
+import {BaseAccount, EVMLThunkAction, transaction} from "../index"
 
 import Defaults from "../../classes/Defaults"
 import Actions from "../common/BaseActions";
@@ -40,7 +40,7 @@ export default class KeystoreActions extends Actions {
         this.keystore = new Keystore(dataDirectory, 'keystore')
     };
 
-    public handleFetch = (): EVMLThunkAction<BaseAccount[], string> => dispatch => {
+    public handleFetch = (): EVMLThunkAction<BaseAccount[], string> => (dispatch, getState) => {
         const {init, success, failure} = this.handlers<BaseAccount[], string>('List');
         dispatch(init());
 
@@ -52,6 +52,13 @@ export default class KeystoreActions extends Actions {
                     dispatch(failure('No accounts.'));
 
                 return response;
+            })
+            .then((response) => {
+                const datadir = getState().app.dataDirectory;
+                if (datadir.response) {
+                    dispatch(transaction.handleListTransactionHistories(datadir.response))
+                }
+                return response
             })
             .catch(() => {
                 dispatch(failure('Fetch local accounts promise failed.'));
