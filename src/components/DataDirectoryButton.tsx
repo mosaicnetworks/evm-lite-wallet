@@ -1,20 +1,27 @@
 import * as React from 'react';
 
-import {withAlert} from 'react-alert';
+import {InjectedAlertProp, withAlert} from 'react-alert';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Modal} from "semantic-ui-react";
 
-import {app, BaseAccount, DataDirectoryParams, DefaultProps, Store} from "../redux";
+import {app, BaseAccount, DataDirectoryParams, Store} from "../redux";
 
 
-export interface DataDirectoryButtonLocalProps extends DefaultProps {
-    color: "teal" | "blue";
+interface AlertProps {
+    alert: InjectedAlertProp;
+}
 
-    // redux states
-    dataDirectory: string;
+interface StoreProps {
+    dataDirectory: string | null;
+    accounts: BaseAccount[] | null;
+}
 
-    // thunk action handlers
+interface DispatchProps {
     handleDataDirectoryChange: (data: DataDirectoryParams) => Promise<BaseAccount[]>;
+}
+
+interface OwnProps {
+    color: "teal" | "blue";
 }
 
 interface State {
@@ -22,7 +29,9 @@ interface State {
     dataDirectory: string;
 }
 
-class DataDirectoryButton extends React.Component<DataDirectoryButtonLocalProps, State> {
+type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
+
+class DataDirectoryButton extends React.Component<LocalProps, State> {
     public state = {
         open: false,
         dataDirectory: "/Users/danu/.evmlc/",
@@ -72,7 +81,7 @@ class DataDirectoryButton extends React.Component<DataDirectoryButtonLocalProps,
                             <Form.Field>
                                 <label>Data Directory</label>
                                 <input onChange={this.handleOnChangeDataDirectory}
-                                       defaultValue={this.props.dataDirectory}/>
+                                       defaultValue={this.props.dataDirectory || ""}/>
                             </Form.Field>
                         </Form>
                     </Modal.Description>
@@ -87,13 +96,16 @@ class DataDirectoryButton extends React.Component<DataDirectoryButtonLocalProps,
     }
 }
 
-const mapStoreToProps = (store: Store) => ({
+const mapStoreToProps = (store: Store): StoreProps => ({
     dataDirectory: store.app.dataDirectory.response,
     accounts: store.keystore.fetch.response
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({
     handleDataDirectoryChange: (data: DataDirectoryParams) => dispatch(app.handleDataDirInitThenPopulateApp(data)),
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(DataDirectoryButton));
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
+    mapStoreToProps,
+    mapDispatchToProps
+)(withAlert<AlertProps>(DataDirectoryButton));

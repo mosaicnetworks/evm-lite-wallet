@@ -1,10 +1,10 @@
 import * as React from 'react';
 
 import {connect} from 'react-redux';
-import {withAlert} from "react-alert";
+import {InjectedAlertProp, withAlert} from "react-alert";
 import {Divider, Header, Icon} from "semantic-ui-react";
 
-import {BaseAccount, DefaultProps, keystore, Store} from "../redux";
+import {BaseAccount, keystore, Store} from "../redux";
 
 import Account from '../components/account/Account';
 import AccountCreate from "../components/account/AccountCreate";
@@ -14,18 +14,28 @@ import LoadingButton from "../components/LoadingButton";
 import './styles/Accounts.css';
 
 
-export interface AccountsLocalProps extends DefaultProps {
-    // redux states
-    error: string
-    isLoading: boolean;
-    response: BaseAccount[],
-    dataDirectory: any;
+interface AlertProps {
+    alert: InjectedAlertProp;
+}
 
-    // thunk action handlers
+interface StoreProps {
+    error: string | null;
+    isLoading: boolean;
+    response: BaseAccount[] | null,
+    dataDirectory: any | null;
+}
+
+interface DispatchProps {
     handleFetchLocalAccounts: () => Promise<BaseAccount[]>,
 }
 
-class Accounts extends React.Component<AccountsLocalProps, any> {
+interface OwnProps {
+    empty?: null;
+}
+
+type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
+
+class Accounts extends React.Component<LocalProps, any> {
     public handleRefreshAccounts = () => {
         this.props.handleFetchLocalAccounts()
             .then(accounts => {
@@ -43,9 +53,10 @@ class Accounts extends React.Component<AccountsLocalProps, any> {
                     <Icon name='users'/>
                     <Header.Content>
                         Accounts
-                        <Header.Subheader>These accounts are read from the keystore specified in the config file.</Header.Subheader>
+                        <Header.Subheader>These accounts are read from the keystore specified in the config
+                            file.</Header.Subheader>
                     </Header.Content>
-                    <Divider />
+                    <Divider/>
                     <Header.Content>
                         <AccountCreate/>
                         <AccountImport/>
@@ -64,12 +75,15 @@ class Accounts extends React.Component<AccountsLocalProps, any> {
     }
 }
 
-const mapStoreToProps = (store: Store) => ({
+const mapStoreToProps = (store: Store): StoreProps => ({
     ...store.keystore.fetch,
     dataDirectory: store.app.dataDirectory
 });
-const mapsDispatchToProps = (dispatch: any) => ({
+const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
     handleFetchLocalAccounts: () => dispatch(keystore.handleFetch()),
 });
 
-export default connect(mapStoreToProps, mapsDispatchToProps)(withAlert(Accounts));
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
+    mapStoreToProps,
+    mapsDispatchToProps
+)(withAlert<AlertProps>(Accounts));

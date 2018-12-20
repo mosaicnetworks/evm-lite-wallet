@@ -1,29 +1,37 @@
 import * as React from 'react';
 
 import {connect} from "react-redux";
-import {withAlert} from "react-alert";
+import {InjectedAlertProp, withAlert} from "react-alert";
 import {Button, Form, Icon, Message, Modal} from "semantic-ui-react";
 import {V3JSONKeyStore} from 'evm-lite-lib';
 
-import {accounts, BaseAccount, ConfigSchema, configuration, DefaultProps, keystore, Store} from "../../redux";
+import {accounts, BaseAccount, ConfigSchema, configuration, keystore, Store} from "../../redux";
 import {DecryptionParams, TransferParams} from "../../redux/actions/Accounts";
 import {ReadConfigReducer} from "../../redux/reducers/Configuration";
 import {DecryptAccountsReducer} from "../../redux/reducers/Accounts";
 
 
-export interface AccountTransferLocalProps extends DefaultProps {
-    account: BaseAccount;
+interface AlertProps {
+    alert: InjectedAlertProp;
+}
 
-    // redux states
+interface StoreProps {
     config: ReadConfigReducer;
     decryption: DecryptAccountsReducer
+}
 
-    // thunk action handlers
+interface DispatchProps {
     handleTransfer: (data: TransferParams) => Promise<void>;
     handleDecryption: (data: DecryptionParams) => Promise<string>;
     handleDecryptionReset: () => void;
     handleReadConfig: () => Promise<ConfigSchema>;
 }
+
+interface OwnProps {
+    account: BaseAccount;
+}
+
+type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps
 
 interface State {
     open: boolean;
@@ -37,7 +45,7 @@ interface State {
     transferDisable: boolean;
 }
 
-class AccountTransfer extends React.Component<AccountTransferLocalProps, any & State> {
+class AccountTransfer extends React.Component<LocalProps, any & State> {
     public state = {
         open: false,
         toAddress: '',
@@ -242,16 +250,19 @@ class AccountTransfer extends React.Component<AccountTransferLocalProps, any & S
     }
 }
 
-const mapStoreToProps = (store: Store) => ({
+const mapStoreToProps = (store: Store): StoreProps => ({
     config: store.config.read,
     decryption: store.accounts.decrypt
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({
     handleTransfer: (data: TransferParams) => dispatch(accounts.handleTransfer(data)),
     handleReadConfig: () => dispatch(configuration.handleRead()),
     handleDecryption: (data: DecryptionParams) => dispatch(accounts.handleDecryption(data)),
     handleDecryptionReset: () => dispatch(accounts.handlers<string, string>('Decrypt').reset())
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountTransfer));
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
+    mapStoreToProps,
+    mapDispatchToProps
+)(withAlert<AlertProps>(AccountTransfer));

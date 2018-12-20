@@ -1,19 +1,25 @@
 import * as React from 'react';
 
-import {withAlert} from 'react-alert';
+import {InjectedAlertProp, withAlert} from 'react-alert';
 import {Button, Icon} from "semantic-ui-react";
 
-import {DefaultProps} from "../redux";
 
-interface LoadingButtonLocalProps extends DefaultProps {
-    right: boolean;
-    onClickHandler: any;
-    isLoading: boolean
+interface AlertProps {
+    alert: InjectedAlertProp;
 }
 
-class LoadingButton extends React.Component<LoadingButtonLocalProps, any> {
+interface OwnProps {
+    right: boolean;
+    onClickHandler: any;
+    isLoading?: boolean
+}
+
+type LocalProps = OwnProps & AlertProps;
+
+class LoadingButton extends React.Component<LocalProps, any> {
     public render() {
         const {isLoading, onClickHandler, right} = this.props;
+
         return (
             <React.Fragment>
                 <Button className={right ? "right" : ""} onClick={onClickHandler} color={isLoading ? "grey" : 'teal'}>
@@ -25,4 +31,4 @@ class LoadingButton extends React.Component<LoadingButtonLocalProps, any> {
     }
 }
 
-export default withAlert(LoadingButton);
+export default withAlert<AlertProps>(LoadingButton);

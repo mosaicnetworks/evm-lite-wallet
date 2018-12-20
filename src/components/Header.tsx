@@ -4,19 +4,23 @@ import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {Container, Icon, Label} from "semantic-ui-react";
 
-import {DefaultProps, Store} from "../redux";
+import {Store} from "../redux";
 
 import DataDirectoryButton from "./DataDirectoryButton";
 
 import './styles/Header.css';
 
-export interface HeaderLocalProps extends DefaultProps {
-
-    // redux states
+interface StoreProps {
     total: number,
 }
 
-class Header extends React.Component<HeaderLocalProps, any> {
+interface OwnProps {
+    empty?: null;
+}
+
+type LocalProps = OwnProps & StoreProps;
+
+class Header extends React.Component<LocalProps, any> {
     public render() {
         const {total} = this.props;
 
@@ -48,8 +52,10 @@ class Header extends React.Component<HeaderLocalProps, any> {
     }
 }
 
-const mapStoreToProps = (store: Store) => ({
+const mapStoreToProps = (store: Store): StoreProps => ({
     total: (store.keystore.fetch.response ? store.keystore.fetch.response.length : 0),
 });
 
-export default connect(mapStoreToProps)(Header);
+export default connect<StoreProps, {}, OwnProps, Store>(
+    mapStoreToProps
+)(Header);

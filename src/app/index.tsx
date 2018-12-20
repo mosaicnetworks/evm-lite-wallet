@@ -13,13 +13,13 @@ import 'semantic-ui-css/semantic.min.css';
 import './styles/index.css';
 import {PersistGate} from "redux-persist/integration/react";
 
+const stores = getStores();
 const options = {
     timeout: 5000,
     offset: '30px',
     zIndex: 3000000,
 };
 
-const stores = getStores();
 ReactDOM.render(
     (
         <Provider store={stores.store}>
@@ -30,4 +30,5 @@ ReactDOM.render(
             </AlertProvider>
         </Provider>
     ),
-    document.getElementById('root') as HTMLElement);
+    document.getElementById('root') as HTMLElement
+);

@@ -1,6 +1,11 @@
 import * as React from 'react';
 
 import {Button, Card, Icon, Image, Label} from 'semantic-ui-react'
+import {connect} from "react-redux";
+import {InjectedAlertProp, withAlert} from "react-alert";
+
+import {Store} from "../../redux";
+import {BaseAccount} from "evm-lite-lib/evm/client/AccountClient";
 
 import AccountUpdate from "./AccountUpdate";
 import AccountExport from "./AccountExport";
@@ -8,11 +13,27 @@ import AccountTransfer from "./AccountTransfer";
 import AccountHistory from "./AccountHistory";
 
 import './styles/Account.css'
-import {Store} from "../../redux";
-import {connect} from "react-redux";
-import {withAlert} from "react-alert";
 
-class Account extends React.Component<any, any> {
+
+interface AlertProps {
+    alert: InjectedAlertProp;
+}
+
+interface StoreProps {
+    histories: any;
+}
+
+interface DispatchProps {
+    empty?: null;
+}
+
+interface OwnProps {
+    account: BaseAccount;
+}
+
+type LocalProps = AlertProps & DispatchProps & OwnProps & StoreProps;
+
+class Account extends React.Component<LocalProps, any> {
     public state = {
         showTxHistory: false,
     };
@@ -61,10 +82,13 @@ class Account extends React.Component<any, any> {
     }
 }
 
-const mapStoreToProps = (store: Store) => ({
+const mapStoreToProps = (store: Store): StoreProps => ({
     histories: store.transaction.histories
 });
 
-const mapDispatchToProps = (dispatch: any) => ({});
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({});
 
-export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(Account));
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
+    mapStoreToProps,
+    mapDispatchToProps
+)(withAlert<AlertProps>(Account));

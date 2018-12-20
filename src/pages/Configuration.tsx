@@ -1,35 +1,37 @@
 import * as React from 'react';
 
-import {withAlert} from "react-alert";
+import {InjectedAlertProp, withAlert} from "react-alert";
 import {connect} from "react-redux";
 
 import {Button, Divider, Form, Header, Icon} from "semantic-ui-react";
 
-import {app, ConfigSchema, configuration, DataDirectoryParams, DefaultProps, Store} from "../redux";
+import {app, ConfigSchema, configuration, DataDirectoryParams, Store} from "../redux";
 import {SaveConfigParams} from "../redux/actions/Configuration";
 import Defaults from "../classes/Defaults";
+import {ConfigReducer} from "../redux/reducers/Configuration";
 
-export interface ConfigurationLocalProps extends DefaultProps {
-    // redux states
-    dataDirectory: string;
-    config: {
-        read: {
-            isLoading: boolean,
-            response: any,
-            error: string
-        },
-        save: {
-            isLoading: boolean,
-            response: string,
-            error: string
-        }
-    },
 
-    // thunk action handlers
+interface AlertProps {
+    alert: InjectedAlertProp;
+}
+
+interface StoreProps {
+    dataDirectory: string | null;
+    config: ConfigReducer;
+}
+
+interface DispatchProps {
     handleSaveConfig: (data: SaveConfigParams) => Promise<ConfigSchema>;
     handleReadConfig: () => Promise<ConfigSchema>;
     handleDataDirectoryInit: (data: DataDirectoryParams) => void;
+
 }
+
+interface OwnProps {
+    empty?: null;
+}
+
+type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
 interface State {
     host: string,
@@ -40,7 +42,7 @@ interface State {
     keystore: string
 }
 
-class Configuration extends React.Component<ConfigurationLocalProps, State> {
+class Configuration extends React.Component<LocalProps, State> {
     public state = {
         host: '',
         port: '',
@@ -56,7 +58,7 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
         if (response) {
             this.setVars(response)
         } else {
-            this.handleReadConfig();
+            this.handleReadConfig().then();
         }
     };
 
@@ -93,7 +95,7 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
     };
 
     public handleReadConfig = async () => {
-        const config = await this.props.handleReadConfig()
+        const config = await this.props.handleReadConfig();
         this.setVars(config);
     };
 
@@ -121,7 +123,7 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                             </Form.Field>
                             <Form.Field>
                                 <label>Port</label>
-                                <input defaultValue={config.read.response.connection.port}
+                                <input defaultValue={config.read.response.connection.port.toString()}
                                        onChange={(e) => this.setState({port: e.target.value})}/>
                             </Form.Field>
                         </Form.Group>
@@ -135,12 +137,12 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
                             </Form.Field>
                             <Form.Field>
                                 <label>Gas</label>
-                                <input defaultValue={config.read.response.defaults.gas}
+                                <input defaultValue={config.read.response.defaults.gas.toString()}
                                        onChange={(e) => this.setState({gas: e.target.value})}/>
                             </Form.Field>
                             <Form.Field>
                                 <label>Gas Price</label>
-                                <input defaultValue={config.read.response.defaults.gasPrice}
+                                <input defaultValue={config.read.response.defaults.gasPrice.toString()}
                                        onChange={(e) => this.setState({gasprice: e.target.value})}/>
                             </Form.Field>
                         </Form.Group>
@@ -168,15 +170,18 @@ class Configuration extends React.Component<ConfigurationLocalProps, State> {
     }
 }
 
-const mapStoreToProps = (store: Store) => ({
+const mapStoreToProps = (store: Store): StoreProps => ({
     config: store.config,
     dataDirectory: store.app.dataDirectory.response,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({
     handleSaveConfig: (data: SaveConfigParams) => dispatch(configuration.handleSaveThenRefreshApp(data)),
     handleReadConfig: () => dispatch(configuration.handleRead()),
     handleDataDirectoryInit: (data: DataDirectoryParams) => dispatch(app.handleDataDirInitThenPopulateApp(data)),
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(Configuration));
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
+    mapStoreToProps,
+    mapDispatchToProps
+)(withAlert<AlertProps>(Configuration));

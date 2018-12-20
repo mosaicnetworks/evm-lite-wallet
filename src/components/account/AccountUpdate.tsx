@@ -1,32 +1,40 @@
 import * as React from 'react';
 
-import {withAlert} from "react-alert";
+import {InjectedAlertProp, withAlert} from "react-alert";
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 import {V3JSONKeyStore} from 'evm-lite-lib';
 
 import {DecryptionParams} from "../../redux/actions/Accounts";
-import {accounts, BaseAccount, ConfigSchema, DefaultProps, keystore, Store} from "../../redux";
+import {accounts, BaseAccount, ConfigSchema, keystore, Store} from "../../redux";
 import {DecryptAccountsReducer} from "../../redux/reducers/Accounts";
 
 import './styles/Account.css'
 
-export interface AccountUpdateLocalProps extends DefaultProps {
-    account: BaseAccount;
+interface AlertProps {
+    alert: InjectedAlertProp;
+}
 
-    // redux states
-    error: string;
-    response: string;
+interface StoreProps {
+    error: string | null;
+    response: string | null;
     isLoading: boolean;
-    config: ConfigSchema
+    config: ConfigSchema | null
     decryption: DecryptAccountsReducer
+}
 
-    // thunk action handlers
+interface DispatchProps {
     handleUpdatePassword: (a: string, o: string, n: string) => Promise<BaseAccount[]>;
     handleUpdateReset: () => void;
     handleDecryptionReset: () => void;
     handleDecryption: (data: DecryptionParams) => Promise<string>;
 }
+
+interface OwnProps {
+    account: BaseAccount;
+}
+
+type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps
 
 interface State {
     open: boolean;
@@ -38,7 +46,7 @@ interface State {
     matchingPasswordError: string;
 }
 
-class AccountUpdate extends React.Component<AccountUpdateLocalProps, any & State> {
+class AccountUpdate extends React.Component<LocalProps, any & State> {
     public state = {
         open: false,
         oldPassword: '',
@@ -80,7 +88,7 @@ class AccountUpdate extends React.Component<AccountUpdateLocalProps, any & State
                     if (this.props.response) {
                         this.props.alert.success('Account password successfully updated!');
                     } else {
-                        this.props.alert.error(this.props.error);
+                        this.props.alert.error(this.props.error || "");
                     }
                 })
                 .then(() => {
@@ -230,13 +238,13 @@ class AccountUpdate extends React.Component<AccountUpdateLocalProps, any & State
     }
 }
 
-const mapStoreToProps = (store: Store) => ({
+const mapStoreToProps = (store: Store): StoreProps => ({
     ...store.keystore.update,
     config: store.config.read.response,
     decryption: store.accounts.decrypt,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({
     handleUpdatePassword: (a: string, o: string, n: string) => {
         return dispatch(keystore.handleUpdateThenFetch({
             newPassword: n,
@@ -249,4 +257,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     handleDecryption: (data: DecryptionParams) => dispatch(accounts.handleDecryption(data)),
 });
 
-export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountUpdate));
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
+    mapStoreToProps,
+    mapDispatchToProps
+)(withAlert<AlertProps>(AccountUpdate));
