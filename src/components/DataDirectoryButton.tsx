@@ -58,12 +58,8 @@ class DataDirectoryButton extends React.Component<LocalProps, State> {
     public handleOnSubmit = async () => {
         await this.props.handleDataDirectoryChangeInit(this.state.fields.dataDirectory);
 
-        if (this.props.connectivityError) {
-            this.props.alert.error(
-                'A connection to a node could not be established. ' +
-                'Please update the configuration' +
-                ' file with the correct host and port.'
-            );
+        if (this.props.dataDirectoryTask.response) {
+            this.props.alert.success('Data directory successfully changed.');
         }
     };
 

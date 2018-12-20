@@ -15,10 +15,10 @@ interface KeystoreListAction {
 const keystore = new Keystore();
 
 export function* keystoreListInitWatcher() {
-    yield takeLatest(keystore.actions.list.init, keystoreListInitWorker);
+    yield takeLatest(keystore.actions.list.init, keystoreListWorker);
 }
 
-function* keystoreListInitWorker(action: KeystoreListAction) {
+function* keystoreListWorker(action: KeystoreListAction) {
     try {
         const evmlKeystore: EVMLKeystore = yield new EVMLKeystore(action.payload.directory, action.payload.name);
         const state: Store = yield select();

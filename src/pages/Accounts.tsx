@@ -102,6 +102,7 @@ const mapStoreToProps = (store: Store): StoreProps => ({
     keystoreListTask: store.keystore.list,
     config: store.config.load.response,
 });
+
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
     handleListAccountInit: (directory: string) => dispatch(keystore.handlers.list.init({
         directory,

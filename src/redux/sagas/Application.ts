@@ -44,10 +44,10 @@ function* dataDirectoryChangeInitWorker(action: DirectoryChangeInitAction) {
 }
 
 export function* checkConnectivityInitWatcher() {
-    yield takeLatest(app.actions.connectivity.init, checkConnectivityInitWorker);
+    yield takeLatest(app.actions.connectivity.init, checkConnectivityWorker);
 }
 
-function* checkConnectivityInitWorker(action: ConnectivityCheckInitAction) {
+function* checkConnectivityWorker(action: ConnectivityCheckInitAction) {
     try {
         const connection: EVMLC = yield new EVMLC(action.payload.host, action.payload.port, {
             from: '',

@@ -7,7 +7,7 @@ import {applyMiddleware, combineReducers, createStore} from "redux";
 import {InjectedAlertProp} from "react-alert";
 
 import {checkConnectivityInitWatcher, dataDirectoryChangeInitWatcher} from "../sagas/Application";
-import {configFileReadInitWatcher} from "../sagas/Configuration";
+import {configurationReadInitWatcher} from "../sagas/Configuration";
 import {keystoreListInitWatcher} from "../sagas/Keystore";
 
 // import AccountsRootReducer, {AccountsReducer} from '../reducers/Accounts';
@@ -54,7 +54,7 @@ export default () => {
     const persistor = persistStore(store);
 
     saga.run(dataDirectoryChangeInitWatcher);
-    saga.run(configFileReadInitWatcher);
+    saga.run(configurationReadInitWatcher);
     saga.run(checkConnectivityInitWatcher);
     saga.run(keystoreListInitWatcher);
 

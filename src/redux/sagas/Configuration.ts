@@ -14,11 +14,11 @@ interface ConfigFileReadAction {
 const config = new Configuration();
 const app = new Application();
 
-export function* configFileReadInitWatcher() {
-    yield takeLatest(config.actions.load.init, configFileReadInitWorker);
+export function* configurationReadInitWatcher() {
+    yield takeLatest(config.actions.load.init, configurationReadWorker);
 }
 
-function* configFileReadInitWorker(action: ConfigFileReadAction) {
+function* configurationReadWorker(action: ConfigFileReadAction) {
     try {
         const evmlConfig: Config = yield new Config(action.payload.directory, action.payload.name);
         const data: ConfigSchema = yield evmlConfig.load();
