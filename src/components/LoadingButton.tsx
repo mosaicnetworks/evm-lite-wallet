@@ -9,9 +9,9 @@ interface AlertProps {
 }
 
 interface OwnProps {
+    isLoading: boolean
     right: boolean;
     onClickHandler: any;
-    isLoading?: boolean
 }
 
 type LocalProps = OwnProps & AlertProps;
@@ -31,4 +31,4 @@ class LoadingButton extends React.Component<LocalProps, any> {
     }
 }
 
-export default withAlert<AlertProps>(LoadingButton);
+export default withAlert(LoadingButton);

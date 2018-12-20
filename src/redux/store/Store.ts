@@ -1,29 +1,34 @@
-import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import dynamicStorage from 'redux-persist/lib/storage';
+import createSagaMiddleware from 'redux-saga';
 
 import {PersistConfig, persistReducer, persistStore} from 'redux-persist'
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import {InjectedAlertProp} from "react-alert";
 
-import AccountsRootReducer, {AccountsReducer} from '../reducers/Accounts';
+import {checkConnectivityInitWatcher, dataDirectoryChangeInitWatcher} from "../sagas/Application";
+import {configFileReadInitWatcher} from "../sagas/Configuration";
+import {keystoreListInitWatcher} from "../sagas/Keystore";
+
+// import AccountsRootReducer, {AccountsReducer} from '../reducers/Accounts';
 import ConfigRootReducer, {ConfigReducer} from '../reducers/Configuration';
-import AppRootReducer, {AppReducer} from "../reducers/App";
+import AppRootReducer, {AppReducer} from "../reducers/Application";
 import KeystoreRootReducer, {KeystoreReducer} from "../reducers/Keystore";
-import TransactionRootReducer, {ITransactionsReducer} from "../reducers/Transactions";
+// import TransactionRootReducer, {ITransactionsReducer} from "../reducers/Transactions";
 
 
 export interface DefaultProps {
     alert: InjectedAlertProp;
+
     [key: string]: any;
 }
 
 export interface Store {
     keystore: KeystoreReducer;
-    accounts: AccountsReducer;
+    // accounts: AccountsReducer;
     config: ConfigReducer;
     app: AppReducer;
-    transaction: ITransactionsReducer
+    // transaction: ITransactionsReducer
 }
 
 const persistConfig: PersistConfig = {
@@ -34,18 +39,24 @@ const persistConfig: PersistConfig = {
 
 const rootReducer = combineReducers({
     keystore: KeystoreRootReducer,
-    accounts: AccountsRootReducer,
+    // accounts: AccountsRootReducer,
     config: ConfigRootReducer,
     app: AppRootReducer,
-    transaction: TransactionRootReducer,
+    // transaction: TransactionRootReducer,
 });
 
-const middleware = [thunk, logger];
+const saga = createSagaMiddleware();
+const middleware = [saga, logger];
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export default () => {
     const store = createStore(persistedReducer, applyMiddleware(...middleware));
     const persistor = persistStore(store);
+
+    saga.run(dataDirectoryChangeInitWatcher);
+    saga.run(configFileReadInitWatcher);
+    saga.run(checkConnectivityInitWatcher);
+    saga.run(keystoreListInitWatcher);
 
     return {store, persistor}
 }

@@ -2,13 +2,10 @@ import * as React from 'react';
 
 import {connect} from "react-redux";
 import {InjectedAlertProp, withAlert} from "react-alert";
-import {Button, Form, Icon, Message, Modal} from "semantic-ui-react";
+import {Button, Form, Modal} from "semantic-ui-react";
 import {V3JSONKeyStore} from 'evm-lite-lib';
 
-import {accounts, BaseAccount, ConfigSchema, configuration, keystore, Store} from "../../redux";
-import {DecryptionParams, TransferParams} from "../../redux/actions/Accounts";
-import {ReadConfigReducer} from "../../redux/reducers/Configuration";
-import {DecryptAccountsReducer} from "../../redux/reducers/Accounts";
+import {BaseAccount, Store} from "../../redux";
 
 
 interface AlertProps {
@@ -16,15 +13,12 @@ interface AlertProps {
 }
 
 interface StoreProps {
-    config: ReadConfigReducer;
-    decryption: DecryptAccountsReducer
+    config?: any;
+    decryption?: any
 }
 
 interface DispatchProps {
-    handleTransfer: (data: TransferParams) => Promise<void>;
-    handleDecryption: (data: DecryptionParams) => Promise<string>;
-    handleDecryptionReset: () => void;
-    handleReadConfig: () => Promise<ConfigSchema>;
+    empty?: null;
 }
 
 interface OwnProps {
@@ -54,29 +48,29 @@ class AccountTransfer extends React.Component<LocalProps, any & State> {
         gasPrice: '',
         password: '',
         decryptionError: '',
-        v3JSONKeystore: keystore.keystore.get(this.props.account.address),
+        // v3JSONKeystore: keystore.keystore.get(this.props.account.address),
         transferDisable: true,
     };
 
     public componentDidMount = () => {
-        const {response} = this.props.config;
-        if (response) {
-            this.setVars(response)
-        } else {
-            this.handleReadConfig();
-        }
+        // const {response} = this.props.config;
+        // if (response) {
+        //     this.setVars(response)
+        // } else {
+        //     this.handleReadConfig();
+        // }
     };
 
     public handleReadConfig = () => {
-        this.props.handleReadConfig()
-            .then((config) => this.setVars(config));
+        // this.props.handleReadConfig()
+        //     .then((config) => this.setVars(config));
     };
 
     public open = () => this.setState({open: true});
     public close = () => {
-        if (this.props.decryption.response || this.props.decryption.error) {
-            this.props.handleDecryptionReset();
-        }
+        // if (this.props.decryption.response || this.props.decryption.error) {
+        //     this.props.handleDecryptionReset();
+        // }
         this.setState({open: false});
     };
 
@@ -110,41 +104,41 @@ class AccountTransfer extends React.Component<LocalProps, any & State> {
 
     public onBlurPassword = async () => {
         if (!this.props.decryption.response) {
-            this.props.handleDecryption({
-                v3JSONKeystore: await this.state.v3JSONKeystore,
-                password: this.state.password
-            })
-                .then(() => {
-                    if (this.props.decryption.response) {
-                        this.setState({transferDisable: false})
-                    }
-                })
+            // this.props.handleDecryption({
+            //     v3JSONKeystore: await this.state.v3JSONKeystore,
+            // password: this.state.password
+            // })
+            //     .then(() => {
+            //         if (this.props.decryption.response) {
+            //             this.setState({transferDisable: false})
+            //         }
+            //     })
         }
     };
 
     public handleTransfer = async () => {
-        const tx = {
-            from: this.props.account.address,
-            to: this.state.toAddress,
-            value: this.state.value,
-            gas: this.state.gas,
-            gasprice: this.state.gasPrice,
-            nonce: this.props.account.nonce
-        };
-        const data: TransferParams = {
-            tx,
-            password: this.state.password,
-            v3JSONKeystore: await this.state.v3JSONKeystore,
-        };
+        // const tx = {
+        //     from: this.props.account.address,
+        //     to: this.state.toAddress,
+        //     value: this.state.value,
+        //     gas: this.state.gas,
+        //     gasprice: this.state.gasPrice,
+        //     nonce: this.props.account.nonce
+        // };
+        // const data: TransferParams = {
+        //     tx,
+        //     password: this.state.password,
+        //     v3JSONKeystore: await this.state.v3JSONKeystore,
+        // };
 
         if (this.props.decryption.response) {
-            this.props.handleTransfer(data)
-                .then(() => {
-                    this.props.alert.success('Transaction submitted!');
-                })
-                .catch(() => {
-                    this.props.alert.error('Error transacting!');
-                });
+            // this.props.handleTransfer(data)
+            //     .then(() => {
+            //         this.props.alert.success('Transaction submitted!');
+            //     })
+            //     .catch(() => {
+            //         this.props.alert.error('Error transacting!');
+            //     });
 
             this.close();
         }
@@ -189,8 +183,8 @@ class AccountTransfer extends React.Component<LocalProps, any & State> {
     };
 
     public render() {
-        const {decryption} = this.props;
-        const decryptMessage = this.getMessageHeaderAndContent();
+        // const {decryption} = this.props;
+        // const decryptMessage = this.getMessageHeaderAndContent();
         return (
             <React.Fragment>
                 <Modal onClose={this.close} open={this.state.open}
@@ -204,16 +198,16 @@ class AccountTransfer extends React.Component<LocalProps, any & State> {
                                     <input type={"password"} onChange={this.handlePasswordChange}
                                            onBlur={this.onBlurPassword}/>
                                 </Form.Field>
-                                <Message icon={true} info={decryption.isLoading} negative={!!(decryption.error)}
-                                         positive={!!(decryption.response)}>
-                                    <Icon name={this.getDecryptIcon()} loading={decryption.isLoading}/>
-                                    <Message.Content>
-                                        <Message.Header>
-                                            {decryptMessage.header}
-                                        </Message.Header>
-                                        <p>{decryptMessage.message}</p>
-                                    </Message.Content>
-                                </Message>
+                                {/*<Message icon={true} info={decryption.isLoading} negative={!!(decryption.error)}*/}
+                                {/*positive={!!(decryption.response)}>*/}
+                                {/*<Icon name={this.getDecryptIcon()} loading={decryption.isLoading}/>*/}
+                                {/*<Message.Content>*/}
+                                {/*<Message.Header>*/}
+                                {/*{decryptMessage.header}*/}
+                                {/*</Message.Header>*/}
+                                {/*<p>{decryptMessage.message}</p>*/}
+                                {/*</Message.Content>*/}
+                                {/*</Message>*/}
                                 <Form.Group widths={"two"}>
                                     <Form.Field>
                                         <label>To</label>
@@ -250,17 +244,9 @@ class AccountTransfer extends React.Component<LocalProps, any & State> {
     }
 }
 
-const mapStoreToProps = (store: Store): StoreProps => ({
-    config: store.config.read,
-    decryption: store.accounts.decrypt
-});
+const mapStoreToProps = (store: Store): StoreProps => ({});
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-    handleTransfer: (data: TransferParams) => dispatch(accounts.handleTransfer(data)),
-    handleReadConfig: () => dispatch(configuration.handleRead()),
-    handleDecryption: (data: DecryptionParams) => dispatch(accounts.handleDecryption(data)),
-    handleDecryptionReset: () => dispatch(accounts.handlers<string, string>('Decrypt').reset())
-});
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({});
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
     mapStoreToProps,

@@ -11,7 +11,7 @@ import DataDirectoryButton from "./DataDirectoryButton";
 import './styles/Header.css';
 
 interface StoreProps {
-    total: number,
+    total?: number,
 }
 
 interface OwnProps {
@@ -53,7 +53,6 @@ class Header extends React.Component<LocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-    total: (store.keystore.fetch.response ? store.keystore.fetch.response.length : 0),
 });
 
 export default connect<StoreProps, {}, OwnProps, Store>(

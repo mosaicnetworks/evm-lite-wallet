@@ -4,11 +4,15 @@ import {connect} from 'react-redux';
 import {InjectedAlertProp, withAlert} from "react-alert";
 import {Divider, Header, Icon} from "semantic-ui-react";
 
-import {BaseAccount, keystore, Store} from "../redux";
+import {ConfigSchema} from "evm-lite-lib";
+
+import {BaseAccount, Store} from "../redux";
+import {KeystoreListType} from "../redux/reducers/Keystore";
 
 import Account from '../components/account/Account';
 import AccountCreate from "../components/account/AccountCreate";
 import AccountImport from "../components/account/AccountImport";
+import Keystore from '../redux/actions/Keystore';
 import LoadingButton from "../components/LoadingButton";
 
 import './styles/Accounts.css';
@@ -19,14 +23,12 @@ interface AlertProps {
 }
 
 interface StoreProps {
-    error: string | null;
-    isLoading: boolean;
-    response: BaseAccount[] | null,
-    dataDirectory: any | null;
+    keystoreListTask: KeystoreListType;
+    config: ConfigSchema | null;
 }
 
 interface DispatchProps {
-    handleFetchLocalAccounts: () => Promise<BaseAccount[]>,
+    handleListAccountInit: (directory: string) => void,
 }
 
 interface OwnProps {
@@ -35,18 +37,36 @@ interface OwnProps {
 
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
+const keystore = new Keystore();
+
 class Accounts extends React.Component<LocalProps, any> {
-    public handleRefreshAccounts = () => {
-        this.props.handleFetchLocalAccounts()
-            .then(accounts => {
-                accounts.length ?
-                    this.props.alert.success('Accounts refresh successful!') :
-                    this.props.alert.error('No Accounts detected!')
-            })
+    public handleRefreshAccounts = async () => {
+        if (this.props.config) {
+            const list = this.props.config.storage.keystore.split('/');
+            const popped = list.pop();
+
+            if (popped === '/') {
+                list.pop();
+            }
+
+            const keystoreParentDirectory = list.join('/');
+
+           await this.props.handleListAccountInit(keystoreParentDirectory);
+
+           if (this.props.keystoreListTask.response) {
+               this.props.alert.success('Accounts refreshed.');
+           }
+
+           if (this.props.keystoreListTask.error) {
+               this.props.alert.error(this.props.keystoreListTask.error);
+           }
+        } else {
+            this.props.alert.info('Looks like there was a problem reading the config file.');
+        }
     };
 
     public render() {
-        const {error, response, isLoading} = this.props;
+        const {keystoreListTask} = this.props;
         return (
             <React.Fragment>
                 <Header as='h2'>
@@ -60,15 +80,18 @@ class Accounts extends React.Component<LocalProps, any> {
                     <Header.Content>
                         <AccountCreate/>
                         <AccountImport/>
-                        <LoadingButton isLoading={isLoading} onClickHandler={this.handleRefreshAccounts} right={true}/>
-                    </Header.Content>
+                        <LoadingButton isLoading={keystoreListTask.isLoading}
+                                       onClickHandler={this.handleRefreshAccounts}
+                                       right={true}/>
+                </Header.Content>
                 </Header>
                 <Divider hidden={true}/>
                 <div className={'page'}>
-                    {response && response.map((account: BaseAccount) => {
+                    {keystoreListTask.response && keystoreListTask.response.map((account: BaseAccount) => {
                         return <Account key={account.address} account={account}/>
                     })}
-                    {!isLoading && error && <div className={"error_message"}>{error}</div>}
+                    {!keystoreListTask.isLoading &&
+                    keystoreListTask.error && <div className={"error_message"}>{keystoreListTask.error}</div>}
                 </div>
             </React.Fragment>
         );
@@ -76,11 +99,14 @@ class Accounts extends React.Component<LocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-    ...store.keystore.fetch,
-    dataDirectory: store.app.dataDirectory
+    keystoreListTask: store.keystore.list,
+    config: store.config.load.response,
 });
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-    handleFetchLocalAccounts: () => dispatch(keystore.handleFetch()),
+    handleListAccountInit: (directory: string) => dispatch(keystore.handlers.list.init({
+        directory,
+        name: 'keystore',
+    })),
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {InjectedAlertProp, withAlert} from "react-alert";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {ConfigSchema, EVMLDispatch, keystore, Store} from "../../redux";
+import {ConfigSchema, EVMLDispatch, Store} from "../../redux";
 
 
 interface AlertProps {
@@ -12,14 +12,14 @@ interface AlertProps {
 }
 
 interface StoreProps {
-    isLoading: boolean;
-    response: string | null;
-    error: string | null;
-    config: ConfigSchema | null;
+    isLoading?: boolean;
+    response?: string | null;
+    error?: string | null;
+    config?: ConfigSchema | null;
 }
 
 interface DispatchProps {
-    handleCreateAccount: (password: string) => void;
+    empty?: null;
 }
 
 interface OwnProps {
@@ -70,7 +70,7 @@ class AccountCreate extends React.Component<LocalProps, any & State> {
 
         this.close();
 
-        await this.props.handleCreateAccount(password);
+        // await this.props.handleCreateAccount(password);
 
         if (this.props.response) {
             this.props.alert.success('Account created!');
@@ -143,13 +143,9 @@ class AccountCreate extends React.Component<LocalProps, any & State> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-    ...store.keystore.create,
-    config: store.config.read.response
 });
 
-const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>): DispatchProps => ({
-    handleCreateAccount: (password: string) => dispatch(keystore.handleCreateThenFetch(password)),
-});
+const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>): DispatchProps => ({});
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
     mapStoreToProps,

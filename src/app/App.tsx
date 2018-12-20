@@ -8,10 +8,10 @@ import Accounts from "../pages/Accounts";
 import Index from "../pages/Index";
 import Configuration from "../pages/Configuration";
 import Wrapper from "../components/Wrapper";
-
-import {app, configuration, DataDirectoryParams, keystore, Store} from "../redux";
-
+import Application from "../redux/actions/Application";
 import Defaults from "../classes/Defaults";
+
+import {Store} from "../redux";
 
 import './styles/App.css';
 
@@ -21,13 +21,12 @@ interface AlertProps {
 }
 
 interface StoreProps {
-    dataDirectory: string | null;
+    directory: string | null;
+    connectivityError: string | null;
 }
 
 interface DispatchProps {
-    handleFetchLocalAccounts: () => void;
-    handleReadConfig: () => Promise<any>;
-    handleDataDirectoryInit: (data: DataDirectoryParams) => void;
+    handleDataDirectoryInit: (directory: string) => void;
 }
 
 interface OwnProps {
@@ -36,9 +35,23 @@ interface OwnProps {
 
 type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
+
+const application = new Application();
+
 class App extends React.Component<LocalProps, any> {
+
+    public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<any>, nextContext: any): void {
+        if (this.props.connectivityError === null && nextProps.connectivityError !== this.props.connectivityError) {
+            nextProps.alert.error(
+                'A connection to a node could not be established. ' +
+                'Please update the configuration' +
+                ' file with the correct host and port.'
+            );
+        }
+    }
+
     public componentDidMount = () => {
-        this.props.handleDataDirectoryInit({path: this.props.dataDirectory || Defaults.dataDirectory});
+        this.props.handleDataDirectoryInit(this.props.directory || Defaults.dataDirectory);
     };
 
     public render() {
@@ -57,13 +70,12 @@ class App extends React.Component<LocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-    dataDirectory: store.app.dataDirectory.response
+    directory: store.app.directory.payload,
+    connectivityError: store.app.connectivity.error,
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-    handleFetchLocalAccounts: () => dispatch(keystore.handleFetch()),
-    handleReadConfig: () => dispatch(configuration.handleRead()),
-    handleDataDirectoryInit: (data: DataDirectoryParams) => dispatch(app.handleDataDirInitThenPopulateApp(data)),
+    handleDataDirectoryInit: directory => dispatch(application.handlers.directory.init(directory)),
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

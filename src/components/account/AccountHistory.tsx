@@ -54,7 +54,6 @@ class AccountHistory extends React.Component<AccountsHistoryLocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store) => ({
-    histories: store.transaction.histories
 });
 
 const mapDispatchToProps = (dispatch: any) => ({});

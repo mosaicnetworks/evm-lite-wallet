@@ -20,7 +20,7 @@ interface AlertProps {
 }
 
 interface StoreProps {
-    histories: any;
+    histories?: any;
 }
 
 interface DispatchProps {
@@ -83,7 +83,7 @@ class Account extends React.Component<LocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-    histories: store.transaction.histories
+    // histories: store.transaction.histories
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({});

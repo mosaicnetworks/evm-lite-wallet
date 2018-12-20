@@ -4,7 +4,7 @@ import {withAlert} from "react-alert";
 import {connect} from "react-redux";
 import {Button, Form, Icon, Message, Modal, TextArea} from "semantic-ui-react";
 
-import {DefaultProps, keystore, Store, BaseAccount} from "../../redux";
+import {BaseAccount, DefaultProps, Store} from "../../redux";
 
 export interface AccountImportLocalProps extends DefaultProps {
     // redux states
@@ -103,11 +103,10 @@ class AccountImport extends React.Component<AccountImportLocalProps, any & State
 }
 
 const mapStoreToProps = (store: Store) => ({
-    ...store.keystore.import,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    handleImportAccount: (v3JSONKeystore: string) => dispatch(keystore.handleImportThenFetch(v3JSONKeystore)),
+    // handleImportAccount: (v3JSONKeystore: string) => dispatch(keystore.handleImportThenFetch(v3JSONKeystore)),
 });
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountImport));

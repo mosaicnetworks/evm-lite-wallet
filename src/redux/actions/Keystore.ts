@@ -1,25 +1,24 @@
-import {EVMLC as Connection, Keystore} from 'evm-lite-lib';
+import {BaseAccount} from "evm-lite-lib";
 
-import {BaseAccount, EVMLThunkAction, transaction} from "../index"
-
-import Defaults from "../../classes/Defaults"
-import Actions from "../common/BaseActions";
+import BaseActions, {ActionCreatorHandlers, ActionInterface, ActionValue} from "../common/BaseActions";
 
 
-export interface UpdatePasswordParams {
-    oldPassword: string;
-    newPassword: string;
-    address: string;
+export interface KeystoreListPayload {
+    directory: string;
+    name: string;
 }
 
-export default class KeystoreActions extends Actions {
-    public path: string = Defaults.dataDirectory;
-    public keystore: Keystore = new Keystore(this.path, 'keystore');
-    private connection = new Connection('127.0.0.1', 8080, {
-        from: '',
-        gas: 0,
-        gasPrice: 1
-    });
+interface HandlerSchema {
+    list: ActionCreatorHandlers<KeystoreListPayload, BaseAccount[], string>;
+}
+
+interface ActionSchema extends ActionInterface {
+    list: ActionValue;
+}
+
+export default class KeystoreActions extends BaseActions<HandlerSchema, ActionSchema> {
+
+    public handlers: HandlerSchema;
 
     constructor() {
         super(KeystoreActions.name);
@@ -30,124 +29,10 @@ export default class KeystoreActions extends Actions {
             'Export',
             'Import'
         ];
+
+        this.handlers = {
+            list: this.generateHandlers<KeystoreListPayload, BaseAccount[], string>('List'),
+        };
     }
-
-    public setNewDataDirectory = (path: string): void => {
-        const list = path.split('/');
-        list.pop();
-
-        const dataDirectory = list.join('/');
-        this.keystore = new Keystore(dataDirectory, 'keystore')
-    };
-
-    public setNewConnectionInfo = (host: string, port: number): void => {
-        this.connection = new Connection(host, port, {
-            from: '',
-            gas: 0,
-            gasPrice: 1
-        })
-    };
-
-    public handleFetch = (): EVMLThunkAction<BaseAccount[], string> => (dispatch, getState) => {
-        const {init, success, failure} = this.handlers<BaseAccount[], string>('List');
-        dispatch(init());
-
-        return this.keystore
-            .list(true, this.connection)
-            .then((response: BaseAccount[]) => {
-                response.length ?
-                    dispatch(success(response)) :
-                    dispatch(failure('No accounts.'));
-
-                return response;
-            })
-            .then((response) => {
-                const datadir = getState().app.dataDirectory;
-                if (datadir.response) {
-                    dispatch(transaction.handleListTransactionHistories(datadir.response)).then();
-                }
-                return response
-            })
-            .catch(() => {
-                dispatch(failure('Fetch local accounts promise failed.'));
-                return [];
-            })
-    };
-
-    public handleExport = (address: string): EVMLThunkAction<string, string> => dispatch => {
-        const {init, success, failure} = this.handlers<string, string>('Export');
-        dispatch(init());
-
-        return this.keystore
-            .get(address)
-            .then((v3JSONKeystoreString: string) => {
-                dispatch(success(v3JSONKeystoreString));
-                return v3JSONKeystoreString
-            })
-            .catch(() => {
-                dispatch(failure('Something went wrong while exporting an account'));
-                return ''
-            });
-    };
-
-    public handleImport = (data: string): EVMLThunkAction<string, string> => dispatch => {
-        const {init, success, failure} = this.handlers<string, string>('Import');
-        dispatch(init());
-
-        return this.keystore
-            .import(data)
-            .then((address: string) => {
-                dispatch(success(address));
-                return address;
-            })
-            .catch(() => {
-                dispatch(failure('Something went wrong while importing an account'));
-                return ''
-            });
-    };
-
-    public handleUpdate = (data: UpdatePasswordParams): EVMLThunkAction<string, string> => dispatch => {
-        const {init, success, failure} = this.handlers<string, string>('Update');
-        dispatch(init());
-
-        return this.keystore
-            .update(data.address, data.oldPassword, data.newPassword)
-            .then(() => {
-                dispatch(success('Updated account!'));
-                return 'Updated!'
-            })
-            .catch((err: string) => {
-                dispatch(failure(err));
-                return ''
-            })
-    };
-
-    public handleCreate = (data: string): EVMLThunkAction<string, string> => dispatch => {
-        const {init, success, failure} = this.handlers<string, string>('Create');
-        dispatch(init());
-
-        return this.keystore
-            .create(data)
-            .then((account: string) => {
-                dispatch(success(account));
-                return account;
-            })
-            .catch(() => {
-                dispatch(failure('Account creation unsuccessful.'));
-                return '';
-            });
-    };
-
-    public handleUpdateThenFetch = (data: UpdatePasswordParams): EVMLThunkAction<BaseAccount[] | string, string> => {
-        return dispatch => dispatch(this.handleUpdate(data)).then(() => dispatch(this.handleFetch()));
-    };
-
-    public handleCreateThenFetch = (data: string): EVMLThunkAction<BaseAccount[] | string, string> => {
-        return dispatch => dispatch(this.handleCreate(data)).then(() => dispatch(this.handleFetch()));
-    };
-
-    public handleImportThenFetch = (data: string): EVMLThunkAction<BaseAccount[] | string, string> => {
-        return dispatch => dispatch(this.handleImport(data)).then(() => dispatch(this.handleFetch()));
-    };
 
 }
