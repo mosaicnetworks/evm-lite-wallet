@@ -7,12 +7,15 @@ import {InjectedAlertProp, withAlert} from "react-alert";
 import {Store} from "../../redux";
 import {BaseAccount} from "evm-lite-lib/evm/client/AccountClient";
 
-import AccountUpdate from "./AccountUpdate";
-import AccountExport from "./AccountExport";
-import AccountTransfer from "./AccountTransfer";
-import AccountHistory from "./AccountHistory";
+import {TransactionHistoryType} from "../../redux/reducers/Transactions";
+
+import AccountUpdate from "./modals/AccountUpdate";
+import AccountExport from "./modals/AccountExport";
+import AccountTransfer from "./modals/AccountTransfer";
+import AccountHistory from "./modals/AccountHistory";
 
 import './styles/Account.css'
+import {SentTX} from "evm-lite-lib/evm/classes/Transaction";
 
 
 interface AlertProps {
@@ -20,7 +23,7 @@ interface AlertProps {
 }
 
 interface StoreProps {
-    histories?: any;
+    transactionHistoryTask: TransactionHistoryType;
 }
 
 interface DispatchProps {
@@ -40,6 +43,16 @@ class Account extends React.Component<LocalProps, any> {
 
     public onTXHistoryClick = () => {
         this.setState({showTxHistory: !(this.state.showTxHistory)});
+    };
+
+    public transactionHistory = (): SentTX[] => {
+        const {transactionHistoryTask, account} = this.props;
+
+        if (transactionHistoryTask.response) {
+            return transactionHistoryTask.response[account.address] || []
+        } else {
+            return []
+        }
     };
 
     public render() {
@@ -75,15 +88,14 @@ class Account extends React.Component<LocalProps, any> {
                 </Card.Content>
                 {(this.state.showTxHistory) ?
                     (<Card.Content><AccountHistory
-                        account={this.props.account}
-                        txs={this.props.histories.response[this.props.account.address]}/></Card.Content>) : null}
+                        account={this.props.account} txs={this.transactionHistory()}/></Card.Content>) : null}
             </Card>
         );
     }
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-    // histories: store.transaction.histories
+    transactionHistoryTask: store.transactions.history,
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({});

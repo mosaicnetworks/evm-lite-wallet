@@ -4,12 +4,13 @@ import {Static} from 'evm-lite-lib';
 import {Label, Table} from "semantic-ui-react";
 import {connect} from "react-redux";
 import {withAlert} from "react-alert";
+import {SentTX} from "evm-lite-lib";
 
-import {DefaultProps, Store} from "../../redux";
+import {DefaultProps, Store} from "../../../redux";
 
 
 export interface AccountsHistoryLocalProps extends DefaultProps {
-    test?: string;
+    txs: SentTX[]
 }
 
 class AccountHistory extends React.Component<AccountsHistoryLocalProps, any> {

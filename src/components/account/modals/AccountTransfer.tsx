@@ -5,7 +5,7 @@ import {InjectedAlertProp, withAlert} from "react-alert";
 import {Button, Form, Modal} from "semantic-ui-react";
 import {V3JSONKeyStore} from 'evm-lite-lib';
 
-import {BaseAccount, Store} from "../../redux";
+import {BaseAccount, Store} from "../../../redux";
 
 
 interface AlertProps {

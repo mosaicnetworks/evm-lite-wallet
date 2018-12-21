@@ -43,7 +43,7 @@ class Index extends React.Component<LocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-    currentDataDirectory: store.app.directory.payload
+    currentDataDirectory: store.app.directory.payload,
 });
 
 const mapsDispatchToProps = (dispatch: any) => ({});

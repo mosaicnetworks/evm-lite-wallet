@@ -5,9 +5,9 @@ import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Label, Modal} from "semantic-ui-react";
 import {V3JSONKeyStore} from 'evm-lite-lib';
 
-import {BaseAccount, ConfigSchema, Store} from "../../redux";
+import {BaseAccount, ConfigSchema, Store} from "../../../redux";
 
-import './styles/Account.css'
+import '../styles/Account.css'
 
 interface AlertProps {
     alert: InjectedAlertProp;

@@ -6,15 +6,15 @@ import {PersistConfig, persistReducer, persistStore} from 'redux-persist'
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import {InjectedAlertProp} from "react-alert";
 
-import {checkConnectivityInitWatcher, dataDirectoryChangeInitWatcher} from "../sagas/Application";
-import {configurationReadInitWatcher} from "../sagas/Configuration";
-import {keystoreListInitWatcher} from "../sagas/Keystore";
+import applicationSagas from "../sagas/Application";
+import configurationSagas from "../sagas/Configuration";
+import keystoreSagas from "../sagas/Keystore";
+import transactionSagas from "../sagas/Transactions";
 
-// import AccountsRootReducer, {AccountsReducer} from '../reducers/Accounts';
 import ConfigRootReducer, {ConfigReducer} from '../reducers/Configuration';
 import AppRootReducer, {AppReducer} from "../reducers/Application";
 import KeystoreRootReducer, {KeystoreReducer} from "../reducers/Keystore";
-// import TransactionRootReducer, {ITransactionsReducer} from "../reducers/Transactions";
+import TransactionsRootReducer, {ITransactionsReducer} from "../reducers/Transactions";
 
 
 export interface DefaultProps {
@@ -25,10 +25,9 @@ export interface DefaultProps {
 
 export interface Store {
     keystore: KeystoreReducer;
-    // accounts: AccountsReducer;
     config: ConfigReducer;
     app: AppReducer;
-    // transaction: ITransactionsReducer
+    transactions: ITransactionsReducer
 }
 
 const persistConfig: PersistConfig = {
@@ -39,10 +38,9 @@ const persistConfig: PersistConfig = {
 
 const rootReducer = combineReducers({
     keystore: KeystoreRootReducer,
-    // accounts: AccountsRootReducer,
     config: ConfigRootReducer,
     app: AppRootReducer,
-    // transaction: TransactionRootReducer,
+    transactions: TransactionsRootReducer,
 });
 
 const saga = createSagaMiddleware();
@@ -53,10 +51,10 @@ export default () => {
     const store = createStore(persistedReducer, applyMiddleware(...middleware));
     const persistor = persistStore(store);
 
-    saga.run(dataDirectoryChangeInitWatcher);
-    saga.run(configurationReadInitWatcher);
-    saga.run(checkConnectivityInitWatcher);
-    saga.run(keystoreListInitWatcher);
+    saga.run(applicationSagas);
+    saga.run(configurationSagas);
+    saga.run(keystoreSagas);
+    saga.run(transactionSagas);
 
     return {store, persistor}
 }

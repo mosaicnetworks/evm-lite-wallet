@@ -4,14 +4,15 @@ import {connect} from "react-redux";
 import {BrowserRouter, Route} from "react-router-dom";
 import {InjectedAlertProp, withAlert} from 'react-alert';
 
+import {Store} from "../redux";
+import {ApplicationDirectoryChangeType} from "../redux/reducers/Application";
+
 import Accounts from "../pages/Accounts";
 import Index from "../pages/Index";
 import Configuration from "../pages/Configuration";
 import Wrapper from "../components/Wrapper";
 import Application from "../redux/actions/Application";
 import Defaults from "../classes/Defaults";
-
-import {Store} from "../redux";
 
 import './styles/App.css';
 
@@ -21,8 +22,9 @@ interface AlertProps {
 }
 
 interface StoreProps {
-    directory: string | null;
+    directorySetTask: ApplicationDirectoryChangeType;
     connectivityError: string | null;
+    connectivityResponse: string | null;
 }
 
 interface DispatchProps {
@@ -42,16 +44,23 @@ class App extends React.Component<LocalProps, any> {
 
     public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<any>, nextContext: any): void {
         if (this.props.connectivityError === null && nextProps.connectivityError !== this.props.connectivityError) {
-            nextProps.alert.error(
-                'A connection to a node could not be established. ' +
-                'Please update the configuration' +
-                ' file with the correct host and port.'
-            );
+            nextProps.alert.error('A connection to a node could not be established.');
+        }
+
+        if (this.props.connectivityResponse === null &&
+            nextProps.connectivityResponse !== this.props.connectivityResponse) {
+            nextProps.alert.success('Connection to node has been established.');
+        }
+
+        if (this.props.directorySetTask.payload === null &&
+            nextProps.directorySetTask.error !== this.props.directorySetTask.error) {
+            nextProps.alert.error('There was a problem setting the data directory.');
         }
     }
 
     public componentDidMount = () => {
-        this.props.handleDataDirectoryInit(this.props.directory || Defaults.dataDirectory);
+        const directory = this.props.directorySetTask.payload;
+        this.props.handleDataDirectoryInit(directory || Defaults.dataDirectory);
     };
 
     public render() {
@@ -70,8 +79,9 @@ class App extends React.Component<LocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-    directory: store.app.directory.payload,
+    directorySetTask: store.app.directory,
     connectivityError: store.app.connectivity.error,
+    connectivityResponse: store.app.connectivity.response,
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({

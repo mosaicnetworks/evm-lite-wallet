@@ -10,10 +10,10 @@ import {BaseAccount, Store} from "../redux";
 import {KeystoreListType} from "../redux/reducers/Keystore";
 
 import Account from '../components/account/Account';
-import AccountCreate from "../components/account/AccountCreate";
-import AccountImport from "../components/account/AccountImport";
+import AccountCreate from "../components/account/modals/AccountCreate";
+import AccountImport from "../components/account/modals/AccountImport";
 import Keystore from '../redux/actions/Keystore';
-import LoadingButton from "../components/LoadingButton";
+import LoadingButton from "../components/modals/LoadingButton";
 
 import './styles/Accounts.css';
 
@@ -25,6 +25,7 @@ interface AlertProps {
 interface StoreProps {
     keystoreListTask: KeystoreListType;
     config: ConfigSchema | null;
+    connectivityError: string | null;
 }
 
 interface DispatchProps {
@@ -40,7 +41,18 @@ type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 const keystore = new Keystore();
 
 class Accounts extends React.Component<LocalProps, any> {
-    public handleRefreshAccounts = async () => {
+
+    public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<any>, nextContext: any): void {
+        if (!this.props.keystoreListTask.response && nextProps.keystoreListTask.response) {
+            nextProps.alert.success('Accounts refreshed.');
+        }
+
+        if (!this.props.keystoreListTask.error && nextProps.keystoreListTask.error) {
+            this.props.alert.error(nextProps.keystoreListTask.error);
+        }
+    }
+
+    public handleRefreshAccounts = () => {
         if (this.props.config) {
             const list = this.props.config.storage.keystore.split('/');
             const popped = list.pop();
@@ -51,15 +63,7 @@ class Accounts extends React.Component<LocalProps, any> {
 
             const keystoreParentDirectory = list.join('/');
 
-           await this.props.handleListAccountInit(keystoreParentDirectory);
-
-           if (this.props.keystoreListTask.response) {
-               this.props.alert.success('Accounts refreshed.');
-           }
-
-           if (this.props.keystoreListTask.error) {
-               this.props.alert.error(this.props.keystoreListTask.error);
-           }
+            this.props.handleListAccountInit(keystoreParentDirectory);
         } else {
             this.props.alert.info('Looks like there was a problem reading the config file.');
         }
@@ -83,7 +87,7 @@ class Accounts extends React.Component<LocalProps, any> {
                         <LoadingButton isLoading={keystoreListTask.isLoading}
                                        onClickHandler={this.handleRefreshAccounts}
                                        right={true}/>
-                </Header.Content>
+                    </Header.Content>
                 </Header>
                 <Divider hidden={true}/>
                 <div className={'page'}>
@@ -101,6 +105,7 @@ class Accounts extends React.Component<LocalProps, any> {
 const mapStoreToProps = (store: Store): StoreProps => ({
     keystoreListTask: store.keystore.list,
     config: store.config.load.response,
+    connectivityError: store.app.connectivity.error,
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({

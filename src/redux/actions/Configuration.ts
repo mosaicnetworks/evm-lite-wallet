@@ -8,9 +8,13 @@ export interface ConfigLoadPayLoad {
     name: string;
 }
 
+export interface ConfigSavePayLoad extends ConfigLoadPayLoad {
+    configSchema: ConfigSchema;
+}
+
 interface HandlerSchema {
     load: ActionCreatorHandlers<ConfigLoadPayLoad, ConfigSchema, string>
-    save: ActionCreatorHandlers<ConfigSchema, string, string>
+    save: ActionCreatorHandlers<ConfigSavePayLoad, string, string>
 }
 
 interface ActionSchema extends ActionInterface {
@@ -32,7 +36,7 @@ class Configuration extends BaseActions<HandlerSchema, ActionSchema> {
 
         this.handlers = {
             load: this.generateHandlers<ConfigLoadPayLoad, ConfigSchema, string>('Load'),
-            save: this.generateHandlers<ConfigSchema, string, string>('Save'),
+            save: this.generateHandlers<ConfigSavePayLoad, string, string>('Save'),
         };
     }
 

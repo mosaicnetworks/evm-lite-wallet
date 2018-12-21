@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {InjectedAlertProp, withAlert} from "react-alert";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {ConfigSchema, EVMLDispatch, Store} from "../../redux";
+import {ConfigSchema, EVMLDispatch, Store} from "../../../redux";
 
 
 interface AlertProps {

@@ -4,10 +4,10 @@ import {InjectedAlertProp, withAlert} from 'react-alert';
 import {connect} from "react-redux";
 import {Button, Divider, Form, Header, Icon, Label, Modal} from "semantic-ui-react";
 
-import {app, Store} from "../redux";
-import {DataDirectoryAppReducer} from "../redux/reducers/Application";
+import {app, Store} from "../../redux";
+import {ApplicationDirectoryChangeType} from "../../redux/reducers/Application";
 
-import Defaults from "../classes/Defaults";
+import Defaults from "../../classes/Defaults";
 
 
 interface AlertProps {
@@ -15,7 +15,7 @@ interface AlertProps {
 }
 
 interface StoreProps {
-    dataDirectoryTask: DataDirectoryAppReducer;
+    dataDirectoryTask: ApplicationDirectoryChangeType;
     connectivityError: string | null;
 }
 
@@ -79,7 +79,7 @@ class DataDirectoryButton extends React.Component<LocalProps, State> {
                     <br/><br/>
                     <Label>
                         Data Directory
-                        <Label.Detail>{this.state.fields.dataDirectory}</Label.Detail>
+                        <Label.Detail>{this.props.dataDirectoryTask.payload}</Label.Detail>
                     </Label><br/><br/>
                     <Divider/>
                     <Modal.Description>

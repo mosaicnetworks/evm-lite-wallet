@@ -4,7 +4,7 @@ import {withAlert} from "react-alert";
 import {connect} from "react-redux";
 import {Button, Form, Icon, Message, Modal, TextArea} from "semantic-ui-react";
 
-import {BaseAccount, DefaultProps, Store} from "../../redux";
+import {BaseAccount, DefaultProps, Store} from "../../../redux";
 
 export interface AccountImportLocalProps extends DefaultProps {
     // redux states

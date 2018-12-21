@@ -4,12 +4,12 @@ import {IBasicReducer} from "../common/reducers/BasicReducerFactory";
 import Application, {AppConnectivityPayLoad} from "../actions/Application";
 
 
-export type DataDirectoryAppReducer = IBasicReducer<string, string, string>;
-export type ConnectivityAppReducer = IBasicReducer<AppConnectivityPayLoad, string, string>;
+export type ApplicationDirectoryChangeType = IBasicReducer<string, string, string>;
+export type ApplicationConnectivityCheckType = IBasicReducer<AppConnectivityPayLoad, string, string>;
 
 export interface AppReducer {
-    directory: DataDirectoryAppReducer;
-    connectivity: ConnectivityAppReducer;
+    directory: ApplicationDirectoryChangeType;
+    connectivity: ApplicationConnectivityCheckType;
 }
 
 const app = new Application();
