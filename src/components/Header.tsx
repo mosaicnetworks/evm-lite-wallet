@@ -9,7 +9,6 @@ import {KeystoreListType} from "../redux/reducers/Keystore";
 import {ApplicationDirectoryChangeType} from "../redux/reducers/Application";
 
 import DataDirectoryButton from "./modals/DataDirectoryButton";
-// import LoadingButton from "./modals/LoadingButton";
 import Application from "../redux/actions/Application";
 import Defaults from "../classes/Defaults";
 
@@ -65,9 +64,11 @@ class Header extends React.Component<LocalProps, any> {
                             <a><DataDirectoryButton color={"teal"}/></a>
                         </li>
                         <li>
-                            {/*<a><LoadingButton isLoading={keystoreListTask.isLoading}*/}
-                            {/*onClickHandler={this.handleReloadApp}*/}
-                            {/*right={true}/></a>*/}
+                            <a>
+                                <Label horizontal={true} color={'green'}>
+                                    Online
+                                </Label>
+                            </a>
                         </li>
                     </div>
                 </Container>

@@ -66,8 +66,9 @@ class AccountImport extends React.Component<AccountImportLocalProps, any & State
         return (
             <React.Fragment>
                 <Modal open={this.state.open} onClose={this.close}
-                       trigger={<Button basic={false} onClick={this.open} color={"orange"}><Icon
-                           name="upload"/>Import</Button>}>
+                       trigger={<Button content='Import' color={"orange"}
+                                        onClick={this.open} icon='upload'
+                                        labelPosition='left' />}>
                     <Modal.Header>Import an Account</Modal.Header>
                     {(parseError || error) && (<Modal.Content>
                         <Message icon={true} error={true}>

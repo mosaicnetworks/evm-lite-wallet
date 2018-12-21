@@ -87,11 +87,9 @@ class AccountCreate extends React.Component<LocalProps, any & State> {
                 <Modal open={this.state.open}
                        onClose={this.close}
                        trigger={
-                           <Button color={"green"}
+                           <Button content='Create' color={"green"} icon='plus'
                                    onClick={this.open}
-                                   basic={false}>
-                               <Icon name="plus"/>Create
-                           </Button>
+                                   labelPosition='left' />
                        }>
                     <Modal.Header>Create an Account</Modal.Header>
                     <Modal.Content>
