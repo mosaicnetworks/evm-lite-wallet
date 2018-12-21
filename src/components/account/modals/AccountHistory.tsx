@@ -29,10 +29,9 @@ class AccountHistory extends React.Component<AccountsHistoryLocalProps, any> {
 
                     <Table.Body>
                         {this.props.txs && this.props.txs.map((tx: any) => {
-                            console.log(tx);
-                            return (<Table.Row key={tx.txHash}>
+                            return (<Table.Row key={tx.txHash || tx.hash}>
                                 <Table.Cell>
-                                    {Static.cleanAddress(tx.to)}
+                                    {Static.cleanAddress(tx.to).toUpperCase()}
                                 </Table.Cell>
                                 <Table.Cell>{tx.value}</Table.Cell>
                                 <Table.Cell><Label color={"green"}>Successful</Label></Table.Cell>

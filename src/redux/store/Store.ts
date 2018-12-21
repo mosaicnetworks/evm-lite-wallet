@@ -10,11 +10,13 @@ import applicationSagas from "../sagas/Application";
 import configurationSagas from "../sagas/Configuration";
 import keystoreSagas from "../sagas/Keystore";
 import transactionSagas from "../sagas/Transactions";
+import accountsSaga from '../sagas/Accounts';
 
 import ConfigRootReducer, {ConfigReducer} from '../reducers/Configuration';
 import AppRootReducer, {AppReducer} from "../reducers/Application";
 import KeystoreRootReducer, {KeystoreReducer} from "../reducers/Keystore";
 import TransactionsRootReducer, {ITransactionsReducer} from "../reducers/Transactions";
+import AccountsRootReducer, {IAccountsReducer} from "../reducers/Accounts";
 
 
 export interface DefaultProps {
@@ -24,6 +26,7 @@ export interface DefaultProps {
 }
 
 export interface Store {
+    accounts: IAccountsReducer;
     keystore: KeystoreReducer;
     config: ConfigReducer;
     app: AppReducer;
@@ -37,6 +40,7 @@ const persistConfig: PersistConfig = {
 };
 
 const rootReducer = combineReducers({
+    accounts: AccountsRootReducer,
     keystore: KeystoreRootReducer,
     config: ConfigRootReducer,
     app: AppRootReducer,
@@ -55,6 +59,7 @@ export default () => {
     saga.run(configurationSagas);
     saga.run(keystoreSagas);
     saga.run(transactionSagas);
+    saga.run(accountsSaga);
 
     return {store, persistor}
 }

@@ -2,31 +2,30 @@ import * as React from 'react';
 
 import {InjectedAlertProp, withAlert} from "react-alert";
 import {connect} from "react-redux";
-import {Button, Divider, Form, Header, Label, Modal} from "semantic-ui-react";
-import {V3JSONKeyStore} from 'evm-lite-lib';
+import {Button, Divider, Form, Header, Modal} from "semantic-ui-react";
 
-import {BaseAccount, ConfigSchema, Store} from "../../../redux";
+import {BaseAccount, Store} from "../../../redux";
+import {AccountsDecryptType} from "../../../redux/reducers/Accounts";
+import {KeystoreUpdateType} from "../../../redux/reducers/Keystore";
+
+import Accounts, {AccountsDecryptPayload} from "../../../redux/actions/Accounts";
+import Keystore, {KeystoreUpdatePayload} from "../../../redux/actions/Keystore";
 
 import '../styles/Account.css'
+
 
 interface AlertProps {
     alert: InjectedAlertProp;
 }
 
 interface StoreProps {
-    error?: string | null;
-    response?: string | null;
-    isLoading?: boolean;
-    config?: ConfigSchema | null
-    decryption?: any
+    accountDecryptTask: AccountsDecryptType;
+    keystoreUpdateTask: KeystoreUpdateType;
 }
 
 interface DispatchProps {
-    empty?: null;
-    // handleUpdatePassword: (a: string, o: string, n: string) => Promise<BaseAccount[]>;
-    // handleUpdateReset: () => void;
-    // handleDecryptionReset: () => void;
-    // handleDecryption: (data: DecryptionParams) => Promise<string>;
+    handleDecryption: (payload: AccountsDecryptPayload) => void;
+    handleUpdatePassword: (payload: KeystoreUpdatePayload) => void;
 }
 
 interface OwnProps {
@@ -37,132 +36,109 @@ type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps
 
 interface State {
     open: boolean;
-    oldPassword: string;
-    newPassword: string;
-    verifyNewPassword: string;
-    v3JSONKeystore: V3JSONKeyStore;
     updateDisable: boolean;
-    matchingPasswordError: string;
+    fields: {
+        oldPassword: string;
+        newPassword: string;
+        verifyNewPassword: string;
+    }
 }
 
-class AccountUpdate extends React.Component<LocalProps, any & State> {
+const accounts = new Accounts();
+const keystore = new Keystore();
+
+class AccountUpdate extends React.Component<LocalProps, State> {
     public state = {
         open: false,
-        oldPassword: '',
-        verifyNewPassword: '',
-        newPassword: '',
-        matchingPasswordError: '',
-        v3JSONKeystore: {},
-        updateDisable: true
+        updateDisable: true,
+        fields: {
+            oldPassword: '',
+            verifyNewPassword: '',
+            newPassword: '',
+        }
     };
+
+    public componentWillReceiveProps(nextProps: Readonly<LocalProps>, nextContext: any): void {
+        if (!this.props.accountDecryptTask.error && !!nextProps.accountDecryptTask.error &&
+            !!this.state.fields.oldPassword) {
+            this.props.alert.error('Could not decrypt account with password provided.');
+            this.setState({updateDisable: true});
+        }
+
+        if (!this.props.accountDecryptTask.response && !!nextProps.accountDecryptTask.response &&
+            !!this.state.fields.oldPassword) {
+            this.props.alert.success(nextProps.accountDecryptTask.response);
+            this.setState({updateDisable: false});
+        }
+
+        if (!this.props.keystoreUpdateTask.response && !!nextProps.keystoreUpdateTask.response
+            && !this.state.updateDisable) {
+            this.props.alert.success('Account updated successfully.');
+            this.close();
+        }
+    }
 
     public open = () => this.setState({open: true});
     public close = () => {
-        // if (this.props.decryption.response || this.props.decryption.error) {
-        //     this.props.handleDecryptionReset();
-        // }
-        //
-        // if (this.props.response || this.props.error) {
-        //     this.props.handleUpdateReset();
-        // }
-
-        this.setState({open: false});
+        this.setState({open: false, updateDisable: true});
     };
 
     public handleSave = () => {
-        // this.setState({matchingPasswordError: ''});
-        //
-        // const {oldPassword, newPassword, verifyNewPassword} = this.state;
-        //
-        // if (!newPassword && !verifyNewPassword) {
-        //     this.setState({matchingPasswordError: 'The fields cannot be empty!'});
-        //     return;
-        // }
-        //
-        // if (newPassword !== verifyNewPassword) {
-        //     this.setState({matchingPasswordError: 'New password & verify password must match!'});
-        // } else {
-        // this.props.handleUpdatePassword(this.props.account.address, oldPassword, newPassword)
-        //     .then(() => {
-        //         if (this.props.response) {
-        //             this.props.alert.success('Account password successfully updated!');
-        //         } else {
-        //             this.props.alert.error(this.props.error || "");
-        //         }
-        //     })
-        //     .then(() => {
-        //         this.close();
-        //     })
-        // }
+        const {newPassword, verifyNewPassword} = this.state.fields;
+
+        if (!newPassword && !verifyNewPassword) {
+            this.props.alert.error('The fields cannot be empty!');
+            return;
+        }
+
+        if (newPassword !== verifyNewPassword) {
+            this.props.alert.error('New password & verify password must match!');
+        } else {
+            this.props.handleUpdatePassword({
+                address: this.props.account.address,
+                old: this.state.fields.oldPassword,
+                new: this.state.fields.newPassword
+            })
+        }
     };
 
     public handleChangeOldPassword = (e: any) => {
-        this.setState({oldPassword: e.target.value});
-    };
-
-    public getDecryptIcon = (): ('circle notched' | 'info circle' | 'times' | 'thumbs up') => {
-        const {decryption} = this.props;
-        let icon: ('circle notched' | 'info circle' | 'times' | 'thumbs up') = decryption.isLoading ? 'circle notched' : 'info circle';
-
-        if (!decryption.isLoading && decryption.response) {
-            icon = 'thumbs up'
-        }
-
-        if (!decryption.isLoading && decryption.error) {
-            icon = 'times'
-        }
-
-        return icon
-    };
-
-    public getMessageHeaderAndContent = () => {
-        const {decryption} = this.props;
-        let header = decryption.isLoading ? 'Decrypting...' :
-            'Password is required to decryption the account before a transfer.';
-        let message = decryption.isLoading ? 'Please wait while we try to decryption the account' :
-            `Please enter the password for the account: ${this.props.account.address}`;
-
-        if (!decryption.isLoading && decryption.response) {
-            header = 'Decryption Successful';
-            message = 'The account was successfully decrypted with the password provided!';
-        }
-
-        if (!decryption.isLoading && decryption.error) {
-            header = 'Decryption Failed';
-            message = 'The account was could not be decrypted with the password provided!';
-        }
-
-        return {
-            header,
-            message
-        }
+        this.setState({
+            fields: {
+                ...this.state.fields,
+                oldPassword: e.target.value
+            }
+        });
     };
 
     public handleChangeNewPassword = (e: any) => {
-        this.setState({newPassword: e.target.value});
+        this.setState({
+            fields: {
+                ...this.state.fields,
+                newPassword: e.target.value
+            }
+        });
     };
 
     public handleChangeVerifyNewPassword = (e: any) => {
-        this.setState({verifyNewPassword: e.target.value});
+        this.setState({
+            fields: {
+                ...this.state.fields,
+                verifyNewPassword: e.target.value
+            }
+        });
     };
 
     public onBlurPassword = async () => {
-        // if (!this.props.decryption.response) {
-        //     this.props.handleDecryption({
-        //         v3JSONKeystore: await keystore.keystore.get(this.props.account.address),
-        //         password: this.state.oldPassword
-        //     })
-        //         .then(() => {
-        //             if (this.props.decryption.response) {
-        //                 this.setState({updateDisable: false})
-        //             }
-        //         })
-        // }
+        if (!this.props.accountDecryptTask.response) {
+            this.props.handleDecryption({
+                address: this.props.account.address,
+                password: this.state.fields.oldPassword
+            })
+        }
     };
 
     public render() {
-        // const {isLoading, error, config, decryption} = this.props;
-        // const decryptMessage = this.getMessageHeaderAndContent();
         return (
             <React.Fragment>
                 <Modal open={this.state.open} onClose={this.close}
@@ -175,21 +151,7 @@ class AccountUpdate extends React.Component<LocalProps, any & State> {
                         Account will be encrypted with the new password and the current v3JSONKeystore file will be
                         overwritten with the new JSON data.
                         <br/><br/>
-                        <Label>
-                            Keystore
-                            {/*<Label.Detail>{config && config.storage.keystore}</Label.Detail>*/}
-                        </Label><br/><br/>
                         <Divider/>
-                        {/*{(this.state.matchingPasswordError || error) && (<Modal.Content>*/}
-                        {/*<Message icon={true} error={true}>*/}
-                        {/*<Icon name={"times"}/>*/}
-                        {/*<Message.Content>*/}
-                        {/*<Message.Header>*/}
-                        {/*Oops! {this.state.matchingPasswordError ? this.state.matchingPasswordError : error}*/}
-                        {/*</Message.Header>*/}
-                        {/*</Message.Content>*/}
-                        {/*</Message>*/}
-                        {/*</Modal.Content>)}*/}
                         <br/>
                         <Modal.Description>
                             <Form>
@@ -198,16 +160,6 @@ class AccountUpdate extends React.Component<LocalProps, any & State> {
                                     <input onBlur={this.onBlurPassword} type={"password"} placeholder='Old Password'
                                            onChange={this.handleChangeOldPassword}/>
                                 </Form.Field>
-                                {/*<Message icon={true} info={decryption.isLoading} negative={!!(decryption.error)}*/}
-                                {/*positive={!!(decryption.response)}>*/}
-                                {/*<Icon name={this.getDecryptIcon()} loading={decryption.isLoading}/>*/}
-                                {/*<Message.Content>*/}
-                                {/*<Message.Header>*/}
-                                {/*{decryptMessage.header}*/}
-                                {/*</Message.Header>*/}
-                                {/*<p>{decryptMessage.message}</p>*/}
-                                {/*</Message.Content>*/}
-                                {/*</Message>*/}
                                 <Form.Field>
                                     <label>New Password</label>
                                     <input type={"password"} placeholder='New Password'
@@ -223,12 +175,11 @@ class AccountUpdate extends React.Component<LocalProps, any & State> {
                         </Modal.Description>
                     </Modal.Content>
                     <Modal.Actions>
-                        {/*{isLoading && (<span className={"m-2"}>*/}
-                        {/*<Icon color={"green"} name={"circle notch"} loading={true}/>*/}
-                        {/*Saving...*/}
-                        {/*</span>)}*/}
                         <Button onClick={this.close}>Close</Button>
-                        <Button disabled={this.state.updateDisable} onClick={this.handleSave} color={"green"}
+                        <Button disabled={this.state.updateDisable}
+                                loading={this.props.accountDecryptTask.isLoading ||
+                                this.props.keystoreUpdateTask.isLoading}
+                                onClick={this.handleSave} color={"green"}
                                 type='submit'>Update</Button>
                     </Modal.Actions>
                 </Modal>
@@ -237,19 +188,14 @@ class AccountUpdate extends React.Component<LocalProps, any & State> {
     }
 }
 
-const mapStoreToProps = (store: Store): StoreProps => ({});
+const mapStoreToProps = (store: Store): StoreProps => ({
+    accountDecryptTask: store.accounts.decrypt,
+    keystoreUpdateTask: store.keystore.update,
+});
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-    // handleUpdatePassword: (a: string, o: string, n: string) => {
-    //     return dispatch(keystore.handleUpdateThenFetch({
-    //         newPassword: n,
-    //         oldPassword: o,
-    //         address: a,
-    //     }));
-    // },
-    // handleUpdateReset: () => dispatch(keystore.handlers<string, string>('Update').reset()),
-    // handleDecryptionReset: () => dispatch(accounts.handlers<string, string>('Decrypt').reset()),
-    // handleDecryption: (data: DecryptionParams) => dispatch(accounts.handleDecryption(data)),
+    handleDecryption: payload => dispatch(accounts.handlers.decrypt.init(payload)),
+    handleUpdatePassword: payload => dispatch(keystore.handlers.update.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

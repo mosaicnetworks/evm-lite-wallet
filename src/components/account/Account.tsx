@@ -38,7 +38,7 @@ type LocalProps = AlertProps & DispatchProps & OwnProps & StoreProps;
 
 class Account extends React.Component<LocalProps, any> {
     public state = {
-        showTxHistory: false,
+        showTxHistory: true,
     };
 
     public onTXHistoryClick = () => {

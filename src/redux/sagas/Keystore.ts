@@ -5,7 +5,7 @@ import {BaseAccount, Keystore as EVMLKeystore} from "evm-lite-lib";
 import {Store} from "..";
 import {checkConnectivityWorker} from "./Application";
 
-import Keystore, {KeystoreListPayload} from "../actions/Keystore";
+import Keystore, {KeystoreListPayload, KeystoreUpdatePayload} from "../actions/Keystore";
 import Transactions from "../actions/Transactions";
 import Application from "../actions/Application";
 
@@ -15,12 +15,21 @@ interface KeystoreListAction {
     payload: KeystoreListPayload;
 }
 
+interface KeystoreUpdateAction {
+    type: string;
+    payload: KeystoreUpdatePayload;
+}
+
 const keystore = new Keystore();
 const transactions = new Transactions();
 const app = new Application();
 
 function* keystoreListInitWatcher() {
     yield takeLatest(keystore.actions.list.init, keystoreListWorker);
+}
+
+function* keystoreUpdateInitWatcher() {
+    yield takeLatest(keystore.actions.update.init, keystoreUpdateWorker);
 }
 
 export function* keystoreListWorker(action: KeystoreListAction) {
@@ -56,8 +65,39 @@ export function* keystoreListWorker(action: KeystoreListAction) {
     }
 }
 
+export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
+    try {
+        const state: Store = yield select();
+
+        if (state.config.load.response) {
+            const list = state.config.load.response.storage.keystore.split('/');
+            const popped = list.pop();
+
+            if (popped === "/") {
+                list.pop();
+            }
+
+            const keystoreParentDir = list.join('/');
+            const evmlKeystore: EVMLKeystore = new EVMLKeystore(keystoreParentDir, 'keystore');
+
+            const account = yield evmlKeystore.update(
+                action.payload.address,
+                action.payload.old,
+                action.payload.new
+            );
+
+            yield put(keystore.handlers.update.success(JSON.parse(account)))
+        }
+
+    } catch (e) {
+        yield put(keystore.handlers.update.failure('Something went wrong trying to update password.'));
+    }
+
+    yield put(keystore.handlers.update.reset());
+}
+
 export default function* keystoreSagas() {
-    yield all([keystoreListInitWatcher()]);
+    yield all([keystoreListInitWatcher(), keystoreUpdateInitWatcher()]);
 }
 
 
