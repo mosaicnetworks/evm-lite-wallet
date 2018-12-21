@@ -1,21 +1,58 @@
 import * as React from 'react';
 
 import {Button, Card, Icon, Image, Label} from 'semantic-ui-react'
+import {connect} from "react-redux";
+import {InjectedAlertProp, withAlert} from "react-alert";
 
-import AccountUpdate from "./AccountUpdate";
-import AccountExport from "./AccountExport";
-import AccountTransfer from "./AccountTransfer";
-import AccountHistory from "./AccountHistory";
+import {Store} from "../../redux";
+import {BaseAccount} from "evm-lite-lib/evm/client/AccountClient";
+
+import {TransactionHistoryType} from "../../redux/reducers/Transactions";
+
+import AccountUpdate from "./modals/AccountUpdate";
+import AccountExport from "./modals/AccountExport";
+import AccountTransfer from "./modals/AccountTransfer";
+import AccountHistory from "./modals/AccountHistory";
 
 import './styles/Account.css'
+import {SentTX} from "evm-lite-lib/evm/classes/Transaction";
 
-class Account extends React.Component<any, any> {
+
+interface AlertProps {
+    alert: InjectedAlertProp;
+}
+
+interface StoreProps {
+    transactionHistoryTask: TransactionHistoryType;
+}
+
+interface DispatchProps {
+    empty?: null;
+}
+
+interface OwnProps {
+    account: BaseAccount;
+}
+
+type LocalProps = AlertProps & DispatchProps & OwnProps & StoreProps;
+
+class Account extends React.Component<LocalProps, any> {
     public state = {
-        showTxHistory: false,
+        showTxHistory: true,
     };
 
     public onTXHistoryClick = () => {
         this.setState({showTxHistory: !(this.state.showTxHistory)});
+    };
+
+    public transactionHistory = (): SentTX[] => {
+        const {transactionHistoryTask, account} = this.props;
+
+        if (transactionHistoryTask.response) {
+            return transactionHistoryTask.response[account.address] || []
+        } else {
+            return []
+        }
     };
 
     public render() {
@@ -50,10 +87,20 @@ class Account extends React.Component<any, any> {
                     </div>
                 </Card.Content>
                 {(this.state.showTxHistory) ?
-                    (<Card.Content><AccountHistory account={this.props.account}/></Card.Content>) : null}
+                    (<Card.Content><AccountHistory
+                        account={this.props.account} txs={this.transactionHistory()}/></Card.Content>) : null}
             </Card>
         );
     }
 }
 
-export default Account;
+const mapStoreToProps = (store: Store): StoreProps => ({
+    transactionHistoryTask: store.transactions.history,
+});
+
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({});
+
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
+    mapStoreToProps,
+    mapDispatchToProps
+)(withAlert<AlertProps>(Account));

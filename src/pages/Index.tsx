@@ -3,16 +3,18 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Divider, Header, Icon, Message} from "semantic-ui-react";
 
-import {DefaultProps, Store} from "../redux";
+import {Store} from "../redux";
 
 import Defaults from "../classes/Defaults";
 
 
-export interface IndexLocalProps extends DefaultProps {
-    currentDataDirectory: string
+interface StoreProps {
+    currentDataDirectory: string | null;
 }
 
-class Index extends React.Component<IndexLocalProps, any> {
+type LocalProps = StoreProps
+
+class Index extends React.Component<LocalProps, any> {
     public render() {
         const {currentDataDirectory} = this.props;
         return (
@@ -32,7 +34,7 @@ class Index extends React.Component<IndexLocalProps, any> {
                     </p>
                     <Message.List>
                         <Message.Item><b>Default: </b> {Defaults.dataDirectory}</Message.Item>
-                        <Message.Item><b>Current: </b> {currentDataDirectory && currentDataDirectory}</Message.Item>
+                        <Message.Item><b>Current: </b> {currentDataDirectory || ""}</Message.Item>
                     </Message.List>
                 </Message>
             </React.Fragment>
@@ -40,10 +42,13 @@ class Index extends React.Component<IndexLocalProps, any> {
     }
 }
 
-const mapStoreToProps = (store: Store) => ({
-    currentDataDirectory: store.app.dataDirectory.response
+const mapStoreToProps = (store: Store): StoreProps => ({
+    currentDataDirectory: store.app.directory.payload,
 });
 
 const mapsDispatchToProps = (dispatch: any) => ({});
 
-export default connect(mapStoreToProps, mapsDispatchToProps)(Index);
+export default connect<StoreProps, {}, {}, Store>(
+    mapStoreToProps,
+    mapsDispatchToProps
+)(Index);

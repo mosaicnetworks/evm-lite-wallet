@@ -1,21 +1,32 @@
 import * as React from 'react';
 
 import {connect} from "react-redux";
+import {InjectedAlertProp, withAlert} from "react-alert";
 import {Button, Divider, Form, Header, Icon, Label, Message, Modal} from "semantic-ui-react";
 
-import {BaseAccount, ConfigSchema, DefaultProps, EVMLDispatch, keystore, Store} from "../../redux";
-import {withAlert} from "react-alert";
+import {ConfigSchema, EVMLDispatch, Store} from "../../../redux";
 
-export interface AccountCreateLocalProps extends DefaultProps {
-    // redux states
-    isLoading: boolean;
-    response: string;
-    error: string,
-    config: ConfigSchema
 
-    // thunk action handlers
-    handleCreateAccount: (password: string) => Promise<BaseAccount[]>;
+interface AlertProps {
+    alert: InjectedAlertProp;
 }
+
+interface StoreProps {
+    isLoading?: boolean;
+    response?: string | null;
+    error?: string | null;
+    config?: ConfigSchema | null;
+}
+
+interface DispatchProps {
+    empty?: null;
+}
+
+interface OwnProps {
+    empty?: null;
+}
+
+type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps
 
 interface State {
     open: boolean;
@@ -24,7 +35,7 @@ interface State {
     errorState: string;
 }
 
-class AccountCreate extends React.Component<AccountCreateLocalProps, any & State> {
+class AccountCreate extends React.Component<LocalProps, any & State> {
     public state = {
         open: false,
         password: '',
@@ -43,7 +54,7 @@ class AccountCreate extends React.Component<AccountCreateLocalProps, any & State
         this.setState({verifyPassword: e.target.value});
     };
 
-    public handleCreate = () => {
+    public handleCreate = async () => {
         this.setState({errorState: ''});
 
         const {password, verifyPassword} = this.state;
@@ -58,14 +69,14 @@ class AccountCreate extends React.Component<AccountCreateLocalProps, any & State
         }
 
         this.close();
-        this.props.handleCreateAccount(password)
-            .then(() => {
-                if (this.props.response) {
-                    this.props.alert.success('Account created!');
-                } else {
-                    this.props.alert.error('Error: ' + this.props.error);
-                }
-            })
+
+        // await this.props.handleCreateAccount(password);
+
+        if (this.props.response) {
+            this.props.alert.success('Account created!');
+        } else {
+            this.props.alert.error('Error: ' + this.props.error);
+        }
     };
 
     public render() {
@@ -73,7 +84,13 @@ class AccountCreate extends React.Component<AccountCreateLocalProps, any & State
         const {isLoading, config} = this.props;
         return (
             <React.Fragment>
-                <Modal open={this.state.open} onClose={this.close} trigger={<Button color={"green"} onClick={this.open} basic={false}><Icon name="plus"/>Create</Button>}>
+                <Modal open={this.state.open}
+                       onClose={this.close}
+                       trigger={
+                           <Button content='Create' color={"green"} icon='plus'
+                                   onClick={this.open}
+                                   labelPosition='left' />
+                       }>
                     <Modal.Header>Create an Account</Modal.Header>
                     <Modal.Content>
                         <Header as={"h4"}>
@@ -97,7 +114,7 @@ class AccountCreate extends React.Component<AccountCreateLocalProps, any & State
                                     </Message.Header>
                                 </Message.Content>
                             </Message>
-                        </Modal.Content>)}<br />
+                        </Modal.Content>)}<br/>
                         <Modal.Description>
                             <Form>
                                 <Form.Field>
@@ -123,13 +140,12 @@ class AccountCreate extends React.Component<AccountCreateLocalProps, any & State
     }
 }
 
-const mapStoreToProps = (store: Store) => ({
-    ...store.keystore.create,
-    config: store.config.read.response
+const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
-const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>) => ({
-    handleCreateAccount: (password: string) => dispatch(keystore.handleCreateThenFetch(password)),
-});
+const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>): DispatchProps => ({});
 
-export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountCreate));
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
+    mapStoreToProps,
+    mapDispatchToProps
+)(withAlert<AlertProps>(AccountCreate));

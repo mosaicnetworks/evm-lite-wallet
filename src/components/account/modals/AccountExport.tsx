@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import {connect} from "react-redux";
-import {Button, Form, Icon, Modal, TextArea} from "semantic-ui-react";
+import {Button, Form, Modal, TextArea} from "semantic-ui-react";
 
-import {DefaultProps, Store, BaseAccount} from "../../redux";
+import {BaseAccount, DefaultProps, Store} from "../../../redux";
 
 import './styles/AccountExport.css'
 
@@ -49,7 +49,7 @@ class AccountExport extends React.Component<AccountExportLocalProps, any & State
         };
         return (
             <React.Fragment>
-                <Modal trigger={<Button basic={false}><Icon name="download"/> Export</Button>}>
+                <Modal trigger={<Button basic={false}>Export</Button>}>
                     <Modal.Header>Export: {this.props.account.address}</Modal.Header>
                     <Modal.Content>
                         <Modal.Description>

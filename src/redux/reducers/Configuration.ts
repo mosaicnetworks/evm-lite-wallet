@@ -3,22 +3,22 @@ import {ConfigSchema} from 'evm-lite-lib';
 
 import {IBasicReducer} from "../common/reducers/BasicReducerFactory";
 
-import Configuration from "../actions/Configuration";
+import Configuration, {ConfigLoadPayLoad, ConfigSavePayLoad} from "../actions/Configuration";
 
 
-export type ReadConfigReducer = IBasicReducer<ConfigSchema, string>;
-export type SaveConfigReducer = IBasicReducer<string, string>;
+export type ConfigLoadType = IBasicReducer<ConfigLoadPayLoad, ConfigSchema, string>;
+export type ConfigSaveType = IBasicReducer<any, string, string>;
 
 export interface ConfigReducer {
-    read: ReadConfigReducer;
-    save: SaveConfigReducer;
+    load: ConfigLoadType;
+    save: ConfigSaveType;
 }
 
 const configuration = new Configuration();
 
 const ConfigReducer = combineReducers({
-    read: configuration.SimpleReducer<any, string>('Detail'),
-    save: configuration.SimpleReducer<string, string>('Update'),
+    load: configuration.SimpleReducer<ConfigLoadPayLoad, ConfigSchema, string>('Load'),
+    save: configuration.SimpleReducer<ConfigSavePayLoad, string, string>('Save'),
 });
 
 export default ConfigReducer;

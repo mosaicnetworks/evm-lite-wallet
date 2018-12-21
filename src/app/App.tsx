@@ -2,30 +2,65 @@ import * as React from 'react';
 
 import {connect} from "react-redux";
 import {BrowserRouter, Route} from "react-router-dom";
-import {withAlert} from 'react-alert';
+import {InjectedAlertProp, withAlert} from 'react-alert';
+
+import {Store} from "../redux";
+import {ApplicationDirectoryChangeType} from "../redux/reducers/Application";
 
 import Accounts from "../pages/Accounts";
 import Index from "../pages/Index";
 import Configuration from "../pages/Configuration";
 import Wrapper from "../components/Wrapper";
-
-import {app, configuration, DataDirectoryParams, DefaultProps, keystore, Store} from "../redux";
-
+import Application from "../redux/actions/Application";
 import Defaults from "../classes/Defaults";
 
 import './styles/App.css';
 
 
-export interface ApplicationLocalProps extends DefaultProps {
-    // thunk action handlers
-    handleFetchLocalAccounts: () => void;
-    handleReadConfig: () => Promise<any>;
-    handleDataDirectoryInit: (data: DataDirectoryParams) => void;
+interface AlertProps {
+    alert: InjectedAlertProp;
 }
 
-class App extends React.Component<ApplicationLocalProps, any> {
+interface StoreProps {
+    directorySetTask: ApplicationDirectoryChangeType;
+    connectivityError: string | null;
+    connectivityResponse: string | null;
+}
+
+interface DispatchProps {
+    handleDataDirectoryInit: (directory: string) => void;
+}
+
+interface OwnProps {
+    empty?: null;
+}
+
+type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
+
+
+const application = new Application();
+
+class App extends React.Component<LocalProps, any> {
+
+    public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<any>, nextContext: any): void {
+        if (this.props.connectivityError === null && nextProps.connectivityError !== this.props.connectivityError) {
+            nextProps.alert.error('A connection to a node could not be established.');
+        }
+
+        if (this.props.connectivityResponse === null &&
+            nextProps.connectivityResponse !== this.props.connectivityResponse) {
+            nextProps.alert.success('Connection to node has been established.');
+        }
+
+        if (this.props.directorySetTask.payload === null &&
+            nextProps.directorySetTask.error !== this.props.directorySetTask.error) {
+            nextProps.alert.error('There was a problem setting the data directory.');
+        }
+    }
+
     public componentDidMount = () => {
-        this.props.handleDataDirectoryInit({path: Defaults.dataDirectory});
+        const directory = this.props.directorySetTask.payload;
+        this.props.handleDataDirectoryInit(directory || Defaults.dataDirectory);
     };
 
     public render() {
@@ -43,12 +78,17 @@ class App extends React.Component<ApplicationLocalProps, any> {
     }
 }
 
-const mapStoreToProps = (store: Store) => ({});
-
-const mapsDispatchToProps = (dispatch: any) => ({
-    handleFetchLocalAccounts: () => dispatch(keystore.handleFetch()),
-    handleReadConfig: () => dispatch(configuration.handleRead()),
-    handleDataDirectoryInit: (data: DataDirectoryParams) => dispatch(app.handleDataDirInitThenPopulateApp(data)),
+const mapStoreToProps = (store: Store): StoreProps => ({
+    directorySetTask: store.app.directory,
+    connectivityError: store.app.connectivity.error,
+    connectivityResponse: store.app.connectivity.response,
 });
 
-export default connect(mapStoreToProps, mapsDispatchToProps)(withAlert(App));
+const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
+    handleDataDirectoryInit: directory => dispatch(application.handlers.directory.init(directory)),
+});
+
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
+    mapStoreToProps,
+    mapsDispatchToProps
+)(withAlert<AlertProps>(App))

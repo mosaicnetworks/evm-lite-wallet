@@ -4,21 +4,43 @@ import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {Container, Icon, Label} from "semantic-ui-react";
 
-import {DefaultProps, Store} from "../redux";
+import {Store} from "../redux";
+import {KeystoreListType} from "../redux/reducers/Keystore";
+import {ApplicationDirectoryChangeType} from "../redux/reducers/Application";
 
-import DataDirectoryButton from "./DataDirectoryButton";
+import DataDirectoryButton from "./modals/DataDirectoryButton";
+import Application from "../redux/actions/Application";
+import Defaults from "../classes/Defaults";
 
 import './styles/Header.css';
 
-export interface HeaderLocalProps extends DefaultProps {
 
-    // redux states
-    total: number,
+interface StoreProps {
+    keystoreListTask: KeystoreListType;
+    directorySetTask: ApplicationDirectoryChangeType;
 }
 
-class Header extends React.Component<HeaderLocalProps, any> {
+interface DispatchProps {
+    handleDataDirectoryInit: (directory: string) => void;
+}
+
+interface OwnProps {
+    empty?: null;
+}
+
+type LocalProps = OwnProps & StoreProps & DispatchProps;
+
+const application = new Application();
+
+class Header extends React.Component<LocalProps, any> {
+
+    public handleReloadApp = () => {
+        const directory = this.props.directorySetTask.payload;
+        this.props.handleDataDirectoryInit(directory || Defaults.dataDirectory);
+    };
+
     public render() {
-        const {total} = this.props;
+        const {keystoreListTask} = this.props;
 
         return (
             <div className="header-main">
@@ -29,7 +51,7 @@ class Header extends React.Component<HeaderLocalProps, any> {
                     <div className="links">
                         <li>
                             <Link to="/accounts">
-                                <Label>{total}</Label>
+                                <Label>{keystoreListTask.response && keystoreListTask.response.length || "0"}</Label>
                                 <Icon size={"big"} color={"black"} name="list alternate outline"/>
                             </Link>
                         </li>
@@ -41,6 +63,13 @@ class Header extends React.Component<HeaderLocalProps, any> {
                         <li>
                             <a><DataDirectoryButton color={"teal"}/></a>
                         </li>
+                        <li>
+                            <a>
+                                <Label horizontal={true} color={'green'}>
+                                    Online
+                                </Label>
+                            </a>
+                        </li>
                     </div>
                 </Container>
             </div>
@@ -48,8 +77,16 @@ class Header extends React.Component<HeaderLocalProps, any> {
     }
 }
 
-const mapStoreToProps = (store: Store) => ({
-    total: (store.keystore.fetch.response ? store.keystore.fetch.response.length : 0),
+const mapStoreToProps = (store: Store): StoreProps => ({
+    keystoreListTask: store.keystore.list,
+    directorySetTask: store.app.directory,
 });
 
-export default connect(mapStoreToProps)(Header);
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({
+    handleDataDirectoryInit: directory => dispatch(application.handlers.directory.init(directory)),
+});
+
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
+    mapStoreToProps,
+    mapDispatchToProps
+)(Header);
