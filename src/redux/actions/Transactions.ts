@@ -1,40 +1,40 @@
-import {SentTX} from "evm-lite-lib";
+import { SentTX } from 'evm-lite-lib';
 
-import BaseActions, {ActionCreatorHandlers, ActionInterface, ActionValue} from "../common/BaseActions";
+import BaseActions, { ActionCreatorHandlers, ActionInterface, ActionValue } from '../common/BaseActions';
 
 
 export interface TransactionHistoryPayload {
-    addresses: string[];
+	addresses: string[];
 }
 
 export interface AccountTransactionHistory {
-    [key: string]: SentTX[]
+	[key: string]: SentTX[]
 }
 
 interface HandlerSchema {
-    history: ActionCreatorHandlers<TransactionHistoryPayload, AccountTransactionHistory, string>;
+	history: ActionCreatorHandlers<TransactionHistoryPayload, AccountTransactionHistory, string>;
 }
 
 interface ActionSchema extends ActionInterface {
-    history: ActionValue;
+	history: ActionValue;
 }
 
 export default class Transactions extends BaseActions<HandlerSchema, ActionSchema> {
 
-    public handlers: HandlerSchema;
+	public handlers: HandlerSchema;
 
-    constructor() {
-        super(Transactions.name);
+	constructor() {
+		super(Transactions.name);
 
-        this.prefixes = [
-            'History'
-        ];
+		this.prefixes = [
+			'History'
+		];
 
-        this.handlers = {
-            history:
-                this.generateHandlers<TransactionHistoryPayload, AccountTransactionHistory, string>('History'),
-        }
-    }
+		this.handlers = {
+			history:
+				this.generateHandlers<TransactionHistoryPayload, AccountTransactionHistory, string>('History')
+		};
+	}
 
 }
 
