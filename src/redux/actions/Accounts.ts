@@ -1,34 +1,34 @@
-import BaseActions, {ActionCreatorHandlers, ActionInterface, ActionValue} from "../common/BaseActions";
+import BaseActions, { ActionCreatorHandlers, ActionInterface, ActionValue } from '../common/BaseActions';
 
 export interface AccountsDecryptPayload {
-    address: string;
-    password: string;
+	address: string;
+	password: string;
 }
 
 interface HandlerSchema {
-    decrypt: ActionCreatorHandlers<AccountsDecryptPayload, string, string>;
+	decrypt: ActionCreatorHandlers<AccountsDecryptPayload, string, string>;
 }
 
 interface ActionSchema extends ActionInterface {
-    decrypt: ActionValue;
+	decrypt: ActionValue;
 }
 
 export default class Accounts extends BaseActions<HandlerSchema, ActionSchema> {
 
-    public handlers: HandlerSchema;
+	public handlers: HandlerSchema;
 
-    constructor() {
-        super(Accounts.name);
+	constructor() {
+		super(Accounts.name);
 
-        this.prefixes = [
-            'Transfer',
-            'Decrypt'
-        ];
+		this.prefixes = [
+			'Transfer',
+			'Decrypt'
+		];
 
-        this.handlers = {
-            decrypt: this.generateHandlers<AccountsDecryptPayload, string, string>('Decrypt')
-        }
-    }
+		this.handlers = {
+			decrypt: this.generateHandlers<AccountsDecryptPayload, string, string>('Decrypt')
+		};
+	}
 
 }
 

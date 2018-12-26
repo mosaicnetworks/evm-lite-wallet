@@ -1,11 +1,11 @@
-import store, {Store} from './store/Store';
+import store, { Store } from './store/Store';
 import Application from './actions/Application';
 
-import {ThunkAction, ThunkDispatch} from "redux-thunk";
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 export interface EVMLAction<S, F> {
-    type: string,
-    data?: S | F
+	type: string,
+	data?: S | F
 }
 
 export type EVMLDispatch<S, F> = ThunkDispatch<Store, any, EVMLAction<S, F>>;
@@ -18,8 +18,8 @@ export const app = new Application();
 // export const keystore = new Keystore();
 // export const transaction = new Transactions();
 
-export {DefaultProps, Store} from './store/Store'
+export { DefaultProps, Store } from './store/Store';
 
-export {BaseAccount, ConfigSchema} from 'evm-lite-lib'
+export { BaseAccount, ConfigSchema } from 'evm-lite-lib';
 
 export default store;

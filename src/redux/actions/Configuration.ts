@@ -1,45 +1,45 @@
-import {ConfigSchema} from "evm-lite-lib/tools/classes/Config";
+import { ConfigSchema } from 'evm-lite-lib/tools/classes/Config';
 
-import BaseActions, {ActionCreatorHandlers, ActionInterface, ActionValue} from "../common/BaseActions";
+import BaseActions, { ActionCreatorHandlers, ActionInterface, ActionValue } from '../common/BaseActions';
 
 
 export interface ConfigLoadPayLoad {
-    directory: string;
-    name: string;
+	directory: string;
+	name: string;
 }
 
 export interface ConfigSavePayLoad extends ConfigLoadPayLoad {
-    configSchema: ConfigSchema;
+	configSchema: ConfigSchema;
 }
 
 interface HandlerSchema {
-    load: ActionCreatorHandlers<ConfigLoadPayLoad, ConfigSchema, string>
-    save: ActionCreatorHandlers<ConfigSavePayLoad, string, string>
+	load: ActionCreatorHandlers<ConfigLoadPayLoad, ConfigSchema, string>
+	save: ActionCreatorHandlers<ConfigSavePayLoad, string, string>
 }
 
 interface ActionSchema extends ActionInterface {
-    load: ActionValue;
-    save: ActionValue;
+	load: ActionValue;
+	save: ActionValue;
 }
 
 class Configuration extends BaseActions<HandlerSchema, ActionSchema> {
 
-    public handlers: HandlerSchema;
+	public handlers: HandlerSchema;
 
-    constructor() {
-        super(Configuration.name);
+	constructor() {
+		super(Configuration.name);
 
-        this.prefixes = [
-            'Load',
-            'Save'
-        ];
+		this.prefixes = [
+			'Load',
+			'Save'
+		];
 
-        this.handlers = {
-            load: this.generateHandlers<ConfigLoadPayLoad, ConfigSchema, string>('Load'),
-            save: this.generateHandlers<ConfigSavePayLoad, string, string>('Save'),
-        };
-    }
+		this.handlers = {
+			load: this.generateHandlers<ConfigLoadPayLoad, ConfigSchema, string>('Load'),
+			save: this.generateHandlers<ConfigSavePayLoad, string, string>('Save')
+		};
+	}
 
 }
 
-export default Configuration
+export default Configuration;
