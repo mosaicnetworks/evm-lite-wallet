@@ -1,10 +1,10 @@
-import { all, put, select, takeLatest } from 'redux-saga/effects';
+import { put, select } from 'redux-saga/effects';
 
 import { Account, Keystore } from 'evm-lite-lib';
 
-import { Store } from '..';
+import { Store } from '../..';
 
-import Accounts, { AccountsDecryptPayload } from '../actions/Accounts';
+import Accounts, { AccountsDecryptPayload } from '../../actions/Accounts';
 
 
 interface AccountsDecryptAction {
@@ -14,11 +14,7 @@ interface AccountsDecryptAction {
 
 const accounts = new Accounts();
 
-function* accountsDecryptInitWatcher() {
-	yield takeLatest(accounts.actions.decrypt.init, accountsDecryptWorker);
-}
-
-function* accountsDecryptWorker(action: AccountsDecryptAction) {
+export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 	const { success, failure, reset } = accounts.handlers.decrypt;
 
 	try {
@@ -46,8 +42,3 @@ function* accountsDecryptWorker(action: AccountsDecryptAction) {
 
 	yield put(reset());
 }
-
-export default function* () {
-	yield all([accountsDecryptInitWatcher()]);
-}
-

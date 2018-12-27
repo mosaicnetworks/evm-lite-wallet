@@ -1,13 +1,13 @@
-import { all, fork, join, put, takeLatest } from 'redux-saga/effects';
+import { all, fork, join, put } from 'redux-saga/effects';
 
 import { ConfigSchema, DataDirectory, EVMLC } from 'evm-lite-lib';
 
-import { configurationReadWorker } from './Configuration';
-import { keystoreListWorker } from './Keystore';
+import { configurationReadWorker } from '../Configuration';
+import { keystoreListWorker } from '../Keystore';
 
-import Application, { AppConnectivityPayLoad } from '../actions/Application';
-import Configuration from '../actions/Configuration';
-import Keystore from '../actions/Keystore';
+import Configuration from '../../actions/Configuration';
+import Keystore from '../../actions/Keystore';
+import Application, { AppConnectivityPayLoad } from '../../actions/Application';
 
 
 interface DirectoryChangeInitAction {
@@ -24,14 +24,13 @@ const app = new Application();
 const config = new Configuration();
 const keystore = new Keystore();
 
-function* dataDirectoryChangeInitWatcher() {
-	yield takeLatest(app.actions.directory.init, dataDirectoryChangeWorker);
-}
-
 export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
+	const { success, failure } = app.handlers.directory;
+
 	try {
 		const directory = yield new DataDirectory(action.payload);
-		yield put(app.handlers.directory.success('Data Directory change successful.'));
+
+		yield put(success('Data Directory change successful.'));
 
 		const configurationForkData: ConfigSchema = yield join(
 			yield fork(configurationReadWorker, config.handlers.load.init({
@@ -58,15 +57,13 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 			);
 		}
 	} catch (e) {
-		yield put(app.handlers.directory.failure('Something went wrong while trying to initialize directory.'));
+		yield put(failure('Something went wrong while trying to initialize directory.'));
 	}
 }
 
-function* checkConnectivityInitWatcher() {
-	yield takeLatest(app.actions.connectivity.init, checkConnectivityWorker);
-}
-
 export function* checkConnectivityWorker(action: ConnectivityCheckInitAction) {
+	const { success, failure, reset } = app.handlers.connectivity;
+
 	try {
 		const connection: EVMLC = new EVMLC(action.payload.host, action.payload.port, {
 			from: '',
@@ -77,22 +74,18 @@ export function* checkConnectivityWorker(action: ConnectivityCheckInitAction) {
 		const result: boolean = yield connection.testConnection();
 
 		if (result) {
-			yield put(app.handlers.connectivity.success('A connection to a node was established.'));
-			yield put(app.handlers.connectivity.reset());
+			yield put(success('A connection to a node was established.'));
+			yield put(reset());
 
 			return connection;
 		}
 	} catch (e) {
-		yield put(app.handlers.connectivity.failure('Something went wrong trying to connect.'));
-		yield put(app.handlers.connectivity.reset());
+		yield put(failure('Something went wrong trying to connect.'));
+		yield put(reset());
 
 		return null;
 	}
 
-}
-
-export default function* applicationSagas() {
-	yield all([checkConnectivityInitWatcher(), dataDirectoryChangeInitWatcher()]);
 }
 
 

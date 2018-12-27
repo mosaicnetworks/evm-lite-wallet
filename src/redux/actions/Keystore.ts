@@ -3,25 +3,32 @@ import { BaseAccount } from 'evm-lite-lib';
 import BaseActions, { ActionCreatorHandlers, ActionInterface, ActionValue } from '../common/BaseActions';
 
 
-export interface KeystoreListPayload {
+export interface KeystoreListPayLoad {
 	directory: string;
 	name: string;
 }
 
-export interface KeystoreUpdatePayload {
+export interface KeystoreUpdatePayLoad {
 	address: string;
 	old: string;
 	new: string;
 }
 
+export interface KeystoreCreatePayLoad {
+	password: string;
+	keystore: string;
+}
+
 interface HandlerSchema {
-	list: ActionCreatorHandlers<KeystoreListPayload, BaseAccount[], string>;
-	update: ActionCreatorHandlers<KeystoreUpdatePayload, BaseAccount, string>;
+	list: ActionCreatorHandlers<KeystoreListPayLoad, BaseAccount[], string>;
+	update: ActionCreatorHandlers<KeystoreUpdatePayLoad, BaseAccount, string>;
+	create: ActionCreatorHandlers<KeystoreCreatePayLoad, BaseAccount, string>;
 }
 
 interface ActionSchema extends ActionInterface {
 	list: ActionValue;
 	update: ActionValue;
+	create: ActionValue;
 }
 
 export default class KeystoreActions extends BaseActions<HandlerSchema, ActionSchema> {
@@ -39,8 +46,9 @@ export default class KeystoreActions extends BaseActions<HandlerSchema, ActionSc
 		];
 
 		this.handlers = {
-			list: this.generateHandlers<KeystoreListPayload, BaseAccount[], string>('List'),
-			update: this.generateHandlers<KeystoreUpdatePayload, BaseAccount, string>('Update')
+			list: this.generateHandlers<KeystoreListPayLoad, BaseAccount[], string>('List'),
+			update: this.generateHandlers<KeystoreUpdatePayLoad, BaseAccount, string>('Update'),
+			create: this.generateHandlers<KeystoreCreatePayLoad, BaseAccount, string>('Create')
 		};
 	}
 

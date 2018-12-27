@@ -6,11 +6,11 @@ import { PersistConfig, persistReducer, persistStore } from 'redux-persist';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { InjectedAlertProp } from 'react-alert';
 
-import applicationSagas from '../sagas/Application';
-import configurationSagas from '../sagas/Configuration';
-import keystoreSagas from '../sagas/Keystore';
-import transactionSagas from '../sagas/Transactions';
-import accountsSaga from '../sagas/Accounts';
+import ApplicationSagas from '../sagas/watchers/Application';
+import ConfigurationSagas from '../sagas/watchers/Configuration';
+import KeystoreSagas from '../sagas/watchers/Keystore';
+import TransactionSagas from '../sagas/watchers/Transactions';
+import AccountSagas from '../sagas/watchers/Accounts';
 
 import ConfigRootReducer, { ConfigReducer } from '../reducers/Configuration';
 import AppRootReducer, { AppReducer } from '../reducers/Application';
@@ -55,11 +55,11 @@ export default () => {
 	const store = createStore(persistedReducer, applyMiddleware(...middleware));
 	const persistor = persistStore(store);
 
-	saga.run(applicationSagas);
-	saga.run(configurationSagas);
-	saga.run(keystoreSagas);
-	saga.run(transactionSagas);
-	saga.run(accountsSaga);
+	saga.run(ApplicationSagas);
+	saga.run(ConfigurationSagas);
+	saga.run(KeystoreSagas);
+	saga.run(TransactionSagas);
+	saga.run(AccountSagas);
 
 	return { store, persistor };
 }

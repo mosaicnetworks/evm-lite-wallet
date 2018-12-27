@@ -9,7 +9,7 @@ import { AccountsDecryptType } from '../../../redux/reducers/Accounts';
 import { KeystoreUpdateType } from '../../../redux/reducers/Keystore';
 
 import Accounts, { AccountsDecryptPayload } from '../../../redux/actions/Accounts';
-import Keystore, { KeystoreUpdatePayload } from '../../../redux/actions/Keystore';
+import Keystore, { KeystoreUpdatePayLoad } from '../../../redux/actions/Keystore';
 
 import '../styles/Account.css';
 
@@ -25,7 +25,7 @@ interface StoreProps {
 
 interface DispatchProps {
 	handleDecryption: (payload: AccountsDecryptPayload) => void;
-	handleUpdatePassword: (payload: KeystoreUpdatePayload) => void;
+	handleUpdatePassword: (payload: KeystoreUpdatePayLoad) => void;
 }
 
 interface OwnProps {
