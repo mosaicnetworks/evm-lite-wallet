@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Button, Divider, Form, Header, Modal } from 'semantic-ui-react';
 
 import { BaseAccount, Store } from '../../../redux';
-import { AccountsDecryptType } from '../../../redux/reducers/Accounts';
+import { AccountsDecryptReducer } from '../../../redux/reducers/Accounts';
 import { KeystoreUpdateType } from '../../../redux/reducers/Keystore';
 
 import Accounts, { AccountsDecryptPayload } from '../../../redux/actions/Accounts';
@@ -19,7 +19,7 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	accountDecryptTask: AccountsDecryptType;
+	accountDecryptTask: AccountsDecryptReducer;
 	keystoreUpdateTask: KeystoreUpdateType;
 }
 

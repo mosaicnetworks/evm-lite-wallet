@@ -1,6 +1,6 @@
 import { all, takeLatest } from 'redux-saga/effects';
 
-import { accountsDecryptWorker } from '../workers/Accounts';
+import { accountsDecryptWorker, accountsTransferWorker } from '../workers/Accounts';
 
 import Accounts from '../../actions/Accounts';
 
@@ -11,7 +11,11 @@ function* accountsDecryptInitWatcher() {
 	yield takeLatest(accounts.actions.decrypt.init, accountsDecryptWorker);
 }
 
+function* accountsTransferInitWatcher() {
+	yield takeLatest(accounts.actions.transfer.init, accountsTransferWorker);
+}
+
 export default function* () {
-	yield all([accountsDecryptInitWatcher()]);
+	yield all([accountsDecryptInitWatcher(), accountsTransferInitWatcher()]);
 }
 

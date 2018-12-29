@@ -5,9 +5,9 @@ import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Button, Form, Modal } from 'semantic-ui-react';
 
 import { BaseAccount, Store } from '../../../redux';
-import { AccountsDecryptType } from '../../../redux/reducers/Accounts';
+import { AccountsDecryptReducer, AccountsTransferReducer } from '../../../redux/reducers/Accounts';
 
-import Accounts, { AccountsDecryptPayload } from '../../../redux/actions/Accounts';
+import Accounts, { AccountsDecryptPayload, AccountsTransferPayLoad } from '../../../redux/actions/Accounts';
 
 
 interface AlertProps {
@@ -15,11 +15,13 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	accountDecryptTask: AccountsDecryptType;
+	accountDecryptTask: AccountsDecryptReducer;
+	accountTransferTask: AccountsTransferReducer
 }
 
 interface DispatchProps {
 	handleDecryption: (payload: AccountsDecryptPayload) => void;
+	handleTransfer: (payload: AccountsTransferPayLoad) => void;
 }
 
 interface OwnProps {
@@ -45,7 +47,7 @@ const accounts = new Accounts();
 class AccountTransfer extends React.Component<LocalProps, State> {
 	public state = {
 		open: false,
-		transferDisable: true,
+		transferDisable: false,
 		fields: {
 			to: '',
 			value: '',
@@ -56,14 +58,15 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 	};
 
 	public componentWillReceiveProps(nextProps: Readonly<LocalProps>, nextContext: any): void {
-		if (!this.props.accountDecryptTask.error && !!nextProps.accountDecryptTask.error) {
+		if (!this.props.accountDecryptTask.error && !!nextProps.accountDecryptTask.error &&
+			this.state.fields.password) {
 			this.props.alert.error('Could not decrypt account with password provided.');
 			this.setState({ transferDisable: true });
 		}
 
-		if (!this.props.accountDecryptTask.response && !!nextProps.accountDecryptTask.response) {
+		if (!this.props.accountDecryptTask.response && !!nextProps.accountDecryptTask.response &&
+			this.state.fields.password) {
 			this.props.alert.success(nextProps.accountDecryptTask.response);
-			this.setState({ transferDisable: false });
 		}
 	}
 
@@ -127,33 +130,26 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 	};
 
 	public handleTransfer = () => {
-		// const {fields} = this.state;
-		//
-		// const tx = {
-		//     from: this.props.account.address,
-		//     to: fields.to,
-		//     value: fields.value,
-		//     gas: fields.gas,
-		//     gasprice: fields.gasPrice,
-		//     nonce: this.props.account.nonce
-		// };
-		// const data: TransferParams = {
-		//     tx,
-		//     password: this.state.password,
-		//     v3JSONKeystore: await this.state.v3JSONKeystore,
-		// };
+		const { fields } = this.state;
+		const { account } = this.props;
 
-		// if (this.props.accountDecryptTask.response) {
-		// this.props.handleTransfer(data)
-		//     .then(() => {
-		//         this.props.alert.success('Transaction submitted!');
-		//     })
-		//     .catch(() => {
-		//         this.props.alert.error('Error transacting!');
-		//     });
+		for (const field in fields) {
+			if (!fields[field]) {
+				this.props.alert.error(`All fields must be filled in. Missing '${field}'.`);
+				return;
+			}
+		}
 
-		// this.close();
-		// }
+		this.props.handleTransfer({
+			tx: {
+				to: fields.to,
+				from: account.address,
+				gas: parseInt(fields.gas, 10),
+				gasPrice: parseInt(fields.gasPrice, 10),
+				value: parseInt(fields.value, 10),
+			},
+			password: fields.password,
+		});
 	};
 
 	public render() {
@@ -169,7 +165,8 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 							<Form>
 								<Form.Field>
 									<label>Password</label>
-									<input type={'password'} onChange={this.handlePasswordChange}
+									<input type={'password'}
+										   onChange={this.handlePasswordChange}
 										   onBlur={this.onBlurPassword}/>
 								</Form.Field>
 								<Form.Group widths={'two'}>
@@ -213,11 +210,13 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	accountDecryptTask: store.accounts.decrypt
+	accountDecryptTask: store.accounts.decrypt,
+	accountTransferTask: store.accounts.transfer
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleDecryption: payload => dispatch(accounts.handlers.decrypt.init(payload))
+	handleDecryption: payload => dispatch(accounts.handlers.decrypt.init(payload)),
+	handleTransfer: payload => dispatch(accounts.handlers.transfer.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

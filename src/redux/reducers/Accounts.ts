@@ -1,20 +1,21 @@
 import { combineReducers } from 'redux';
 import { IBasicReducer } from '../common/reducers/BasicReducerFactory';
 
-import Accounts, { AccountsDecryptPayload } from '../actions/Accounts';
+import Accounts, { AccountsDecryptPayload, AccountsTransferPayLoad } from '../actions/Accounts';
 
-// export type TransferAccountsReducer = IBasicReducer<string, string>;
-export type AccountsDecryptType = IBasicReducer<AccountsDecryptPayload, string, string>;
+
+export type AccountsTransferReducer = IBasicReducer<AccountsTransferPayLoad, string, string>;
+export type AccountsDecryptReducer = IBasicReducer<AccountsDecryptPayload, string, string>;
 
 export interface IAccountsReducer {
-	// transfer: TransferAccountsReducer;
-	decrypt: AccountsDecryptType;
+	transfer: TransferAccountsReducer;
+	decrypt: AccountsDecryptReducer;
 }
 
 const accounts = new Accounts();
 
 const AccountsReducer = combineReducers({
-	// transfer: accounts.SimpleReducer<string, string>('Transfer'),
+	transfer: accounts.SimpleReducer<AccountsTransferPayLoad, string, string>('Transfer'),
 	decrypt: accounts.SimpleReducer<AccountsDecryptPayload, string, string>('Decrypt')
 });
 

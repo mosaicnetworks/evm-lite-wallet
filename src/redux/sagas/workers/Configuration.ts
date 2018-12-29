@@ -1,8 +1,8 @@
-import { all, fork, join, put } from 'redux-saga/effects';
+import { fork, join, put } from 'redux-saga/effects';
 
 import { Config, ConfigSchema } from 'evm-lite-lib';
 
-import { keystoreListWorker } from '../Keystore';
+import { keystoreListWorker } from './Keystore';
 
 import Configuration, { ConfigLoadPayLoad, ConfigSavePayLoad } from '../../actions/Configuration';
 import Keystore from '../../actions/Keystore';
