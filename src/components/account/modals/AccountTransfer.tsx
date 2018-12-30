@@ -67,6 +67,7 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 		if (!this.props.accountDecryptTask.response && !!nextProps.accountDecryptTask.response &&
 			this.state.fields.password) {
 			this.props.alert.success(nextProps.accountDecryptTask.response);
+			this.setState({ transferDisable: false });
 		}
 	}
 

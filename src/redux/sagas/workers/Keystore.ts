@@ -55,7 +55,7 @@ export function* keystoreListWorker(action: KeystoreListAction) {
 			addresses: accounts.map((account) => account.address)
 		}));
 	} catch (e) {
-		yield put(failure('Something went wrong fetching all accounts.'));
+		yield put(failure('Error: ' + e));
 	}
 }
 
@@ -86,7 +86,7 @@ export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
 		}
 
 	} catch (e) {
-		yield put(failure('Something went wrong trying to update password.'));
+		yield put(failure('Error: ' + e));
 	}
 
 	yield put(reset());

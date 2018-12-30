@@ -57,7 +57,7 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 			);
 		}
 	} catch (e) {
-		yield put(failure('Something went wrong while trying to initialize directory.'));
+		yield put(failure('Error: ' + e));
 	}
 }
 
@@ -80,7 +80,7 @@ export function* checkConnectivityWorker(action: ConnectivityCheckInitAction) {
 			return connection;
 		}
 	} catch (e) {
-		yield put(failure('Something went wrong trying to connect.'));
+		yield put(failure('Error: ' + e));
 		yield put(reset());
 
 		return null;

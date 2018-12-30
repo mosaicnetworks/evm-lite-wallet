@@ -40,14 +40,15 @@ export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 			const decryptedAccount: Account = yield Account.decrypt(account, action.payload.password);
 
 			yield put(success('Account decryption was successful.'));
+			yield put(reset());
 
 			return decryptedAccount;
 		}
 	} catch (e) {
-		yield put(failure('Something went wrong trying to decrypt your account.'));
+		yield put(failure('Error: ' + e));
+		yield put(reset());
 	}
 
-	yield put(reset());
 }
 
 export function* accountsTransferWorker(action: AccountsTransferAction) {

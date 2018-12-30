@@ -32,7 +32,7 @@ export function* configurationReadWorker(action: ConfigFileLoadAction) {
 
 		return data;
 	} catch (e) {
-		yield put(failure('Something when wrong trying to load configuration data.'));
+		yield put(failure('Error: ' + e));
 
 		return null;
 	}
@@ -74,7 +74,7 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 
 		return true;
 	} catch (e) {
-		yield put(failure('Something when wrong trying to save configuration data.'));
+		yield put(failure('Error: ' + e));
 
 		return null;
 	}
