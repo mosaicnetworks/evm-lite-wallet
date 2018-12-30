@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Button, Divider, Form, Header, Icon, Label, Modal } from 'semantic-ui-react';
 
 import { app, Store } from '../../redux';
-import { ApplicationDirectoryChangeType } from '../../redux/reducers/Application';
+import { ApplicationDirectoryChangeReducer } from '../../redux/reducers/Application';
 
 import Defaults from '../../classes/Defaults';
 
@@ -15,7 +15,7 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	dataDirectoryTask: ApplicationDirectoryChangeType;
+	dataDirectoryTask: ApplicationDirectoryChangeReducer;
 	connectivityError: string | null;
 }
 

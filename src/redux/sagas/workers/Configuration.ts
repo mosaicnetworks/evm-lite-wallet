@@ -25,7 +25,7 @@ export function* configurationReadWorker(action: ConfigFileLoadAction) {
 	const { success, failure } = config.handlers.load;
 
 	try {
-		const evmlConfig: Config = yield new Config(action.payload.directory, action.payload.name);
+		const evmlConfig: Config = new Config(action.payload.directory, action.payload.name);
 		const data: ConfigSchema = yield evmlConfig.load();
 
 		yield put(success(data));
@@ -42,7 +42,7 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 	const { success, failure } = config.handlers.save;
 
 	try {
-		const evmlConfig: Config = yield new Config(action.payload.directory, action.payload.name);
+		const evmlConfig: Config = new Config(action.payload.directory, action.payload.name);
 		const response: string = yield evmlConfig.save(action.payload.configSchema);
 
 		yield put(success(response));
@@ -64,7 +64,6 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 
 			const keystoreParentDir = list.join('/');
 
-
 			yield join(
 				yield fork(keystoreListWorker, keystore.handlers.list.init({
 					directory: keystoreParentDir,
@@ -75,7 +74,6 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 
 		return true;
 	} catch (e) {
-		console.log(e);
 		yield put(failure('Something when wrong trying to save configuration data.'));
 
 		return null;

@@ -28,7 +28,7 @@ export function* keystoreListWorker(action: KeystoreListAction) {
 	const { success, failure } = keystore.handlers.list;
 
 	try {
-		const evmlKeystore: EVMLKeystore = yield new EVMLKeystore(action.payload.directory, action.payload.name);
+		const evmlKeystore: EVMLKeystore = new EVMLKeystore(action.payload.directory, action.payload.name);
 		const state: Store = yield select();
 
 		let fetch: boolean = false;

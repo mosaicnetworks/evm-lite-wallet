@@ -6,7 +6,7 @@ import { Button, Divider, Form, Header, Modal } from 'semantic-ui-react';
 
 import { BaseAccount, Store } from '../../../redux';
 import { AccountsDecryptReducer } from '../../../redux/reducers/Accounts';
-import { KeystoreUpdateType } from '../../../redux/reducers/Keystore';
+import { KeystoreUpdateReducer } from '../../../redux/reducers/Keystore';
 
 import Accounts, { AccountsDecryptPayload } from '../../../redux/actions/Accounts';
 import Keystore, { KeystoreUpdatePayLoad } from '../../../redux/actions/Keystore';
@@ -20,7 +20,7 @@ interface AlertProps {
 
 interface StoreProps {
 	accountDecryptTask: AccountsDecryptReducer;
-	keystoreUpdateTask: KeystoreUpdateType;
+	keystoreUpdateTask: KeystoreUpdateReducer;
 }
 
 interface DispatchProps {

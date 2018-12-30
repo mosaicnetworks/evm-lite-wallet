@@ -2,9 +2,13 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Button, Divider, Form, Header, Icon, Label, Message, Modal } from 'semantic-ui-react';
+import { Button, Divider, Form, Header, Label, Modal } from 'semantic-ui-react';
 
-import { ConfigSchema, EVMLDispatch, Store } from '../../../redux';
+import { EVMLDispatch, Store } from '../../../redux';
+import { ConfigLoadReducer } from '../../../redux/reducers/Configuration';
+import { KeystoreCreateReducer } from '../../../redux/reducers/Keystore';
+
+import Keystore, { KeystoreCreatePayLoad } from '../../../redux/actions/Keystore';
 
 
 interface AlertProps {
@@ -12,14 +16,12 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	isLoading?: boolean;
-	response?: string | null;
-	error?: string | null;
-	config?: ConfigSchema | null;
+	configLoadTask: ConfigLoadReducer;
+	keystoreCreateTask: KeystoreCreateReducer;
 }
 
 interface DispatchProps {
-	empty?: null;
+	handleCreateAccount: (payload: KeystoreCreatePayLoad) => void;
 }
 
 interface OwnProps {
@@ -38,6 +40,8 @@ interface State {
 		fieldError: string;
 	}
 }
+
+const keystore = new Keystore();
 
 class AccountCreate extends React.Component<LocalProps, State> {
 	public state = {
@@ -90,15 +94,16 @@ class AccountCreate extends React.Component<LocalProps, State> {
 
 		this.close();
 
-		if (this.props.response) {
+		if (this.props.keystoreCreateTask.response) {
 			this.props.alert.success('Account created!');
 		} else {
-			this.props.alert.error('Error: ' + this.props.error);
+			this.props.alert.error('Error: ' + this.props.keystoreCreateTask.error);
 		}
 	};
 
 	public render() {
-		const { isLoading, config } = this.props;
+		const { configLoadTask } = this.props;
+
 		return (
 			<React.Fragment>
 				<Modal open={this.state.open}
@@ -119,19 +124,11 @@ class AccountCreate extends React.Component<LocalProps, State> {
 						directory, update the configuration for keystore. <br/><br/>
 						<Label>
 							Keystore
-							<Label.Detail>{config && config.storage.keystore}</Label.Detail>
+							<Label.Detail>
+								{configLoadTask.response && configLoadTask.response.storage.keystore}
+							</Label.Detail>
 						</Label><br/><br/>
 						<Divider/>
-						{!isLoading && ('asd') && (<Modal.Content>
-							<Message icon={true} error={true}>
-								<Icon name={'times'}/>
-								<Message.Content>
-									<Message.Header>
-										Oops! {'Asd'}
-									</Message.Header>
-								</Message.Content>
-							</Message>
-						</Modal.Content>)}<br/>
 						<Modal.Description>
 							<Form>
 								<Form.Field>
@@ -147,8 +144,6 @@ class AccountCreate extends React.Component<LocalProps, State> {
 					</Modal.Content>
 					<Modal.Actions>
 						<Button onClick={this.close}>Close</Button>
-						{isLoading && (<span className={'m-2'}>
-                            <Icon color={'green'} name={'circle notch'} loading={true}/> Creating...</span>)}
 						<Button onClick={this.handleCreate} color={'green'} type='submit'>Create</Button>
 					</Modal.Actions>
 				</Modal>
@@ -157,9 +152,14 @@ class AccountCreate extends React.Component<LocalProps, State> {
 	}
 }
 
-const mapStoreToProps = (store: Store): StoreProps => ({});
+const mapStoreToProps = (store: Store): StoreProps => ({
+	configLoadTask: store.config.load,
+	keystoreCreateTask: store.keystore.create
+});
 
-const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>): DispatchProps => ({});
+const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>): DispatchProps => ({
+	handleCreateAccount: payload => dispatch(keystore.handlers.create.init(payload))
+});
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,

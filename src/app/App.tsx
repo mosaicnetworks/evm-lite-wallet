@@ -5,7 +5,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 
 import { Store } from '../redux';
-import { ApplicationDirectoryChangeType } from '../redux/reducers/Application';
+import { ApplicationDirectoryChangeReducer } from '../redux/reducers/Application';
 
 import Accounts from '../pages/Accounts';
 import Index from '../pages/Index';
@@ -22,7 +22,7 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	directorySetTask: ApplicationDirectoryChangeType;
+	directorySetTask: ApplicationDirectoryChangeReducer;
 	connectivityError: string | null;
 	connectivityResponse: string | null;
 }

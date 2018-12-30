@@ -6,12 +6,12 @@ import { IBasicReducer } from '../common/reducers/BasicReducerFactory';
 import Configuration, { ConfigLoadPayLoad, ConfigSavePayLoad } from '../actions/Configuration';
 
 
-export type ConfigLoadType = IBasicReducer<ConfigLoadPayLoad, ConfigSchema, string>;
-export type ConfigSaveType = IBasicReducer<any, string, string>;
+export type ConfigLoadReducer = IBasicReducer<ConfigLoadPayLoad, ConfigSchema, string>;
+export type ConfigSaveReducer = IBasicReducer<any, string, string>;
 
 export interface ConfigReducer {
-	load: ConfigLoadType;
-	save: ConfigSaveType;
+	load: ConfigLoadReducer;
+	save: ConfigSaveReducer;
 }
 
 const configuration = new Configuration();

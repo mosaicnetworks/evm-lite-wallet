@@ -8,7 +8,7 @@ export type AccountsTransferReducer = IBasicReducer<AccountsTransferPayLoad, str
 export type AccountsDecryptReducer = IBasicReducer<AccountsDecryptPayload, string, string>;
 
 export interface IAccountsReducer {
-	transfer: TransferAccountsReducer;
+	transfer: AccountsTransferReducer;
 	decrypt: AccountsDecryptReducer;
 }
 

@@ -4,10 +4,11 @@ import { Button, Card, Icon, Image, Label } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 
-import { Store } from '../../redux';
 import { BaseAccount } from 'evm-lite-lib/evm/client/AccountClient';
+import { SentTX } from 'evm-lite-lib/evm/classes/Transaction';
 
-import { TransactionHistoryType } from '../../redux/reducers/Transactions';
+import { Store } from '../../redux';
+import { TransactionHistoryReducer } from '../../redux/reducers/Transactions';
 
 import AccountUpdate from './modals/AccountUpdate';
 import AccountExport from './modals/AccountExport';
@@ -15,7 +16,6 @@ import AccountTransfer from './modals/AccountTransfer';
 import AccountHistory from './modals/AccountHistory';
 
 import './styles/Account.css';
-import { SentTX } from 'evm-lite-lib/evm/classes/Transaction';
 
 
 interface AlertProps {
@@ -23,7 +23,7 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	transactionHistoryTask: TransactionHistoryType;
+	transactionHistoryTask: TransactionHistoryReducer;
 }
 
 interface DispatchProps {
