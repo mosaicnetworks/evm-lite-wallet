@@ -147,9 +147,9 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 				from: account.address,
 				gas: parseInt(fields.gas, 10),
 				gasPrice: parseInt(fields.gasPrice, 10),
-				value: parseInt(fields.value, 10),
+				value: parseInt(fields.value, 10)
 			},
-			password: fields.password,
+			password: fields.password
 		});
 	};
 

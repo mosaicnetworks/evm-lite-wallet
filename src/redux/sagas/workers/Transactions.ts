@@ -17,7 +17,7 @@ interface TransactionHistoryAction {
 const transactions = new Transactions();
 
 export function* transactionHistoryWorker(action: TransactionHistoryAction) {
-	const {success, failure} = transactions.handlers.history;
+	const { success, failure } = transactions.handlers.history;
 
 	try {
 		const state: Store = yield select();
