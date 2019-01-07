@@ -55,7 +55,7 @@ export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 }
 
 export function* accountsTransferWorker(action: AccountsTransferAction) {
-	const { failure, success } = accounts.handlers.transfer;
+	const { failure, success, reset } = accounts.handlers.transfer;
 
 	try {
 		const state: Store = yield select();
@@ -72,12 +72,20 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 			}))
 		);
 
+		if (!evmlc) {
+			return;
+		}
+
 		const decryptedAccount = yield join(
 			yield fork(accountsDecryptWorker, accounts.handlers.decrypt.init({
 				address: action.payload.tx.from,
 				password: action.payload.password
 			}))
 		);
+
+		if (!decryptedAccount) {
+			return;
+		}
 
 		const transaction: Transaction = yield evmlc.prepareTransfer(
 			action.payload.tx.to,
@@ -115,4 +123,6 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 		console.log(e);
 		yield put(failure(e.text || 'Something went wrong while transferring.'));
 	}
+
+	yield put(reset())
 }

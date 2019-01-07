@@ -6,6 +6,7 @@ import { Button, Form, Modal } from 'semantic-ui-react';
 
 import { BaseAccount, Store } from '../../../redux';
 import { AccountsDecryptReducer, AccountsTransferReducer } from '../../../redux/reducers/Accounts';
+import { ConfigLoadReducer } from '../../../redux/reducers/Configuration';
 
 import Accounts, { AccountsDecryptPayload, AccountsTransferPayLoad } from '../../../redux/actions/Accounts';
 
@@ -16,7 +17,8 @@ interface AlertProps {
 
 interface StoreProps {
 	accountDecryptTask: AccountsDecryptReducer;
-	accountTransferTask: AccountsTransferReducer
+	accountTransferTask: AccountsTransferReducer;
+	configLoadTask: ConfigLoadReducer;
 }
 
 interface DispatchProps {
@@ -33,6 +35,8 @@ type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps
 interface State {
 	open: boolean;
 	transferDisable: boolean;
+	transferErrorMessage: boolean;
+	transferSuccessMessage: boolean;
 	fields: {
 		to: string;
 		value: string;
@@ -48,6 +52,8 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 	public state = {
 		open: false,
 		transferDisable: false,
+		transferErrorMessage: false,
+		transferSuccessMessage: false,
 		fields: {
 			to: '',
 			value: '',
@@ -61,28 +67,47 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 		if (!this.props.accountDecryptTask.error && !!nextProps.accountDecryptTask.error &&
 			this.state.fields.password) {
 			this.props.alert.error('Could not decrypt account with password provided.');
-			this.setState({ transferDisable: true });
+		}
+
+		if (nextProps.configLoadTask.response && (!this.state.fields.gas || this.state.fields.gasPrice)) {
+			this.setState({
+				fields: {
+					...this.state.fields,
+					gas: nextProps.configLoadTask.response.defaults.gas.toString(),
+					gasPrice: nextProps.configLoadTask.response.defaults.gasPrice.toString()
+				}
+			});
 		}
 
 		if (!this.props.accountDecryptTask.response && !!nextProps.accountDecryptTask.response &&
 			this.state.fields.password) {
 			this.props.alert.success(nextProps.accountDecryptTask.response);
-			this.setState({ transferDisable: false });
 		}
 
 		if (!this.props.accountTransferTask.response && !!nextProps.accountTransferTask.response &&
 			parseInt(this.state.fields.gasPrice, 10) >= 0) {
 
-			this.props.alert.success('Transfer request submitted.');
-			this.setState({ transferDisable: true });
+			this.setState({
+				transferSuccessMessage: true
+			});
+
+			if (!this.state.transferSuccessMessage) {
+				this.props.alert.success('Transfer request submitted.');
+			}
 
 			this.close();
 		}
 
 		if (!this.props.accountTransferTask.error && !!nextProps.accountTransferTask.error &&
-			parseInt(this.state.fields.gasPrice, 10) >= 0) {
+			this.state.fields.gas && this.state.fields.gasPrice && !this.props.accountDecryptTask.response) {
 
-			this.props.alert.error(nextProps.accountTransferTask.error);
+			if (!this.state.transferErrorMessage) {
+				this.props.alert.error(nextProps.accountTransferTask.error);
+			}
+
+			this.setState({
+				transferErrorMessage: true
+			});
 		}
 	}
 
@@ -136,16 +161,12 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 		});
 	};
 
-	public onBlurPassword = () => {
-		if (!this.props.accountDecryptTask.response) {
-			this.props.handleDecryption({
-				address: this.props.account.address,
-				password: this.state.fields.password
-			});
-		}
-	};
-
 	public handleTransfer = () => {
+		this.setState({
+			transferErrorMessage: false,
+			transferSuccessMessage: false
+		});
+
 		const { fields } = this.state;
 		const { account } = this.props;
 
@@ -182,8 +203,7 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 								<Form.Field>
 									<label>Password</label>
 									<input type={'password'}
-										   onChange={this.handlePasswordChange}
-										   onBlur={this.onBlurPassword}/>
+										   onChange={this.handlePasswordChange}/>
 								</Form.Field>
 								<Form.Group widths={'two'}>
 									<Form.Field>
@@ -199,12 +219,20 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 									<Form.Field>
 										<label>Gas</label>
 										<input onChange={this.handleOnChangeGas}
-											   defaultValue={fields.gas}/>
+											   defaultValue={
+												   this.props.configLoadTask.response ?
+													   this.props.configLoadTask.response.defaults.gas.toString() :
+													   fields.gas
+											   }/>
 									</Form.Field>
 									<Form.Field>
 										<label>Gas Price</label>
 										<input onChange={this.handleOnChangeGasPrice}
-											   defaultValue={fields.gasPrice}/>
+											   defaultValue={
+												   this.props.configLoadTask.response ?
+													   this.props.configLoadTask.response.defaults.gasPrice.toString() :
+													   fields.gasPrice
+											   }/>
 									</Form.Field>
 								</Form.Group>
 							</Form>
@@ -227,7 +255,8 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 
 const mapStoreToProps = (store: Store): StoreProps => ({
 	accountDecryptTask: store.accounts.decrypt,
-	accountTransferTask: store.accounts.transfer
+	accountTransferTask: store.accounts.transfer,
+	configLoadTask: store.config.load
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
