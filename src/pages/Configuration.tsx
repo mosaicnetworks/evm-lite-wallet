@@ -6,7 +6,7 @@ import { ConfigSchema, Static } from 'evm-lite-lib';
 import { Button, Divider, Form, Header, Icon } from 'semantic-ui-react';
 
 import { Store } from '../redux';
-import { ConfigLoadType } from '../redux/reducers/Configuration';
+import { ConfigLoadReducer } from '../redux/reducers/Configuration';
 
 import Config, { ConfigSavePayLoad } from '../redux/actions/Configuration';
 
@@ -17,7 +17,7 @@ interface AlertProps {
 
 interface StoreProps {
 	dataDirectory: string | null;
-	configLoadTask: ConfigLoadType;
+	configLoadTask: ConfigLoadReducer;
 }
 
 interface DispatchProps {

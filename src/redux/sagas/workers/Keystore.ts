@@ -1,40 +1,39 @@
-import { all, fork, join, put, select, takeLatest } from 'redux-saga/effects';
+import { fork, join, put, select } from 'redux-saga/effects';
 
 import { BaseAccount, Keystore as EVMLKeystore } from 'evm-lite-lib';
 
-import { Store } from '..';
+import { Store } from '../..';
 import { checkConnectivityWorker } from './Application';
 
-import Keystore, { KeystoreListPayload, KeystoreUpdatePayload } from '../actions/Keystore';
-import Transactions from '../actions/Transactions';
-import Application from '../actions/Application';
+import Keystore, { KeystoreCreatePayLoad, KeystoreListPayLoad, KeystoreUpdatePayLoad } from '../../actions/Keystore';
+import Transactions from '../../actions/Transactions';
+import Application from '../../actions/Application';
 
 
 interface KeystoreListAction {
 	type: string;
-	payload: KeystoreListPayload;
+	payload: KeystoreListPayLoad;
 }
 
 interface KeystoreUpdateAction {
 	type: string;
-	payload: KeystoreUpdatePayload;
+	payload: KeystoreUpdatePayLoad;
+}
+
+interface KeystoreCreateAction {
+	type: string;
+	payload: KeystoreCreatePayLoad;
 }
 
 const keystore = new Keystore();
 const transactions = new Transactions();
 const app = new Application();
 
-function* keystoreListInitWatcher() {
-	yield takeLatest(keystore.actions.list.init, keystoreListWorker);
-}
-
-function* keystoreUpdateInitWatcher() {
-	yield takeLatest(keystore.actions.update.init, keystoreUpdateWorker);
-}
-
 export function* keystoreListWorker(action: KeystoreListAction) {
+	const { success, failure } = keystore.handlers.list;
+
 	try {
-		const evmlKeystore: EVMLKeystore = yield new EVMLKeystore(action.payload.directory, action.payload.name);
+		const evmlKeystore: EVMLKeystore = new EVMLKeystore(action.payload.directory, action.payload.name);
 		const state: Store = yield select();
 
 		let fetch: boolean = false;
@@ -55,13 +54,13 @@ export function* keystoreListWorker(action: KeystoreListAction) {
 		}
 
 		const accounts: BaseAccount[] = yield evmlKeystore.list(fetch, connection || null);
-		yield put(keystore.handlers.list.success(accounts));
+		yield put(success(accounts));
 
 		yield put(transactions.handlers.history.init({
 			addresses: accounts.map((account) => account.address)
 		}));
 	} catch (e) {
-		yield put(keystore.handlers.list.failure('Something went wrong fetching all accounts.'));
+		yield put(failure('Error: ' + e));
 	}
 }
 
@@ -92,15 +91,35 @@ export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
 		}
 
 	} catch (e) {
-		yield put(failure('Something went wrong trying to update password.'));
+		yield put(failure('Error: ' + e));
 	}
 
 	yield put(reset());
 }
 
-export default function* keystoreSagas() {
-	yield all([keystoreListInitWatcher(), keystoreUpdateInitWatcher()]);
+export function* keystoreCreateWorker(action: KeystoreCreateAction) {
+	const { success, failure } = keystore.handlers.create;
+
+	try {
+		const list = action.payload.keystore.split('/');
+		const popped = list.pop();
+
+		if (popped === '/') {
+			list.pop();
+		}
+
+		const keystoreParentDir = list.join('/');
+		const evmlKeystore = new EVMLKeystore(keystoreParentDir, 'keystore');
+
+		const account = JSON.parse(yield evmlKeystore.create(action.payload.password));
+
+		yield put(success({
+			address: account.address,
+			nonce: 0,
+			balance: 0
+		}));
+	} catch (e) {
+		yield put(failure(e));
+	}
 }
-
-
 

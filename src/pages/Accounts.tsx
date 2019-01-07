@@ -7,7 +7,7 @@ import { Divider, Header, Icon } from 'semantic-ui-react';
 import { ConfigSchema } from 'evm-lite-lib';
 
 import { BaseAccount, Store } from '../redux';
-import { KeystoreListType } from '../redux/reducers/Keystore';
+import { KeystoreListReducer } from '../redux/reducers/Keystore';
 
 import Account from '../components/account/Account';
 import AccountCreate from '../components/account/modals/AccountCreate';
@@ -23,7 +23,7 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	keystoreListTask: KeystoreListType;
+	keystoreListTask: KeystoreListReducer;
 	config: ConfigSchema | null;
 	connectivityError: string | null;
 }

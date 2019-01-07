@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { Container, Icon, Label } from 'semantic-ui-react';
 
 import { Store } from '../redux';
-import { KeystoreListType } from '../redux/reducers/Keystore';
-import { ApplicationDirectoryChangeType } from '../redux/reducers/Application';
+import { KeystoreListReducer } from '../redux/reducers/Keystore';
+import { ApplicationDirectoryChangeReducer } from '../redux/reducers/Application';
 
 import DataDirectoryButton from './modals/DataDirectoryButton';
 import Application from '../redux/actions/Application';
@@ -16,8 +16,8 @@ import './styles/Header.css';
 
 
 interface StoreProps {
-	keystoreListTask: KeystoreListType;
-	directorySetTask: ApplicationDirectoryChangeType;
+	keystoreListTask: KeystoreListReducer;
+	directorySetTask: ApplicationDirectoryChangeReducer;
 }
 
 interface DispatchProps {
