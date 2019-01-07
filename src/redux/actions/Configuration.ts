@@ -1,4 +1,4 @@
-import { ConfigSchema } from 'evm-lite-lib/tools/classes/Config';
+import { ConfigSchema } from 'evm-lite-lib';
 
 import BaseActions, { ActionCreatorHandlers, ActionInterface, ActionValue } from '../common/BaseActions';
 

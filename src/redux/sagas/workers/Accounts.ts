@@ -1,10 +1,12 @@
 import { fork, join, put, select } from 'redux-saga/effects';
 
-import { Account, Keystore } from 'evm-lite-lib';
+import { Account, Database, Keystore, Transaction, TXReceipt } from 'evm-lite-lib';
 
 import { Store } from '../..';
+import { checkConnectivityWorker } from './Application';
 
 import Accounts, { AccountsDecryptPayload, AccountsTransferPayLoad } from '../../actions/Accounts';
+import Application from '../../actions/Application';
 
 
 interface AccountsDecryptAction {
@@ -18,6 +20,7 @@ interface AccountsTransferAction {
 }
 
 const accounts = new Accounts();
+const app = new Application();
 
 export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 	const { success, failure, reset } = accounts.handlers.decrypt;
@@ -52,7 +55,23 @@ export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 }
 
 export function* accountsTransferWorker(action: AccountsTransferAction) {
+	const { failure, success } = accounts.handlers.transfer;
+
 	try {
+		const state: Store = yield select();
+
+		if (!state.config.load.response) {
+			yield put(failure('No configuration file initialised.'));
+			return;
+		}
+
+		const evmlc = yield join(
+			yield fork(checkConnectivityWorker, app.handlers.connectivity.init({
+				host: state.config.load.response.connection.host,
+				port: state.config.load.response.connection.port
+			}))
+		);
+
 		const decryptedAccount = yield join(
 			yield fork(accountsDecryptWorker, accounts.handlers.decrypt.init({
 				address: action.payload.tx.from,
@@ -60,8 +79,40 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 			}))
 		);
 
-		console.log(decryptedAccount);
+		const transaction: Transaction = yield evmlc.prepareTransfer(
+			action.payload.tx.to,
+			action.payload.tx.value,
+			action.payload.tx.from
+		);
+
+		console.log(transaction.tx);
+
+		transaction.gas(action.payload.tx.gas);
+		transaction.gasPrice(action.payload.tx.gasPrice);
+
+		const signedTransaction = yield transaction.sign(decryptedAccount);
+		const response: TXReceipt = yield signedTransaction.sendRawTX();
+
+		const database = new Database(state.app.directory.payload!, 'db.json');
+		console.log(database);
+		const schema = database.transactions.create({
+			from: action.payload.tx.from,
+			to: action.payload.tx.to,
+			value: action.payload.tx.value,
+			gas: action.payload.tx.gas,
+			nonce: 1,
+			gasPrice: action.payload.tx.gas,
+			date: new Date(),
+			txHash: response.transactionHash
+		});
+
+		console.log(schema);
+		yield database.transactions.insert(schema);
+		console.log('Submitted to db');
+
+		yield put(success(response));
 	} catch (e) {
-		// pass
+		console.log(e);
+		yield put(failure(e.text || 'Something went wrong while transferring.'));
 	}
 }

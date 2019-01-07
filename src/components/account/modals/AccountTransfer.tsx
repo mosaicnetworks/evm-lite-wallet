@@ -69,6 +69,21 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 			this.props.alert.success(nextProps.accountDecryptTask.response);
 			this.setState({ transferDisable: false });
 		}
+
+		if (!this.props.accountTransferTask.response && !!nextProps.accountTransferTask.response &&
+			parseInt(this.state.fields.gasPrice, 10) >= 0) {
+
+			this.props.alert.success('Transfer request submitted.');
+			this.setState({ transferDisable: true });
+
+			this.close();
+		}
+
+		if (!this.props.accountTransferTask.error && !!nextProps.accountTransferTask.error &&
+			parseInt(this.state.fields.gasPrice, 10) >= 0) {
+
+			this.props.alert.error(nextProps.accountTransferTask.error);
+		}
 	}
 
 	public open = () => this.setState({ open: true });

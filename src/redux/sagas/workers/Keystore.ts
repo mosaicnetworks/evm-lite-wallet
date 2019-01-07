@@ -92,3 +92,11 @@ export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
 	yield put(reset());
 }
 
+export function* keystoreCreateWorker(action: KeystoreUpdateAction) {
+	try {
+		// pass
+	} catch (e) {
+		// pass
+	}
+}
+

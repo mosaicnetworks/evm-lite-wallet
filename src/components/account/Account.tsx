@@ -4,8 +4,7 @@ import { Button, Card, Icon, Image, Label } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 
-import { BaseAccount } from 'evm-lite-lib/evm/client/AccountClient';
-import { SentTX } from 'evm-lite-lib/evm/classes/Transaction';
+import { BaseAccount, SentTX } from 'evm-lite-lib';
 
 import { Store } from '../../redux';
 import { TransactionHistoryReducer } from '../../redux/reducers/Transactions';

@@ -2,8 +2,6 @@ import { put, select } from 'redux-saga/effects';
 
 import { Database } from 'evm-lite-lib';
 
-import TransactionFilter from 'evm-lite-lib/tools/database/filters/Transaction';
-
 import { Store } from '../..';
 
 import Transactions, { AccountTransactionHistory, TransactionHistoryPayload } from '../../actions/Transactions';
@@ -24,7 +22,9 @@ export function* transactionHistoryWorker(action: TransactionHistoryAction) {
 
 		if (state.app.directory.response && state.app.directory.payload) {
 			const database: Database = new Database(state.app.directory.payload, 'db.json');
-			const filter: TransactionFilter = yield database.transactions.filter();
+			const filter: {
+				sender: any
+			} = yield database.transactions.filter();
 			const history: AccountTransactionHistory = {};
 
 			action.payload.addresses.forEach(address => {
