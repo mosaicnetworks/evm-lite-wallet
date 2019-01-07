@@ -5,7 +5,7 @@ import { BaseAccount, Keystore as EVMLKeystore } from 'evm-lite-lib';
 import { Store } from '../..';
 import { checkConnectivityWorker } from './Application';
 
-import Keystore, { KeystoreListPayLoad, KeystoreUpdatePayLoad } from '../../actions/Keystore';
+import Keystore, { KeystoreCreatePayLoad, KeystoreListPayLoad, KeystoreUpdatePayLoad } from '../../actions/Keystore';
 import Transactions from '../../actions/Transactions';
 import Application from '../../actions/Application';
 
@@ -18,6 +18,11 @@ interface KeystoreListAction {
 interface KeystoreUpdateAction {
 	type: string;
 	payload: KeystoreUpdatePayLoad;
+}
+
+interface KeystoreCreateAction {
+	type: string;
+	payload: KeystoreCreatePayLoad;
 }
 
 const keystore = new Keystore();
@@ -92,11 +97,29 @@ export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
 	yield put(reset());
 }
 
-export function* keystoreCreateWorker(action: KeystoreUpdateAction) {
+export function* keystoreCreateWorker(action: KeystoreCreateAction) {
+	const { success, failure } = keystore.handlers.create;
+
 	try {
-		// pass
+		const list = action.payload.keystore.split('/');
+		const popped = list.pop();
+
+		if (popped === '/') {
+			list.pop();
+		}
+
+		const keystoreParentDir = list.join('/');
+		const evmlKeystore = new EVMLKeystore(keystoreParentDir, 'keystore');
+
+		const account = JSON.parse(yield evmlKeystore.create(action.payload.password));
+
+		yield put(success({
+			address: account.address,
+			nonce: 0,
+			balance: 0
+		}));
 	} catch (e) {
-		// pass
+		yield put(failure(e));
 	}
 }
 

@@ -58,6 +58,22 @@ class AccountCreate extends React.Component<LocalProps, State> {
 	public open = () => this.setState({ open: true });
 	public close = () => this.setState({ open: false });
 
+	public componentWillReceiveProps(nextProps: Readonly<LocalProps>, nextContext: any): void {
+		if (!this.props.keystoreCreateTask.error && !!nextProps.keystoreCreateTask.error &&
+			this.state.fields.password) {
+
+			this.props.alert.error(nextProps.keystoreCreateTask.error);
+		}
+
+		if (!this.props.keystoreCreateTask.response && !!nextProps.keystoreCreateTask.response &&
+			this.state.fields.password) {
+
+			this.props.alert.success(`Account created: ${nextProps.keystoreCreateTask.response.address}`);
+
+			this.close();
+		}
+	}
+
 	public handleChangeVerifyPassword = (e: any) => {
 		this.setState({
 			fields: {
@@ -86,18 +102,18 @@ class AccountCreate extends React.Component<LocalProps, State> {
 		const { fields } = this.state;
 
 		if (!fields.password || !fields.verifyPassword) {
+			this.props.alert.error('Both fields must not be empty.');
 			return;
 		}
 		if (fields.password !== fields.verifyPassword) {
+			this.props.alert.error('Passwords do not match.');
 			return;
 		}
-
-		this.close();
-
-		if (this.props.keystoreCreateTask.response) {
-			this.props.alert.success('Account created!');
-		} else {
-			this.props.alert.error('Error: ' + this.props.keystoreCreateTask.error);
+		if (this.props.configLoadTask.response) {
+			this.props.handleCreateAccount({
+				password: this.state.fields.password,
+				keystore: this.props.configLoadTask.response.storage.keystore
+			});
 		}
 	};
 
