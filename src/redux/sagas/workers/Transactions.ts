@@ -22,14 +22,11 @@ export function* transactionHistoryWorker(action: TransactionHistoryAction) {
 
 		if (state.app.directory.response && state.app.directory.payload) {
 			const database: Database = new Database(state.app.directory.payload, 'db.json');
-			const filter: {
-				sender: any
-			} = yield database.transactions.filter();
 			const history: AccountTransactionHistory = {};
 
-			action.payload.addresses.forEach(address => {
-				history[address] = filter.sender(address);
-			});
+			const filter: { sender: any } = yield database.transactions.filter();
+
+			action.payload.addresses.forEach(address => history[address] = filter.sender(address));
 
 			yield put(success(history));
 		} else {

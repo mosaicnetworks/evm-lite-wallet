@@ -55,25 +55,14 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 		fields: {
 			to: '',
 			value: '',
-			gas: this.props.configLoadTask.response!.defaults.gas.toString(),
-			gasPrice: this.props.configLoadTask.response!.defaults.gasPrice.toString(),
+			gas: '',
+			gasPrice: '',
 			password: ''
 		}
 	};
 
 	public componentWillReceiveProps(nextProps: Readonly<LocalProps>, nextContext: any): void {
 		if (!this.props.configLoadTask.response && nextProps.configLoadTask.response) {
-			console.log('CHANGING STATE CONFIG')
-			this.setState({
-				fields: {
-					...this.state.fields,
-					gas: nextProps.configLoadTask.response.defaults.gas.toString(),
-					gasPrice: nextProps.configLoadTask.response.defaults.gasPrice.toString(),
-				}
-			})
-		}
-
-		if (nextProps.configLoadTask.response && (!this.state.fields.gas || this.state.fields.gasPrice)) {
 			this.setState({
 				fields: {
 					...this.state.fields,
@@ -83,8 +72,18 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 			});
 		}
 
+		// if (nextProps.configLoadTask.response && (!this.state.fields.gas || this.state.fields.gasPrice)) {
+		// 	this.setState({
+		// 		fields: {
+		// 			...this.state.fields,
+		// 			gas: nextProps.configLoadTask.response.defaults.gas.toString(),
+		// 			gasPrice: nextProps.configLoadTask.response.defaults.gasPrice.toString()
+		// 		}
+		// 	});
+		// }
+
 		if (!this.props.accountTransferTask.response && !!nextProps.accountTransferTask.response &&
-			parseInt(this.state.fields.gasPrice, 10) >= 0&& !this.state.transferSuccessMessage) {
+			parseInt(this.state.fields.gasPrice, 10) >= 0 && !this.state.transferSuccessMessage) {
 			this.props.alert.success('Transfer request submitted.');
 			this.setState({
 				transferSuccessMessage: true
@@ -99,6 +98,19 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 				transferErrorMessage: true
 			});
 			this.props.alert.error(nextProps.accountTransferTask.error);
+		}
+	}
+
+	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<State>, nextContext: any): void {
+		if (this.props.configLoadTask.response && (!this.state.fields.gas || !this.state.fields.gasPrice)) {
+			const { response } = this.props.configLoadTask;
+			this.setState({
+				fields: {
+					...this.state.fields,
+					gas: response.defaults.gas.toString(),
+					gasPrice: response.defaults.gasPrice.toString()
+				}
+			});
 		}
 	}
 
@@ -154,7 +166,6 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 
 	public handleTransfer = () => {
 		this.setState({
-			...this.state,
 			transferErrorMessage: false,
 			transferSuccessMessage: false
 		});
@@ -169,8 +180,6 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 			}
 		}
 
-		console.log(this.state);
-
 		this.props.handleTransfer({
 			tx: {
 				to: fields.to,
@@ -181,6 +190,8 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 			},
 			password: fields.password
 		});
+
+		console.log(this.state);
 	};
 
 	public render() {
