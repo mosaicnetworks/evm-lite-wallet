@@ -1,7 +1,12 @@
 import * as electron from 'electron';
+import { default as installExtension, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 const app = electron.app;
 let main: electron.BrowserWindow | null;
+
+installExtension(REACT_DEVELOPER_TOOLS)
+	.then((name) => console.log(`Added Extension:  ${name}`))
+	.catch((err) => console.log('An error occurred: ', err));
 
 function createWindow() {
 	main = new electron.BrowserWindow({

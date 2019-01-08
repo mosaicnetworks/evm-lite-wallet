@@ -34,7 +34,6 @@ type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps
 
 interface State {
 	open: boolean;
-	transferDisable: boolean;
 	transferErrorMessage: boolean;
 	transferSuccessMessage: boolean;
 	fields: {
@@ -51,22 +50,27 @@ const accounts = new Accounts();
 class AccountTransfer extends React.Component<LocalProps, State> {
 	public state = {
 		open: false,
-		transferDisable: false,
-		transferErrorMessage: false,
-		transferSuccessMessage: false,
+		transferErrorMessage: true,
+		transferSuccessMessage: true,
 		fields: {
 			to: '',
 			value: '',
-			gas: '',
-			gasPrice: '',
+			gas: this.props.configLoadTask.response!.defaults.gas.toString(),
+			gasPrice: this.props.configLoadTask.response!.defaults.gasPrice.toString(),
 			password: ''
 		}
 	};
 
 	public componentWillReceiveProps(nextProps: Readonly<LocalProps>, nextContext: any): void {
-		if (!this.props.accountDecryptTask.error && !!nextProps.accountDecryptTask.error &&
-			this.state.fields.password) {
-			this.props.alert.error('Could not decrypt account with password provided.');
+		if (!this.props.configLoadTask.response && nextProps.configLoadTask.response) {
+			console.log('CHANGING STATE CONFIG')
+			this.setState({
+				fields: {
+					...this.state.fields,
+					gas: nextProps.configLoadTask.response.defaults.gas.toString(),
+					gasPrice: nextProps.configLoadTask.response.defaults.gasPrice.toString(),
+				}
+			})
 		}
 
 		if (nextProps.configLoadTask.response && (!this.state.fields.gas || this.state.fields.gasPrice)) {
@@ -79,35 +83,22 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 			});
 		}
 
-		if (!this.props.accountDecryptTask.response && !!nextProps.accountDecryptTask.response &&
-			this.state.fields.password) {
-			this.props.alert.success(nextProps.accountDecryptTask.response);
-		}
-
 		if (!this.props.accountTransferTask.response && !!nextProps.accountTransferTask.response &&
-			parseInt(this.state.fields.gasPrice, 10) >= 0) {
-
+			parseInt(this.state.fields.gasPrice, 10) >= 0&& !this.state.transferSuccessMessage) {
+			this.props.alert.success('Transfer request submitted.');
 			this.setState({
 				transferSuccessMessage: true
 			});
-
-			if (!this.state.transferSuccessMessage) {
-				this.props.alert.success('Transfer request submitted.');
-			}
-
 			this.close();
 		}
 
-		if (!this.props.accountTransferTask.error && !!nextProps.accountTransferTask.error &&
-			this.state.fields.gas && this.state.fields.gasPrice && !this.props.accountDecryptTask.response) {
-
-			if (!this.state.transferErrorMessage) {
-				this.props.alert.error(nextProps.accountTransferTask.error);
-			}
-
+		if (!this.props.accountTransferTask.error &&
+			!!nextProps.accountTransferTask.error &&
+			!this.state.transferErrorMessage) {
 			this.setState({
 				transferErrorMessage: true
 			});
+			this.props.alert.error(nextProps.accountTransferTask.error);
 		}
 	}
 
@@ -163,6 +154,7 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 
 	public handleTransfer = () => {
 		this.setState({
+			...this.state,
 			transferErrorMessage: false,
 			transferSuccessMessage: false
 		});
@@ -176,6 +168,8 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 				return;
 			}
 		}
+
+		console.log(this.state);
 
 		this.props.handleTransfer({
 			tx: {
@@ -219,20 +213,12 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 									<Form.Field>
 										<label>Gas</label>
 										<input onChange={this.handleOnChangeGas}
-											   defaultValue={
-												   this.props.configLoadTask.response ?
-													   this.props.configLoadTask.response.defaults.gas.toString() :
-													   fields.gas
-											   }/>
+											   defaultValue={fields.gas}/>
 									</Form.Field>
 									<Form.Field>
 										<label>Gas Price</label>
 										<input onChange={this.handleOnChangeGasPrice}
-											   defaultValue={
-												   this.props.configLoadTask.response ?
-													   this.props.configLoadTask.response.defaults.gasPrice.toString() :
-													   fields.gasPrice
-											   }/>
+											   defaultValue={fields.gasPrice}/>
 									</Form.Field>
 								</Form.Group>
 							</Form>
@@ -240,7 +226,7 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 					</Modal.Content>
 					<Modal.Actions>
 						<Button onClick={this.close}>Close</Button>
-						<Button disabled={this.state.transferDisable}
+						<Button disabled={this.props.accountTransferTask.isLoading}
 								onClick={this.handleTransfer}
 								color={'green'}
 								type='submit'>

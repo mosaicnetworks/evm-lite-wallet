@@ -3,6 +3,7 @@ import Application from './actions/Application';
 
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
+
 export interface EVMLAction<S, F> {
 	type: string,
 	data?: S | F

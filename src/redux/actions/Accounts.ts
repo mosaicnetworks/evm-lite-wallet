@@ -1,5 +1,3 @@
-import { TXReceipt } from 'evm-lite-lib';
-
 import BaseActions, { ActionCreatorHandlers, ActionInterface, ActionValue } from '../common/BaseActions';
 
 
@@ -21,7 +19,7 @@ export interface AccountsTransferPayLoad {
 
 interface HandlerSchema {
 	decrypt: ActionCreatorHandlers<AccountsDecryptPayload, string, string>;
-	transfer: ActionCreatorHandlers<AccountsTransferPayLoad, TXReceipt, string>;
+	transfer: ActionCreatorHandlers<AccountsTransferPayLoad, string, string>;
 }
 
 interface ActionSchema extends ActionInterface {
@@ -43,7 +41,7 @@ export default class Accounts extends BaseActions<HandlerSchema, ActionSchema> {
 
 		this.handlers = {
 			decrypt: this.generateHandlers<AccountsDecryptPayload, string, string>('Decrypt'),
-			transfer: this.generateHandlers<AccountsTransferPayLoad, TXReceipt, string>('Transfer')
+			transfer: this.generateHandlers<AccountsTransferPayLoad, string, string>('Transfer')
 		};
 	}
 

@@ -1,6 +1,6 @@
 import { fork, join, put, select } from 'redux-saga/effects';
 
-import { Account, Database, Keystore, Transaction, TXReceipt } from 'evm-lite-lib';
+import { Account, Database, Keystore, Transaction } from 'evm-lite-lib';
 
 import { Store } from '../..';
 import { checkConnectivityWorker } from './Application';
@@ -31,18 +31,13 @@ export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 		if (state.config.load.response) {
 			const list = state.config.load.response.storage.keystore.split('/');
 			const popped = list.pop();
-
-			if (popped === '/') {
-				list.pop();
-			}
-
 			const keystoreParentDir = list.join('/');
-			const evmlKeystore = new Keystore(keystoreParentDir, 'keystore');
+			const evmlKeystore = new Keystore(keystoreParentDir, popped!);
 			const account = yield evmlKeystore.get(action.payload.address);
-
 			const decryptedAccount: Account = yield Account.decrypt(account, action.payload.password);
 
 			yield put(success('Account decryption was successful.'));
+
 			yield put(reset());
 
 			return decryptedAccount;
@@ -55,7 +50,7 @@ export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 }
 
 export function* accountsTransferWorker(action: AccountsTransferAction) {
-	const { failure, success, reset } = accounts.handlers.transfer;
+	const { failure, reset, success } = accounts.handlers.transfer;
 
 	try {
 		const state: Store = yield select();
@@ -73,6 +68,7 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 		);
 
 		if (!evmlc) {
+			yield put(failure('Decryption failed. Please try again.'));
 			return;
 		}
 
@@ -84,6 +80,7 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 		);
 
 		if (!decryptedAccount) {
+			yield put(failure('Decryption failed. Please try again.'));
 			return;
 		}
 
@@ -98,11 +95,10 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 		transaction.gas(action.payload.tx.gas);
 		transaction.gasPrice(action.payload.tx.gasPrice);
 
-		const signedTransaction = yield transaction.sign(decryptedAccount);
-		const response: TXReceipt = yield signedTransaction.sendRawTX();
+		const signedTransaction: Transaction = yield transaction.sign(decryptedAccount);
+		const txHash: string = yield (signedTransaction.submit());
 
 		const database = new Database(state.app.directory.payload!, 'db.json');
-		console.log(database);
 		const schema = database.transactions.create({
 			from: action.payload.tx.from,
 			to: action.payload.tx.to,
@@ -111,18 +107,16 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 			nonce: 1,
 			gasPrice: action.payload.tx.gas,
 			date: new Date(),
-			txHash: response.transactionHash
+			txHash
 		});
 
-		console.log(schema);
 		yield database.transactions.insert(schema);
-		console.log('Submitted to db');
+		console.log(schema);
 
-		yield put(success(response));
+		yield put(success(txHash));
 	} catch (e) {
-		console.log(e);
 		yield put(failure(e.text || 'Something went wrong while transferring.'));
 	}
 
-	yield put(reset())
+	yield put(reset());
 }
