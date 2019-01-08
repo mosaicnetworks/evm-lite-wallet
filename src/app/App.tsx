@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { connect } from 'react-redux';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { HashRouter, Route } from 'react-router-dom';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 
 import { Store } from '../redux';
@@ -65,7 +65,7 @@ class App extends React.Component<LocalProps, any> {
 
 	public render() {
 		return (
-			<BrowserRouter>
+			<HashRouter>
 				<React.Fragment>
 					<Wrapper>
 						<Route exact={true} path="/" component={Index}/>
@@ -73,7 +73,7 @@ class App extends React.Component<LocalProps, any> {
 						<Route path="/configuration" component={Configuration}/>
 					</Wrapper>
 				</React.Fragment>
-			</BrowserRouter>
+			</HashRouter>
 		);
 	}
 }
