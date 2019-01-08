@@ -72,16 +72,6 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 			});
 		}
 
-		// if (nextProps.configLoadTask.response && (!this.state.fields.gas || this.state.fields.gasPrice)) {
-		// 	this.setState({
-		// 		fields: {
-		// 			...this.state.fields,
-		// 			gas: nextProps.configLoadTask.response.defaults.gas.toString(),
-		// 			gasPrice: nextProps.configLoadTask.response.defaults.gasPrice.toString()
-		// 		}
-		// 	});
-		// }
-
 		if (!this.props.accountTransferTask.response && !!nextProps.accountTransferTask.response &&
 			parseInt(this.state.fields.gasPrice, 10) >= 0 && !this.state.transferSuccessMessage) {
 			this.props.alert.success('Transfer request submitted.');
@@ -104,6 +94,7 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<State>, nextContext: any): void {
 		if (this.props.configLoadTask.response && (!this.state.fields.gas || !this.state.fields.gasPrice)) {
 			const { response } = this.props.configLoadTask;
+
 			this.setState({
 				fields: {
 					...this.state.fields,
@@ -190,8 +181,6 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 			},
 			password: fields.password
 		});
-
-		console.log(this.state);
 	};
 
 	public render() {
@@ -240,6 +229,7 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 						<Button disabled={this.props.accountTransferTask.isLoading}
 								onClick={this.handleTransfer}
 								color={'green'}
+								loading={this.props.accountTransferTask.isLoading}
 								type='submit'>
 							Transfer
 						</Button>

@@ -80,13 +80,14 @@ class Accounts extends React.Component<LocalProps, any> {
 						<Header.Subheader>These accounts are read from the keystore specified in the config
 							file.</Header.Subheader>
 					</Header.Content>
-					<Divider/>
+					<Divider hidden={true}/>
 					<Header.Content>
 						<AccountCreate/>
 						<AccountImport/>
 						<LoadingButton isLoading={keystoreListTask.isLoading}
 									   onClickHandler={this.handleRefreshAccounts}
 									   right={true}/>
+						<Divider hidden={true}/>
 					</Header.Content>
 				</Header>
 				<Divider hidden={true}/>
