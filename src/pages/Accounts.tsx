@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Divider, Header, Icon } from 'semantic-ui-react';
+import { Divider, Header } from 'semantic-ui-react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { ConfigSchema } from 'evm-lite-lib';
@@ -74,14 +74,6 @@ class Accounts extends React.Component<LocalProps, any> {
 		const { keystoreListTask } = this.props;
 		return (
 			<React.Fragment>
-				<Header as='h2' className={'header-section'}>
-					<Icon name='users'/>
-					<Header.Content>
-						Accounts
-						<Header.Subheader>These accounts are read from the keystore specified in the config
-							file.</Header.Subheader>
-					</Header.Content>
-				</Header>
 				<Header as='h2' className={'header-section-buttons'}>
 					<Header.Content>
 						<AccountCreate/>
@@ -98,10 +90,10 @@ class Accounts extends React.Component<LocalProps, any> {
 						{keystoreListTask.response && keystoreListTask.response.map((account: BaseAccount) => {
 							return (
 								<CSSTransition key={account.address}
-									in={true}
-									appear={!this.props.keystoreListTask.isLoading}
-									timeout={2000}
-									classNames="slide"
+											   in={true}
+											   appear={!this.props.keystoreListTask.isLoading}
+											   timeout={2000}
+											   classNames="slide"
 								>
 									<Account key={account.address} account={account}/>
 								</CSSTransition>

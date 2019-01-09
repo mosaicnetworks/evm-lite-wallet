@@ -8,6 +8,7 @@ import { checkConnectivityWorker } from './Application';
 import Keystore, { KeystoreCreatePayLoad, KeystoreListPayLoad, KeystoreUpdatePayLoad } from '../../actions/Keystore';
 import Transactions from '../../actions/Transactions';
 import Application from '../../actions/Application';
+import { delay } from 'redux-saga';
 
 
 interface KeystoreListAction {
@@ -71,15 +72,18 @@ export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
 		const state: Store = yield select();
 
 		if (state.config.load.response) {
+
+			yield delay(1000);
+
 			const list = state.config.load.response.storage.keystore.split('/');
-			const popped = list.pop();
+			let popped: string = list.pop() || 'keystore';
 
 			if (popped === '/') {
-				list.pop();
+				popped = list.pop() || 'keystore';
 			}
 
 			const keystoreParentDir = list.join('/');
-			const evmlKeystore: EVMLKeystore = new EVMLKeystore(keystoreParentDir, 'keystore');
+			const evmlKeystore: EVMLKeystore = new EVMLKeystore(keystoreParentDir, popped);
 
 			const account = yield evmlKeystore.update(
 				action.payload.address,
@@ -91,7 +95,7 @@ export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
 		}
 
 	} catch (e) {
-		yield put(failure('Error: ' + e));
+		yield put(failure(e));
 	}
 
 	yield put(reset());
@@ -112,6 +116,13 @@ export function* keystoreCreateWorker(action: KeystoreCreateAction) {
 		const evmlKeystore = new EVMLKeystore(keystoreParentDir, 'keystore');
 
 		const account = JSON.parse(yield evmlKeystore.create(action.payload.password));
+
+		yield join(
+			yield fork(keystoreListWorker, keystore.handlers.list.init({
+				directory: keystoreParentDir,
+				name: 'keystore'
+			}))
+		);
 
 		yield put(success({
 			address: account.address,

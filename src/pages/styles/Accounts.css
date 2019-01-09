@@ -58,26 +58,26 @@
 /* slide enter */
 .slide-enter {
 	opacity: 0;
-	transform: scale(0) translateX(0px);
+	transform: scaleX(0) translateX(0px);
 	z-index: 1;
 }
 
 .slide-enter.slide-enter-active {
 	opacity: 1;
-	transform: scale(1) translateX(0px);
+	transform: scaleX(1) translateX(0px);
 	transition: opacity 3000ms linear 1000ms, transform 0ms linear 0ms;
 }
 
 /* slide exit */
 .slide-exit {
 	opacity: 1;
-	transform: scale(1) translateY(0);
+	transform: scaleX(1) translateY(0);
 
 }
 
 .slide-exit.slide-exit-active {
 	opacity: 0;
-	transform: scale(0) translateY(0);
+	transform: scaleX(0) translateY(0);
 	transition: opacity 1500ms linear, transform 1500ms ease-out;
 }
 

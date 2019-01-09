@@ -5,10 +5,8 @@ import { connect } from 'react-redux';
 import { Button, Divider, Form, Header, Modal } from 'semantic-ui-react';
 
 import { BaseAccount, Store } from '../../../redux';
-import { AccountsDecryptReducer } from '../../../redux/reducers/Accounts';
 import { KeystoreUpdateReducer } from '../../../redux/reducers/Keystore';
 
-import Accounts, { AccountsDecryptPayload } from '../../../redux/actions/Accounts';
 import Keystore, { KeystoreUpdatePayLoad } from '../../../redux/actions/Keystore';
 
 import '../styles/Account.css';
@@ -19,12 +17,10 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	accountDecryptTask: AccountsDecryptReducer;
 	keystoreUpdateTask: KeystoreUpdateReducer;
 }
 
 interface DispatchProps {
-	handleDecryption: (payload: AccountsDecryptPayload) => void;
 	handleUpdatePassword: (payload: KeystoreUpdatePayLoad) => void;
 }
 
@@ -44,7 +40,6 @@ interface State {
 	}
 }
 
-const accounts = new Accounts();
 const keystore = new Keystore();
 
 class AccountUpdate extends React.Component<LocalProps, State> {
@@ -59,22 +54,15 @@ class AccountUpdate extends React.Component<LocalProps, State> {
 	};
 
 	public componentWillReceiveProps(nextProps: Readonly<LocalProps>, nextContext: any): void {
-		if (!this.props.accountDecryptTask.error && !!nextProps.accountDecryptTask.error &&
-			!!this.state.fields.oldPassword) {
-			this.props.alert.error('Could not decrypt account with password provided.');
-			this.setState({ updateDisable: true });
-		}
-
-		if (!this.props.accountDecryptTask.response && !!nextProps.accountDecryptTask.response &&
-			!!this.state.fields.oldPassword) {
-			this.props.alert.success(nextProps.accountDecryptTask.response);
-			this.setState({ updateDisable: false });
-		}
-
 		if (!this.props.keystoreUpdateTask.response && !!nextProps.keystoreUpdateTask.response
-			&& !this.state.updateDisable) {
-			this.props.alert.success('Account updated successfully.');
+			&& this.state.fields.oldPassword) {
+			nextProps.alert.success('Account updated successfully.');
 			this.close();
+		}
+
+		if (!this.props.keystoreUpdateTask.error && !!nextProps.keystoreUpdateTask.error
+			&& this.state.fields.oldPassword) {
+			nextProps.alert.error(nextProps.keystoreUpdateTask.error);
 		}
 	}
 
@@ -129,15 +117,6 @@ class AccountUpdate extends React.Component<LocalProps, State> {
 		});
 	};
 
-	public onBlurPassword = async () => {
-		if (!this.props.accountDecryptTask.response) {
-			this.props.handleDecryption({
-				address: this.props.account.address,
-				password: this.state.fields.oldPassword
-			});
-		}
-	};
-
 	public render() {
 		return (
 			<React.Fragment>
@@ -157,7 +136,7 @@ class AccountUpdate extends React.Component<LocalProps, State> {
 							<Form>
 								<Form.Field>
 									<label>Old Password: </label>
-									<input onBlur={this.onBlurPassword} type={'password'} placeholder='Old Password'
+									<input type={'password'} placeholder='Old Password'
 										   onChange={this.handleChangeOldPassword}/>
 								</Form.Field>
 								<Form.Field>
@@ -176,9 +155,8 @@ class AccountUpdate extends React.Component<LocalProps, State> {
 					</Modal.Content>
 					<Modal.Actions>
 						<Button onClick={this.close}>Close</Button>
-						<Button disabled={this.state.updateDisable}
-								loading={this.props.accountDecryptTask.isLoading ||
-								this.props.keystoreUpdateTask.isLoading}
+						<Button disabled={this.props.keystoreUpdateTask.isLoading}
+								loading={this.props.keystoreUpdateTask.isLoading}
 								onClick={this.handleSave} color={'green'}
 								type='submit'>Update</Button>
 					</Modal.Actions>
@@ -189,12 +167,10 @@ class AccountUpdate extends React.Component<LocalProps, State> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	accountDecryptTask: store.accounts.decrypt,
 	keystoreUpdateTask: store.keystore.update
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleDecryption: payload => dispatch(accounts.handlers.decrypt.init(payload)),
 	handleUpdatePassword: payload => dispatch(keystore.handlers.update.init(payload))
 });
 

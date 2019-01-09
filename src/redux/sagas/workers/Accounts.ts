@@ -4,6 +4,8 @@ import { Account, Database, Keystore, Transaction } from 'evm-lite-lib';
 
 import { Store } from '../..';
 import { checkConnectivityWorker } from './Application';
+import { default as KeystoreActions } from '../../actions/Keystore';
+import { keystoreListWorker } from './Keystore';
 
 import Accounts, { AccountsDecryptPayload, AccountsTransferPayLoad } from '../../actions/Accounts';
 import Application from '../../actions/Application';
@@ -21,6 +23,7 @@ interface AccountsTransferAction {
 
 const accounts = new Accounts();
 const app = new Application();
+const keystore = new KeystoreActions();
 
 export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 	const { success, failure, reset } = accounts.handlers.decrypt;
@@ -112,6 +115,13 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 
 		yield database.transactions.insert(schema);
 		console.log(schema);
+
+		yield join(
+			yield fork(keystoreListWorker, keystore.handlers.list.init({
+				directory: state.app.directory.payload!,
+				name: 'keystore'
+			}))
+		);
 
 		yield put(success(txHash));
 	} catch (e) {
