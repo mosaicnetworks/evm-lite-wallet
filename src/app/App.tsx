@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { HashRouter, Route } from 'react-router-dom';
 import { InjectedAlertProp, withAlert } from 'react-alert';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { Store } from '../redux';
 import { ApplicationDirectoryChangeReducer } from '../redux/reducers/Application';
@@ -68,9 +69,20 @@ class App extends React.Component<LocalProps, any> {
 			<HashRouter>
 				<React.Fragment>
 					<Wrapper>
-						<Route exact={true} path="/" component={Index}/>
-						<Route path="/accounts" component={Accounts}/>
-						<Route path="/configuration" component={Configuration}/>
+						<TransitionGroup>
+							<CSSTransition
+								in={true}
+								appear={true}
+								timeout={1000}
+								classNames="fade"
+							>
+								<div>
+									<Route exact={true} path="/" component={Index}/>
+									<Route path="/accounts" component={Accounts}/>
+									<Route path="/configuration" component={Configuration}/>
+								</div>
+							</CSSTransition>
+						</TransitionGroup>
 					</Wrapper>
 				</React.Fragment>
 			</HashRouter>

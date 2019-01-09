@@ -7,8 +7,6 @@ import { Container, Icon, Label } from 'semantic-ui-react';
 import { Store } from '../redux';
 import { KeystoreListReducer } from '../redux/reducers/Keystore';
 import { ApplicationDirectoryChangeReducer } from '../redux/reducers/Application';
-
-import DataDirectoryButton from './modals/DataDirectoryButton';
 import Application from '../redux/actions/Application';
 import Defaults from '../classes/Defaults';
 
@@ -64,9 +62,6 @@ class Header extends React.Component<LocalProps, any> {
 							<Link to="/configuration">
 								<Icon size={'big'} color={'black'} name="cog"/>
 							</Link>
-						</li>
-						<li>
-							<a><DataDirectoryButton color={'teal'}/></a>
 						</li>
 						<li>
 							<a>

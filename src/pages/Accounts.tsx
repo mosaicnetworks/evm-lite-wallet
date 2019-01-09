@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Divider, Header, Icon } from 'semantic-ui-react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { ConfigSchema } from 'evm-lite-lib';
 
@@ -73,31 +74,44 @@ class Accounts extends React.Component<LocalProps, any> {
 		const { keystoreListTask } = this.props;
 		return (
 			<React.Fragment>
-				<Header as='h2'>
+				<Header as='h2' className={'header-section'}>
 					<Icon name='users'/>
 					<Header.Content>
 						Accounts
 						<Header.Subheader>These accounts are read from the keystore specified in the config
 							file.</Header.Subheader>
 					</Header.Content>
-					<Divider hidden={true}/>
+				</Header>
+				<Header as='h2' className={'header-section-buttons'}>
 					<Header.Content>
 						<AccountCreate/>
 						<AccountImport/>
 						<LoadingButton isLoading={keystoreListTask.isLoading}
 									   onClickHandler={this.handleRefreshAccounts}
 									   right={true}/>
-						<Divider hidden={true}/>
 					</Header.Content>
 				</Header>
 				<Divider hidden={true}/>
+
 				<div className={'page'}>
-					{keystoreListTask.response && keystoreListTask.response.map((account: BaseAccount) => {
-						return <Account key={account.address} account={account}/>;
-					})}
+					<TransitionGroup>
+						{keystoreListTask.response && keystoreListTask.response.map((account: BaseAccount) => {
+							return (
+								<CSSTransition key={account.address}
+									in={true}
+									appear={!this.props.keystoreListTask.isLoading}
+									timeout={2000}
+									classNames="slide"
+								>
+									<Account key={account.address} account={account}/>
+								</CSSTransition>
+							);
+						})}
+					</TransitionGroup>
 					{!keystoreListTask.isLoading &&
 					keystoreListTask.error && <div className={'error_message'}>{keystoreListTask.error}</div>}
 				</div>
+
 			</React.Fragment>
 		);
 	}

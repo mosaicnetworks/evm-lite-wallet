@@ -8,6 +8,7 @@
     "react-alert": "^4.0.4",
     "react-alert-template-basic": "^1.0.0",
     "react-dom": "^16.6.1",
+    "react-transition-group": "^2.5.2",
     "redux-persist": "^5.10.0",
     "redux-saga": "^0.16.2"
   },

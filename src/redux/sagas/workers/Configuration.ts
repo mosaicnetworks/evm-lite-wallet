@@ -6,6 +6,7 @@ import { keystoreListWorker } from './Keystore';
 
 import Configuration, { ConfigLoadPayLoad, ConfigSavePayLoad } from '../../actions/Configuration';
 import Keystore from '../../actions/Keystore';
+import { delay } from 'redux-saga';
 
 
 interface ConfigFileLoadAction {
@@ -39,13 +40,13 @@ export function* configurationReadWorker(action: ConfigFileLoadAction) {
 }
 
 export function* configurationSaveWorker(action: ConfigFileSaveAction) {
-	const { success, failure } = config.handlers.save;
+	const { success, failure, reset } = config.handlers.save;
+
+	yield delay(1000);
 
 	try {
 		const evmlConfig: Config = new Config(action.payload.directory, action.payload.name);
 		const response: string = yield evmlConfig.save(action.payload.configSchema);
-
-		yield put(success(response));
 
 		const configurationData: ConfigSchema = yield join(
 			yield fork(configurationReadWorker, config.handlers.load.init({
@@ -72,10 +73,15 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 			);
 		}
 
+		yield put(success(response));
+		yield put(reset());
+
 		return true;
 	} catch (e) {
 		yield put(failure('Error: ' + e));
+		yield put(reset());
 
 		return null;
 	}
+
 }

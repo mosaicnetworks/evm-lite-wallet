@@ -1,3 +1,86 @@
 .right {
 	float: right !important;
 }
+
+.header-section {
+	background: rgba(255, 255, 255, 1) !important;
+	padding: 20px !important;
+	margin-bottom: -25px !important;
+	border-top: rgba(34, 36, 38, .1) 1px solid !important;
+	border-right: rgba(34, 36, 38, .1) 1px solid !important;
+	border-left: rgba(34, 36, 38, .1) 1px solid !important;
+}
+
+.header-section-buttons {
+	background: rgba(255, 255, 255, 1) !important;
+	position: sticky !important;
+	top: 0;
+	z-index: 200;
+	padding: 20px !important;
+	border-right: rgba(34, 36, 38, .1) 1px solid !important;
+	border-left: rgba(34, 36, 38, .1) 1px solid !important;
+}
+
+
+.fade-appear {
+	opacity: 0;
+	z-index: 1;
+}
+
+.fade-appear.fade-appear-active {
+	opacity: 1;
+	transition: opacity 300ms linear;
+}
+
+.fade-enter {
+	opacity: 0;
+	z-index: 1;
+}
+
+.fade-enter.fade-enter-active {
+	opacity: 1;
+	transition: opacity 1000ms cubic-bezier(1, 2, 3, 5) 1000ms;
+}
+
+.fade-exit {
+	opacity: 1;
+}
+
+.fade-exit.fade-exit-active {
+	opacity: 0;
+	transition: opacity 1000ms linear;
+}
+
+.fade-exit-done {
+	opacity: 0;
+}
+
+/* slide enter */
+.slide-enter {
+	opacity: 0;
+	transform: scale(0) translateX(0px);
+	z-index: 1;
+}
+
+.slide-enter.slide-enter-active {
+	opacity: 1;
+	transform: scale(1) translateX(0px);
+	transition: opacity 3000ms linear 1000ms, transform 0ms linear 0ms;
+}
+
+/* slide exit */
+.slide-exit {
+	opacity: 1;
+	transform: scale(1) translateY(0);
+
+}
+
+.slide-exit.slide-exit-active {
+	opacity: 0;
+	transform: scale(0) translateY(0);
+	transition: opacity 1500ms linear, transform 1500ms ease-out;
+}
+
+.slide-exit-done {
+	opacity: 0;
+}

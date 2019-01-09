@@ -57,7 +57,7 @@ class Account extends React.Component<LocalProps, any> {
 	public render() {
 		return (
 			<Card fluid={true}>
-				<Card.Content>
+				<Card.Content className={"sticky-account-heading"}>
 					<Image floated='right' size='mini'>
 						<Icon name="bitcoin" bordered={false} size={'big'}/>
 					</Image>
@@ -75,7 +75,7 @@ class Account extends React.Component<LocalProps, any> {
 						</Label>
 					</Card.Description>
 				</Card.Content>
-				<Card.Content extra={true}>
+				<Card.Content extra={true} className={"sticky-account-heading-buttons"}>
 					<div className='ui small four buttons'>
 						<Button primary={true} onClick={this.onTXHistoryClick}>
 							<Icon name="list"/> Transaction History
