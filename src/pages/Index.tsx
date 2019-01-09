@@ -19,25 +19,25 @@ class Index extends React.Component<LocalProps, any> {
 		const { currentDataDirectory } = this.props;
 		return (
 			<React.Fragment>
-				<div className={"page-left-right-padding"}>
-				<Header as='h2'>
-					<Icon name='info circle'/>
-					<Header.Content>
-						Overview
-						<Header.Subheader>Overview of data directory.</Header.Subheader>
-					</Header.Content>
-				</Header>
-				<Divider/>
-				<Message info={true}>
-					<Message.Header>Default Data Directory</Message.Header>
-					<p>
-						This application will be defaulted to data directory in your home folder.
-					</p>
-					<Message.List>
-						<Message.Item><b>Default: </b> {Defaults.dataDirectory}</Message.Item>
-						<Message.Item><b>Current: </b> {currentDataDirectory || ''}</Message.Item>
-					</Message.List>
-				</Message>
+				<div className={'page-left-right-padding'}>
+					<Header as='h2'>
+						<Icon name='info circle'/>
+						<Header.Content>
+							Overview
+							<Header.Subheader>Overview of data directory.</Header.Subheader>
+						</Header.Content>
+					</Header>
+					<Divider/>
+					<Message info={true}>
+						<Message.Header>Default Data Directory</Message.Header>
+						<p>
+							This application will be defaulted to data directory in your home folder.
+						</p>
+						<Message.List>
+							<Message.Item><b>Default: </b> {Defaults.dataDirectory}</Message.Item>
+							<Message.Item><b>Current: </b> {currentDataDirectory || ''}</Message.Item>
+						</Message.List>
+					</Message>
 				</div>
 			</React.Fragment>
 		);

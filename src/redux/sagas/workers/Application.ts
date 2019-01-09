@@ -46,7 +46,7 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 			let popped = list.pop();
 
 			if (popped === '/') {
-				popped = list.pop() ;
+				popped = list.pop();
 			}
 
 			const keystoreParentDir = list.join('/');

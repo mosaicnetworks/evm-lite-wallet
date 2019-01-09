@@ -59,7 +59,7 @@ class AccountCreate extends React.Component<LocalProps, State> {
 	public close = () => this.setState({ open: false });
 
 	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextContext: any): void {
-		if (!this.props.keystoreCreateTask.error && !!nextProps.keystoreCreateTask.error ) {
+		if (!this.props.keystoreCreateTask.error && !!nextProps.keystoreCreateTask.error) {
 			nextProps.alert.error(nextProps.keystoreCreateTask.error);
 		}
 

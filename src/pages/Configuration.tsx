@@ -303,45 +303,45 @@ class Configuration extends React.Component<LocalProps, State> {
 												<Form.Field>
 													<label>From</label>
 													<input
-														   value={this.state.fields.defaults.from}
-														   onChange={(e) => this.setState({
-															   fields: {
-																   ...this.state.fields,
-																   defaults: {
-																	   ...this.state.fields.defaults,
-																	   from: e.target.value
-																   }
-															   }
-														   })}
+														value={this.state.fields.defaults.from}
+														onChange={(e) => this.setState({
+															fields: {
+																...this.state.fields,
+																defaults: {
+																	...this.state.fields.defaults,
+																	from: e.target.value
+																}
+															}
+														})}
 													/>
 												</Form.Field>
 												<Form.Field>
 													<label>Gas</label>
 													<input
-														   value={this.state.fields.defaults.gas}
-														   onChange={(e) => this.setState({
-															   fields: {
-																   ...this.state.fields,
-																   defaults: {
-																	   ...this.state.fields.defaults,
-																	   gas: e.target.value
-																   }
-															   }
-														   })}/>
+														value={this.state.fields.defaults.gas}
+														onChange={(e) => this.setState({
+															fields: {
+																...this.state.fields,
+																defaults: {
+																	...this.state.fields.defaults,
+																	gas: e.target.value
+																}
+															}
+														})}/>
 												</Form.Field>
 												<Form.Field>
 													<label>Gas Price</label>
 													<input
-														   value={this.state.fields.defaults.gasPrice}
-														   onChange={(e) => this.setState({
-															   fields: {
-																   ...this.state.fields,
-																   defaults: {
-																	   ...this.state.fields.defaults,
-																	   gasPrice: e.target.value
-																   }
-															   }
-														   })}/>
+														value={this.state.fields.defaults.gasPrice}
+														onChange={(e) => this.setState({
+															fields: {
+																...this.state.fields,
+																defaults: {
+																	...this.state.fields.defaults,
+																	gasPrice: e.target.value
+																}
+															}
+														})}/>
 												</Form.Field>
 											</Form.Group>
 										</Form>
@@ -357,16 +357,16 @@ class Configuration extends React.Component<LocalProps, State> {
 											<Form.Field>
 												<label>Keystore</label>
 												<input
-													   value={this.state.fields.storage.keystore}
-													   onChange={(e) => this.setState({
-														   fields: {
-															   ...this.state.fields,
-															   storage: {
-																   ...this.state.fields.storage,
-																   keystore: e.target.value
-															   }
-														   }
-													   })}/>
+													value={this.state.fields.storage.keystore}
+													onChange={(e) => this.setState({
+														fields: {
+															...this.state.fields,
+															storage: {
+																...this.state.fields.storage,
+																keystore: e.target.value
+															}
+														}
+													})}/>
 											</Form.Field>
 										</Form>
 									</Card.Description>
