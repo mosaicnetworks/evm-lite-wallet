@@ -31,6 +31,7 @@ type LocalProps = OwnProps & StoreProps & DispatchProps;
 const application = new Application();
 
 class Header extends React.Component<LocalProps, any> {
+	public state = { width: 0, height: 0 };
 
 	public handleReloadApp = () => {
 		const directory = this.props.directorySetTask.payload;
@@ -38,12 +39,25 @@ class Header extends React.Component<LocalProps, any> {
 		this.props.handleDataDirectoryInit(directory || Defaults.dataDirectory);
 	};
 
+	public updateWindowDimensions = () => {
+		this.setState({ width: window.innerWidth, height: window.innerHeight });
+	};
+
+	public componentDidMount() {
+		this.updateWindowDimensions();
+		window.addEventListener('resize', this.updateWindowDimensions);
+	}
+
+	public componentWillUnmount() {
+		window.removeEventListener('resize', this.updateWindowDimensions);
+	}
+
 	public render() {
 		const { keystoreListTask } = this.props;
 
 		return (
 			<div className="header-main">
-				<Container fluid={true} style={{paddingLeft: '20px !important'}}>
+				<Container fluid={this.state.width < 1200} style={{ paddingLeft: '20px !important' }}>
 					<div className="logo">
 						<Link to="/">
 							<Icon fitted={false} color="orange" size={'large'} name="google wallet"/>
