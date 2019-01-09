@@ -43,10 +43,10 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 
 		if (configurationForkData) {
 			const list = configurationForkData.storage.keystore.split('/');
-			const popped = list.pop();
+			let popped = list.pop();
 
 			if (popped === '/') {
-				list.pop();
+				popped = list.pop() ;
 			}
 
 			const keystoreParentDir = list.join('/');
@@ -54,7 +54,7 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 			yield join(
 				yield fork(keystoreListWorker, keystore.handlers.list.init({
 					directory: keystoreParentDir,
-					name: 'keystore'
+					name: popped!
 				}))
 			);
 		}

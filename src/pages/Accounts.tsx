@@ -13,7 +13,7 @@ import { KeystoreListReducer } from '../redux/reducers/Keystore';
 import Account from '../components/account/Account';
 import AccountCreate from '../components/account/modals/AccountCreate';
 import AccountImport from '../components/account/modals/AccountImport';
-import Keystore from '../redux/actions/Keystore';
+import Keystore, { KeystoreListPayLoad } from '../redux/actions/Keystore';
 import LoadingButton from '../components/modals/LoadingButton';
 
 import './styles/Accounts.css';
@@ -30,7 +30,7 @@ interface StoreProps {
 }
 
 interface DispatchProps {
-	handleListAccountInit: (directory: string) => void,
+	handleListAccountInit: (payload: KeystoreListPayLoad) => void,
 }
 
 interface OwnProps {
@@ -56,15 +56,18 @@ class Accounts extends React.Component<LocalProps, any> {
 	public handleRefreshAccounts = () => {
 		if (this.props.config) {
 			const list = this.props.config.storage.keystore.split('/');
-			const popped = list.pop();
+			let popped = list.pop();
 
 			if (popped === '/') {
-				list.pop();
+				popped = list.pop();
 			}
 
 			const keystoreParentDirectory = list.join('/');
 
-			this.props.handleListAccountInit(keystoreParentDirectory);
+			this.props.handleListAccountInit({
+				directory: keystoreParentDirectory,
+				name: popped!
+			});
 		} else {
 			this.props.alert.info('Looks like there was a problem reading the config file.');
 		}
@@ -116,10 +119,7 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleListAccountInit: (directory: string) => dispatch(keystore.handlers.list.init({
-		directory,
-		name: 'keystore'
-	}))
+	handleListAccountInit: (payload) => dispatch(keystore.handlers.list.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

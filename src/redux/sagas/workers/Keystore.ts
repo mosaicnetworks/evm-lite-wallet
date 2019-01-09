@@ -106,14 +106,14 @@ export function* keystoreCreateWorker(action: KeystoreCreateAction) {
 
 	try {
 		const list = action.payload.keystore.split('/');
-		const popped = list.pop();
+		let popped = list.pop();
 
 		if (popped === '/') {
-			list.pop();
+			popped = list.pop();
 		}
 
 		const keystoreParentDir = list.join('/');
-		const evmlKeystore = new EVMLKeystore(keystoreParentDir, 'keystore');
+		const evmlKeystore = new EVMLKeystore(keystoreParentDir, popped!);
 
 		const account = JSON.parse(yield evmlKeystore.create(action.payload.password));
 

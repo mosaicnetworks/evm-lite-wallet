@@ -57,10 +57,10 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 
 		if (configurationData) {
 			const list = configurationData.storage.keystore.split('/');
-			const popped = list.pop();
+			let popped = list.pop();
 
 			if (popped === '/') {
-				list.pop();
+				popped = list.pop();
 			}
 
 			const keystoreParentDir = list.join('/');
@@ -68,7 +68,7 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 			yield join(
 				yield fork(keystoreListWorker, keystore.handlers.list.init({
 					directory: keystoreParentDir,
-					name: 'keystore'
+					name: popped!
 				}))
 			);
 		}
