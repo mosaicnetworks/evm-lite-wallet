@@ -79,14 +79,15 @@ class Configuration extends React.Component<LocalProps, State> {
 		}
 	};
 
-	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<State>, nextContext: any): void {
-		if (this.props.configLoadTask.response &&
-			nextProps.configLoadTask.response &&
-			!Static.isEquivalentObjects(this.props.configLoadTask.response, nextProps.configLoadTask.response)) {
-			this.setVars(nextProps.configLoadTask.response);
+	public componentWillMount(): void {
+		if (this.props.configLoadTask.response && !this.state.fields.connection.host) {
+			this.setVars(this.props.configLoadTask.response);
 		}
+	}
 
-		if (!this.props.configLoadTask.response && nextProps.configLoadTask.response) {
+	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<State>, nextContext: any): void {
+		if (nextProps.configLoadTask.response &&
+			!Static.isEquivalentObjects(this.props.configLoadTask.response || {}, nextProps.configLoadTask.response)) {
 			this.setVars(nextProps.configLoadTask.response);
 		}
 
@@ -260,16 +261,16 @@ class Configuration extends React.Component<LocalProps, State> {
 										</Form>
 									</Card.Description>
 								</Card.Content>
-								<Card.Content extra={true}>
-									<div className=''>
-										<Button color={'blue'} fluid={true}
-												content='Test Connection'
-												loading={this.props.connectivityTask.isLoading}
-												disabled={this.props.connectivityTask.isLoading}
-												onClick={this.handleConnectivityCheck}
-										/>
-									</div>
-								</Card.Content>
+								{/*<Card.Content extra={true}>*/}
+								{/*<div className=''>*/}
+								{/*<Button color={'blue'} fluid={true}*/}
+								{/*content='Test Connection'*/}
+								{/*loading={this.props.connectivityTask.isLoading}*/}
+								{/*disabled={this.props.connectivityTask.isLoading}*/}
+								{/*onClick={this.handleConnectivityCheck}*/}
+								{/*/>*/}
+								{/*</div>*/}
+								{/*</Card.Content>*/}
 							</Card>
 							<Card fluid={true}>
 								<Card.Content>

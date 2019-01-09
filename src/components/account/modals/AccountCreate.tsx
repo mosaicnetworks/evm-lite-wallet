@@ -58,18 +58,13 @@ class AccountCreate extends React.Component<LocalProps, State> {
 	public open = () => this.setState({ open: true });
 	public close = () => this.setState({ open: false });
 
-	public componentWillReceiveProps(nextProps: Readonly<LocalProps>, nextContext: any): void {
-		if (!this.props.keystoreCreateTask.error && !!nextProps.keystoreCreateTask.error &&
-			this.state.fields.password) {
-
-			this.props.alert.error(nextProps.keystoreCreateTask.error);
+	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextContext: any): void {
+		if (!this.props.keystoreCreateTask.error && !!nextProps.keystoreCreateTask.error ) {
+			nextProps.alert.error(nextProps.keystoreCreateTask.error);
 		}
 
-		if (!this.props.keystoreCreateTask.response && !!nextProps.keystoreCreateTask.response &&
-			this.state.fields.password) {
-
-			this.props.alert.success(`Account created: ${nextProps.keystoreCreateTask.response.address}`);
-
+		if (!this.props.keystoreCreateTask.response && !!nextProps.keystoreCreateTask.response) {
+			nextProps.alert.success(`Account created: ${nextProps.keystoreCreateTask.response.address}`);
 			this.close();
 		}
 	}

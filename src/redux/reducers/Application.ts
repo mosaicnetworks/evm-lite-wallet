@@ -8,6 +8,7 @@ export type ApplicationDirectoryChangeReducer = IBasicReducer<string, string, st
 export type ApplicationConnectivityCheckReducer = IBasicReducer<AppConnectivityPayLoad, string, string>;
 
 export interface AppReducer {
+
 	directory: ApplicationDirectoryChangeReducer;
 	connectivity: ApplicationConnectivityCheckReducer;
 }

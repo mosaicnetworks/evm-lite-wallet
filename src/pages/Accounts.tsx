@@ -45,11 +45,11 @@ class Accounts extends React.Component<LocalProps, any> {
 
 	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<any>, nextContext: any): void {
 		if (!this.props.keystoreListTask.response && nextProps.keystoreListTask.response) {
-			nextProps.alert.success('Accounts refreshed.');
+			nextProps.alert.success('Local accounts refreshed.');
 		}
 
 		if (!this.props.keystoreListTask.error && nextProps.keystoreListTask.error) {
-			this.props.alert.error(nextProps.keystoreListTask.error);
+			nextProps.alert.error(nextProps.keystoreListTask.error);
 		}
 	}
 

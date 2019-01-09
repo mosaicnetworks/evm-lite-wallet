@@ -6,7 +6,7 @@ import { Container, Icon, Label } from 'semantic-ui-react';
 
 import { Store } from '../redux';
 import { KeystoreListReducer } from '../redux/reducers/Keystore';
-import { ApplicationDirectoryChangeReducer } from '../redux/reducers/Application';
+import { ApplicationConnectivityCheckReducer, ApplicationDirectoryChangeReducer } from '../redux/reducers/Application';
 import Application from '../redux/actions/Application';
 import Defaults from '../classes/Defaults';
 
@@ -16,6 +16,7 @@ import './styles/Header.css';
 interface StoreProps {
 	keystoreListTask: KeystoreListReducer;
 	directorySetTask: ApplicationDirectoryChangeReducer;
+	connectivityTask: ApplicationConnectivityCheckReducer;
 }
 
 interface DispatchProps {
@@ -79,8 +80,9 @@ class Header extends React.Component<LocalProps, any> {
 						</li>
 						<li>
 							<a>
-								<Label horizontal={true} color={'green'}>
-									Online
+								<Label horizontal={true}
+									   color={this.props.connectivityTask.response ? 'green' : 'red'}>
+									{this.props.connectivityTask.response ? 'Online' : 'Offline'}
 								</Label>
 							</a>
 						</li>
@@ -93,7 +95,8 @@ class Header extends React.Component<LocalProps, any> {
 
 const mapStoreToProps = (store: Store): StoreProps => ({
 	keystoreListTask: store.keystore.list,
-	directorySetTask: store.app.directory
+	directorySetTask: store.app.directory,
+	connectivityTask: store.app.connectivity
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({

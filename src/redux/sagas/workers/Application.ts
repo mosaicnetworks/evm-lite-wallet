@@ -62,7 +62,7 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 }
 
 export function* checkConnectivityWorker(action: ConnectivityCheckInitAction) {
-	const { success, failure, reset } = app.handlers.connectivity;
+	const { success, failure } = app.handlers.connectivity;
 
 	try {
 		const connection: EVMLC = new EVMLC(action.payload.host, action.payload.port, {
@@ -75,13 +75,13 @@ export function* checkConnectivityWorker(action: ConnectivityCheckInitAction) {
 
 		if (result) {
 			yield put(success('A connection to a node was established.'));
-			yield put(reset());
+			// yield put(reset());
 
 			return connection;
 		}
 	} catch (e) {
 		yield put(failure('Error: ' + e));
-		yield put(reset());
+		// yield put(reset());
 
 		return null;
 	}
