@@ -85,7 +85,7 @@ class Configuration extends React.Component<LocalProps, State> {
 		}
 	};
 
-	public shouldComponentUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<State>, nextContext: any): boolean {
+	public shouldComponentUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<State>, nextContext: any) {
 		return !!nextProps.configLoadTask.response;
 	}
 
@@ -282,16 +282,16 @@ class Configuration extends React.Component<LocalProps, State> {
 										</Form>
 									</Card.Description>
 								</Card.Content>
-								{/*<Card.Content extra={true}>*/}
-								{/*<div className=''>*/}
-								{/*<Button color={'blue'} fluid={true}*/}
-								{/*content='Test Connection'*/}
-								{/*loading={this.props.connectivityTask.isLoading}*/}
-								{/*disabled={this.props.connectivityTask.isLoading}*/}
-								{/*onClick={this.handleConnectivityCheck}*/}
-								{/*/>*/}
-								{/*</div>*/}
-								{/*</Card.Content>*/}
+								<Card.Content extra={true}>
+								<div className=''>
+								<Button color={'blue'} fluid={true}
+								content='Test Connection'
+								loading={this.props.connectivityTask.isLoading}
+								disabled={this.props.connectivityTask.isLoading}
+								onClick={this.handleConnectivityCheck}
+								/>
+								</div>
+								</Card.Content>
 							</Card>
 							<Card fluid={true}>
 								<Card.Content>
