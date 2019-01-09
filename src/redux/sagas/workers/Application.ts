@@ -38,6 +38,9 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 			}))
 		);
 
+
+		yield put(success('Data Directory change successful.'));
+
 		if (configurationForkData) {
 			const list = configurationForkData.storage.keystore.split('/');
 			const popped = list.pop();
@@ -55,8 +58,6 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 				}))
 			);
 		}
-
-		yield put(success('Data Directory change successful.'));
 	} catch (e) {
 		yield put(failure('Error: ' + e));
 	}
