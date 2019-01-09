@@ -13,7 +13,7 @@
     "redux-saga": "^0.16.2"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js",
+    "build": "webpack --config webpack.config.js && cp ./package.json ./dist/",
     "start:dev": "webpack-dev-server --config webpack.config.js --hot --inline",
     "start:electron": "electron ./dist",
     "start:evml": "cd /Users/danu/code/src/github.com/mosaicnetworks/evm-lite/cmd/evml/ && ./evml solo",
