@@ -64,29 +64,17 @@ class Configuration extends React.Component<LocalProps, State> {
 		dataDirectory: this.props.dataDirectoryTask.payload || Defaults.dataDirectory,
 		fields: {
 			connection: {
-				host:
-					this.props.configLoadTask.response &&
-					this.props.configLoadTask.response.connection.host || '',
-				port:
-					this.props.configLoadTask.response &&
-					this.props.configLoadTask.response.connection.port.toString() || ''
+				host: '',
+				port: ''
 			},
 			defaults: {
-				gas:
-					this.props.configLoadTask.response &&
-					this.props.configLoadTask.response.defaults.gas.toString() || '',
-				gasPrice:
-					this.props.configLoadTask.response &&
-					this.props.configLoadTask.response.defaults.gasPrice.toString() || '',
-				from:
-					this.props.configLoadTask.response &&
-					this.props.configLoadTask.response.defaults.from || ''
+				gas: '',
+				gasPrice: '',
+				from: ''
 
 			},
 			storage: {
-				keystore:
-					this.props.configLoadTask.response &&
-					this.props.configLoadTask.response.storage.keystore || ''
+				keystore: ''
 			}
 		}
 	};
