@@ -30,7 +30,6 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 	try {
 		const directory = yield new DataDirectory(action.payload);
 
-		yield put(success('Data Directory change successful.'));
 
 		const configurationForkData: ConfigSchema = yield join(
 			yield fork(configurationReadWorker, config.handlers.load.init({
@@ -56,6 +55,8 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 				}))
 			);
 		}
+
+		yield put(success('Data Directory change successful.'));
 	} catch (e) {
 		yield put(failure('Error: ' + e));
 	}

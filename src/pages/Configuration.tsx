@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { connect } from 'react-redux';
-import { ConfigSchema, Static } from 'evm-lite-lib';
+import { ConfigSchema } from 'evm-lite-lib';
 import { Button, Card, Divider, Form, Header } from 'semantic-ui-react';
 
 import { Store } from '../redux';
@@ -64,33 +64,49 @@ class Configuration extends React.Component<LocalProps, State> {
 		dataDirectory: this.props.dataDirectoryTask.payload || Defaults.dataDirectory,
 		fields: {
 			connection: {
-				host: '',
-				port: ''
+				host: this.props.configLoadTask.response ?
+					this.props.configLoadTask.response.connection.host : '',
+				port: this.props.configLoadTask.response ?
+					this.props.configLoadTask.response.connection.port.toString() : ''
 			},
 			defaults: {
-				gas: '',
-				gasPrice: '',
-				from: ''
+				gas: this.props.configLoadTask.response ?
+					this.props.configLoadTask.response.defaults.gas.toString() : '',
+				gasPrice: this.props.configLoadTask.response ?
+					this.props.configLoadTask.response.defaults.gasPrice.toString() : '',
+				from: this.props.configLoadTask.response ?
+					this.props.configLoadTask.response.defaults.from : ''
 
 			},
 			storage: {
-				keystore: ''
+				keystore: this.props.configLoadTask.response ?
+					this.props.configLoadTask.response.storage.keystore : ''
 			}
 		}
 	};
 
-	public componentWillMount(): void {
-		if (this.props.configLoadTask.response && !this.state.fields.connection.host) {
+	public shouldComponentUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<State>, nextContext: any): boolean {
+		return !!nextProps.configLoadTask.response;
+	}
+
+	public componentWillReceiveProps(nextProps: Readonly<LocalProps>, nextContext: any): void {
+		if (!this.props.configLoadTask.response && nextProps.configLoadTask.response) {
+			this.setVars(nextProps.configLoadTask.response);
+		}
+
+		if (!this.props.dataDirectoryTask.response &&
+			nextProps.dataDirectoryTask.payload && nextProps.configLoadTask.response) {
+			this.setVars(nextProps.configLoadTask.response);
+		}
+	}
+
+	public componentDidMount(): void {
+		if (this.props.configLoadTask.response) {
 			this.setVars(this.props.configLoadTask.response);
 		}
 	}
 
 	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<State>, nextContext: any): void {
-		if (nextProps.configLoadTask.response &&
-			!Static.isEquivalentObjects(this.props.configLoadTask.response || {}, nextProps.configLoadTask.response)) {
-			this.setVars(nextProps.configLoadTask.response);
-		}
-
 		if (!this.props.configSaveTask.response && nextProps.configSaveTask.response) {
 			nextProps.alert.success(nextProps.configSaveTask.response);
 		}
@@ -110,20 +126,29 @@ class Configuration extends React.Component<LocalProps, State> {
 		this.setState({
 			fields: {
 				connection: {
+					...this.state.fields.connection,
 					host: response.connection.host,
 					port: response.connection.port.toString()
 				},
 				defaults: {
+					...this.state.fields.defaults,
 					from: response.defaults.from,
 					gas: response.defaults.gas.toString(),
 					gasPrice: response.defaults.gasPrice.toString()
 				},
 				storage: {
+					...this.state.fields.storage,
 					keystore: response.storage.keystore
 				}
 			}
 		});
 	}
+
+	public handleOnChangeDataDirectory = (e: any) => {
+		this.setState({
+			dataDirectory: e.target.value
+		});
+	};
 
 	public handleConfigSave = () => {
 		const config: ConfigSchema = {
@@ -147,13 +172,9 @@ class Configuration extends React.Component<LocalProps, State> {
 				directory: this.props.dataDirectoryTask.payload,
 				name: 'config.toml'
 			});
+		} else {
+			this.props.alert.error('Oops! Looks like no data directory was set.');
 		}
-	};
-
-	public handleOnChangeDataDirectory = (e: any) => {
-		this.setState({
-			dataDirectory: e.target.value
-		});
 	};
 
 	public handleDataDirectoryChange = () => {
@@ -215,7 +236,7 @@ class Configuration extends React.Component<LocalProps, State> {
 							</Card>
 						</div>
 						<Divider hidden={true}/>
-						<div>
+						{!!this.props.configLoadTask.response && (<div>
 							<Header as='h3'>
 								<Header.Content>
 									Configuration
@@ -232,7 +253,7 @@ class Configuration extends React.Component<LocalProps, State> {
 												<Form.Input
 													label={'Host'}
 													placeholder='Host'
-													defaultValue={this.state.fields.connection.host}
+													value={this.state.fields.connection.host}
 													onChange={(e) => this.setState({
 														fields: {
 															...this.state.fields,
@@ -246,7 +267,7 @@ class Configuration extends React.Component<LocalProps, State> {
 												<Form.Input
 													label={'Host'}
 													placeholder='Port'
-													defaultValue={this.state.fields.connection.port.toString()}
+													value={this.state.fields.connection.port}
 													onChange={(e) => this.setState({
 														fields: {
 															...this.state.fields,
@@ -281,7 +302,8 @@ class Configuration extends React.Component<LocalProps, State> {
 											<Form.Group widths='equal'>
 												<Form.Field>
 													<label>From</label>
-													<input defaultValue={this.state.fields.defaults.from}
+													<input
+														   value={this.state.fields.defaults.from}
 														   onChange={(e) => this.setState({
 															   fields: {
 																   ...this.state.fields,
@@ -295,7 +317,8 @@ class Configuration extends React.Component<LocalProps, State> {
 												</Form.Field>
 												<Form.Field>
 													<label>Gas</label>
-													<input defaultValue={this.state.fields.defaults.gas.toString()}
+													<input
+														   value={this.state.fields.defaults.gas}
 														   onChange={(e) => this.setState({
 															   fields: {
 																   ...this.state.fields,
@@ -308,7 +331,8 @@ class Configuration extends React.Component<LocalProps, State> {
 												</Form.Field>
 												<Form.Field>
 													<label>Gas Price</label>
-													<input defaultValue={this.state.fields.defaults.gasPrice.toString()}
+													<input
+														   value={this.state.fields.defaults.gasPrice}
 														   onChange={(e) => this.setState({
 															   fields: {
 																   ...this.state.fields,
@@ -332,7 +356,8 @@ class Configuration extends React.Component<LocalProps, State> {
 										<Form>
 											<Form.Field>
 												<label>Keystore</label>
-												<input defaultValue={this.state.fields.storage.keystore}
+												<input
+													   value={this.state.fields.storage.keystore}
 													   onChange={(e) => this.setState({
 														   fields: {
 															   ...this.state.fields,
@@ -357,7 +382,7 @@ class Configuration extends React.Component<LocalProps, State> {
 									</Button>
 								</Form.Field>
 							</Form>
-						</div>
+						</div>)}
 					</div>
 				</div>
 			</React.Fragment>
