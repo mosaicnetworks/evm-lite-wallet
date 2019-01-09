@@ -19,6 +19,7 @@ class Index extends React.Component<LocalProps, any> {
 		const { currentDataDirectory } = this.props;
 		return (
 			<React.Fragment>
+				<div className={"page-left-right-padding"}>
 				<Header as='h2'>
 					<Icon name='info circle'/>
 					<Header.Content>
@@ -37,6 +38,7 @@ class Index extends React.Component<LocalProps, any> {
 						<Message.Item><b>Current: </b> {currentDataDirectory || ''}</Message.Item>
 					</Message.List>
 				</Message>
+				</div>
 			</React.Fragment>
 		);
 	}

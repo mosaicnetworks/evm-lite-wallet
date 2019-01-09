@@ -10,7 +10,7 @@ function createWindow() {
 	});
 	main.loadURL(`file://${__dirname}/index.html`);
 	// main.loadURL(`http://localhost:8081`);
-	main.webContents.openDevTools();
+	// main.webContents.openDevTools();
 
 	main.on('closed', () => {
 		main = null;

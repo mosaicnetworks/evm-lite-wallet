@@ -43,7 +43,7 @@ class Header extends React.Component<LocalProps, any> {
 
 		return (
 			<div className="header-main">
-				<Container>
+				<Container fluid={true} style={{paddingLeft: '20px !important'}}>
 					<div className="logo">
 						<Link to="/">
 							<Icon fitted={false} color="orange" size={'large'} name="google wallet"/>

@@ -182,7 +182,7 @@ class Configuration extends React.Component<LocalProps, State> {
 		return (
 			<React.Fragment>
 				<div>
-					<div className={'page'}>
+					<div className={'page-left-right-padding'}>
 						<div>
 							<Header as='h3'>
 								<Header.Content>

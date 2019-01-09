@@ -9,7 +9,7 @@ class Wrapper extends React.Component<any, any> {
 		return (
 			<React.Fragment>
 				<Header/>
-				<Container fluid={false} text={false}>
+				<Container fluid={true} text={false}>
 					{this.props.children}
 				</Container>
 			</React.Fragment>

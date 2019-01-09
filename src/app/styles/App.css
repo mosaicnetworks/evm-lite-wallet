@@ -1,3 +1,9 @@
 .page {
 	padding: 0 0 100px !important;
 }
+
+.page-left-right-padding {
+	padding: 0 0 100px !important;
+	padding-left: 20px !important;
+	padding-right: 20px !important;
+}
