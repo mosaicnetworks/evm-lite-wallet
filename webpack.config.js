@@ -30,7 +30,13 @@ const config = {
 		contentBase: paths.dist,
 		port: 8081,
 		historyApiFallback: true,
-		publicPath: '/'
+		publicPath: '/',
+		stats: {
+			warnings: false
+		}
+	},
+	stats: {
+		warnings: false
 	},
 	externals: {
 		fs: 'commonjs fs',

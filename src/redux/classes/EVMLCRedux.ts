@@ -40,11 +40,11 @@ export default class EVMLCRedux {
 
 	public get actions() {
 		return {
-			application: this.application,
-			configuration: this.configuration,
-			keystore: this.keystore,
-			transaction: this.transactions,
-			accounts: this.accounts,
+			application: this.application.handlers,
+			configuration: this.configuration.handlers,
+			keystore: this.keystore.handlers,
+			transaction: this.transactions.handlers,
+			accounts: this.accounts.handlers,
 		};
 	}
 

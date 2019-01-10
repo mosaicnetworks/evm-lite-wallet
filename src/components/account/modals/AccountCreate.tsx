@@ -165,7 +165,7 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleCreateAccount: payload => dispatch(redux.actions.keystore.handlers.create.init(payload))
+	handleCreateAccount: payload => dispatch(redux.actions.keystore.create.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

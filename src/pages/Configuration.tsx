@@ -401,9 +401,9 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleSaveConfig: payload => dispatch(redux.actions.configuration.handlers.save.init(payload)),
-	handleCheckConnectivity: payload => dispatch(redux.actions.application.handlers.connectivity.init(payload)),
-	handleDataDirectoryChange: payload => dispatch(redux.actions.application.handlers.directory.init(payload))
+	handleSaveConfig: payload => dispatch(redux.actions.configuration.save.init(payload)),
+	handleCheckConnectivity: payload => dispatch(redux.actions.application.connectivity.init(payload)),
+	handleDataDirectoryChange: payload => dispatch(redux.actions.application.directory.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

@@ -168,7 +168,7 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleUpdatePassword: payload => dispatch(redux.actions.keystore.handlers.update.init(payload))
+	handleUpdatePassword: payload => dispatch(redux.actions.keystore.update.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

@@ -14,7 +14,7 @@
 .header-section-buttons {
 	background: rgba(255, 255, 255, 1) !important;
 	position: sticky !important;
-	top: 0;
+	top: -2px;
 	z-index: 200;
 	padding: 20px !important;
 	border-right: rgba(34, 36, 38, .1) 1px solid !important;

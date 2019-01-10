@@ -251,8 +251,8 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleDecryption: payload => dispatch(redux.actions.accounts.handlers.decrypt.init(payload)),
-	handleTransfer: payload => dispatch(redux.actions.accounts.handlers.transfer.init(payload))
+	handleDecryption: payload => dispatch(redux.actions.accounts.decrypt.init(payload)),
+	handleTransfer: payload => dispatch(redux.actions.accounts.transfer.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

@@ -103,7 +103,7 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleDataDirectoryInit: directory => dispatch(redux.actions.application.handlers.directory.init(directory))
+	handleDataDirectoryInit: directory => dispatch(redux.actions.application.directory.init(directory))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
