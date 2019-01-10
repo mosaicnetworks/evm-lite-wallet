@@ -1,4 +1,5 @@
 import { fork, join, put } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
 
 import { Config, ConfigSchema } from 'evm-lite-lib';
 
@@ -6,7 +7,6 @@ import { keystoreListWorker } from './Keystore';
 
 import Configuration, { ConfigLoadPayLoad, ConfigSavePayLoad } from '../../actions/Configuration';
 import Keystore from '../../actions/Keystore';
-import { delay } from 'redux-saga';
 
 
 interface ConfigFileLoadAction {

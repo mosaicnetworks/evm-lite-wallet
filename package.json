@@ -17,7 +17,7 @@
     "start:dev": "webpack-dev-server --config webpack.config.js --hot --inline",
     "start:electron": "electron ./dist",
     "start:evml": "cd /Users/danu/code/src/github.com/mosaicnetworks/evm-lite/cmd/evml/ && ./evml solo",
-    "bin": "electron-packager ./dist EVM-Lite-Wallet --out ./bin --overwrite"
+    "bin": "electron-packager ./dist EVM-Lite-Wallet --out ./bin --overwrite --icon ./src/assets/monet.png"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",

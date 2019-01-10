@@ -94,7 +94,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! electron */ \"electron\");\n/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_0__);\n\nvar app = electron__WEBPACK_IMPORTED_MODULE_0__[\"app\"];\nvar main;\nfunction createWindow() {\n    main = new electron__WEBPACK_IMPORTED_MODULE_0__[\"BrowserWindow\"]({\n        width: 1200,\n        height: 820\n    });\n    // main.loadURL(`file://${__dirname}/index.html`);\n    main.loadURL(\"http://localhost:8081\");\n    // main.webContents.openDevTools();\n    main.on('closed', function () {\n        main = null;\n    });\n}\napp.on('ready', createWindow);\napp.on('window-all-closed', function () {\n    if (process.platform !== 'darwin') {\n        app.quit();\n    }\n});\napp.on('activate', function () {\n    if (main === null) {\n        createWindow();\n    }\n});\n\n\n//# sourceURL=webpack:///./src/index.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! path */ \"path\");\n/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! electron */ \"electron\");\n/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_1__);\n\n\nvar app = electron__WEBPACK_IMPORTED_MODULE_1__[\"app\"];\nvar main;\nfunction createWindow() {\n    main = new electron__WEBPACK_IMPORTED_MODULE_1__[\"BrowserWindow\"]({\n        width: 1200,\n        height: 820,\n        icon: path__WEBPACK_IMPORTED_MODULE_0__[\"join\"](__dirname, 'assets/monet.png')\n    });\n    // main.loadURL(`file://${__dirname}/index.html`);\n    main.loadURL(\"http://localhost:8081\");\n    // main.webContents.openDevTools();\n    main.on('closed', function () {\n        main = null;\n    });\n}\napp.on('ready', createWindow);\napp.on('window-all-closed', function () {\n    if (process.platform !== 'darwin') {\n        app.quit();\n    }\n});\napp.on('activate', function () {\n    if (main === null) {\n        createWindow();\n    }\n});\n\n\n//# sourceURL=webpack:///./src/index.ts?");
 
 /***/ }),
 
@@ -106,6 +106,17 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var elec
 /***/ (function(module, exports) {
 
 eval("module.exports = require(\"electron\");\n\n//# sourceURL=webpack:///external_%22electron%22?");
+
+/***/ }),
+
+/***/ "path":
+/*!***********************!*\
+  !*** external "path" ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = require(\"path\");\n\n//# sourceURL=webpack:///external_%22path%22?");
 
 /***/ })
 

@@ -14,7 +14,6 @@ import {
 
 import redux from '../redux.config';
 import Accounts from '../pages/Accounts';
-import Index from '../pages/Index';
 import Configuration from '../pages/Configuration';
 import Wrapper from '../components/Wrapper';
 import Defaults from '../classes/Defaults';
@@ -71,10 +70,9 @@ class App extends React.Component<LocalProps, any> {
 				<React.Fragment>
 					<Wrapper>
 						<TransitionGroup>
-							<CSSTransition in={true} appear={true} timeout={1000} classNames="fade">
+							<CSSTransition in={true} appear={true} timeout={1000} classNames="slide1">
 								<div>
-									<Route exact={true} path="/" component={Index}/>
-									<Route path="/accounts" component={Accounts}/>
+									<Route exact={true} path="/" component={Accounts}/>
 									<Route path="/configuration" component={Configuration}/>
 								</div>
 							</CSSTransition>

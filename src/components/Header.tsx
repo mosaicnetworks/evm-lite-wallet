@@ -60,8 +60,8 @@ class Header extends React.Component<LocalProps, any> {
 		const { keystoreListTask } = this.props;
 
 		return (
-			<div className="header-main">
-				<Container fluid={this.state.width < 1200} style={{ paddingLeft: '20px !important' }}>
+			<Container fluid={true} style={{ paddingLeft: '20px !important' }}>
+				<div className="header-main">
 					<div className="logo">
 						<Link to="/">
 							<Icon fitted={false} color="orange" size={'large'} name="google wallet"/>
@@ -69,7 +69,7 @@ class Header extends React.Component<LocalProps, any> {
 					</div>
 					<div className="links">
 						<li>
-							<Link to="/accounts">
+							<Link to="/">
 								<Label>
 									{keystoreListTask.response && keystoreListTask.response.length || '0'}
 								</Label>
@@ -90,8 +90,8 @@ class Header extends React.Component<LocalProps, any> {
 							</a>
 						</li>
 					</div>
-				</Container>
-			</div>
+				</div>
+			</Container>
 		);
 	}
 }

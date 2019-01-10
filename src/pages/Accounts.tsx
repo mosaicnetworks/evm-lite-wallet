@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Divider, Header } from 'semantic-ui-react';
+import { Header } from 'semantic-ui-react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { BaseAccount, ConfigSchema } from 'evm-lite-lib';
@@ -83,8 +83,6 @@ class Accounts extends React.Component<LocalProps, any> {
 									   right={true}/>
 					</Header.Content>
 				</Header>
-				<Divider hidden={true}/>
-
 				<div className={'page'}>
 					<TransitionGroup>
 						{keystoreListTask.response && keystoreListTask.response.map((account: BaseAccount) => {
@@ -93,7 +91,7 @@ class Accounts extends React.Component<LocalProps, any> {
 											   in={true}
 											   appear={!this.props.keystoreListTask.isLoading}
 											   timeout={2000}
-											   classNames="slide"
+											   classNames="slide1"
 								>
 									<Account key={account.address} account={account}/>
 								</CSSTransition>

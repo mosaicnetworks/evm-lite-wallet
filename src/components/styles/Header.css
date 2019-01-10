@@ -7,8 +7,8 @@
 	line-height: 70px !important;
 	color: #FFF;
 	z-index: 2000;
-	margin-bottom: 40px;
-	box-shadow: 1px 0 1px #DDD !important;
+	margin-bottom: 4px !important;
+	border: 1px solid #EEE !important;
 }
 
 .logo {

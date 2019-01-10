@@ -197,11 +197,6 @@ class Configuration extends React.Component<LocalProps, State> {
 				<div>
 					<div className={'page-left-right-padding'}>
 						<div>
-							<Header as='h3'>
-								<Header.Content>
-									Data Directory
-								</Header.Content>
-							</Header>
 							<Divider hidden={true}/>
 							<Card fluid={true}>
 								<Card.Content>

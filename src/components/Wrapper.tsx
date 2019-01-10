@@ -4,6 +4,7 @@ import { Container } from 'semantic-ui-react';
 
 import Header from './Header';
 
+
 class Wrapper extends React.Component<any, any> {
 	public state = { width: 0, height: 0 };
 
@@ -24,7 +25,7 @@ class Wrapper extends React.Component<any, any> {
 		return (
 			<React.Fragment>
 				<Header/>
-				<Container fluid={this.state.width < 1200} text={false}>
+				<Container fluid={true} text={false}>
 					{this.props.children}
 				</Container>
 			</React.Fragment>
