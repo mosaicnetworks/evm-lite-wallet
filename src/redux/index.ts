@@ -1,26 +1,26 @@
-import store, { Store } from './store/Store';
-import Application from './actions/Application';
+import EVMLCRedux from './classes/EVMLCRedux';
 
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+export { Store } from './store/Store';
+
+// Application
+export { ApplicationConnectivityCheckReducer, ApplicationDirectoryChangeReducer } from './reducers/Application';
+export { ApplicationConnectivityPayLoad, ApplicationDataDirectoryPayLoad } from './actions/Application';
+
+// Keystore
+export { KeystoreListReducer, KeystoreCreateReducer, KeystoreUpdateReducer } from './reducers/Keystore';
+export { KeystoreListPayLoad, KeystoreCreatePayLoad, KeystoreUpdatePayLoad } from './actions/Keystore';
+
+// Configuration
+export { ConfigSaveReducer, ConfigLoadReducer } from './reducers/Configuration';
+export { ConfigSavePayLoad, ConfigLoadPayLoad } from './actions/Configuration';
+
+// Transaction
+export { TransactionHistoryReducer } from './reducers/Transactions';
+export { TransactionHistoryPayload } from './actions/Transactions';
+
+// Configuration
+export { AccountsDecryptReducer, AccountsTransferReducer } from './reducers/Accounts';
+export { AccountsTransferPayLoad, AccountsDecryptPayload } from './actions/Accounts';
 
 
-export interface EVMLAction<S, F> {
-	type: string,
-	data?: S | F
-}
-
-export type EVMLDispatch<S, F> = ThunkDispatch<Store, any, EVMLAction<S, F>>;
-export type EVMLThunkAction<S, F, R = Promise<S>> = ThunkAction<R, Store, any, EVMLAction<S, F>>;
-export type EVMLActionHandler<D, S, F, R> = (data?: D) => EVMLThunkAction<S, F, R>;
-
-// export const accounts = new Accounts();
-// export const configuration = new Configuration();
-export const app = new Application();
-// export const keystore = new Keystore();
-// export const transaction = new Transactions();
-
-export { DefaultProps, Store } from './store/Store';
-
-export { BaseAccount, ConfigSchema } from 'evm-lite-lib';
-
-export default store;
+export default EVMLCRedux;

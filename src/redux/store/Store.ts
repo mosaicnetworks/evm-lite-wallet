@@ -4,7 +4,6 @@ import createSagaMiddleware from 'redux-saga';
 
 import { PersistConfig, persistReducer, persistStore } from 'redux-persist';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
-import { InjectedAlertProp } from 'react-alert';
 
 import ApplicationSagas from '../sagas/watchers/Application';
 import ConfigurationSagas from '../sagas/watchers/Configuration';
@@ -18,12 +17,6 @@ import KeystoreRootReducer, { KeystoreReducer } from '../reducers/Keystore';
 import TransactionsRootReducer, { ITransactionsReducer } from '../reducers/Transactions';
 import AccountsRootReducer, { IAccountsReducer } from '../reducers/Accounts';
 
-
-export interface DefaultProps {
-	alert: InjectedAlertProp;
-
-	[key: string]: any;
-}
 
 export interface Store {
 	accounts: IAccountsReducer;

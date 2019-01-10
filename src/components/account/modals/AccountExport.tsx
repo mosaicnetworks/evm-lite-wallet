@@ -3,11 +3,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Button, Form, Modal, TextArea } from 'semantic-ui-react';
 
-import { BaseAccount, DefaultProps, Store } from '../../../redux';
+import { BaseAccount } from 'evm-lite-lib';
+
+import {Store } from '../../../redux';
 
 import './styles/AccountExport.css';
 
-export interface AccountExportLocalProps extends DefaultProps {
+
+export interface AccountExportLocalProps {
 	account: BaseAccount;
 }
 

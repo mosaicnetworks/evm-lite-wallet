@@ -4,10 +4,15 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Container, Icon, Label } from 'semantic-ui-react';
 
-import { Store } from '../redux';
-import { KeystoreListReducer } from '../redux/reducers/Keystore';
-import { ApplicationConnectivityCheckReducer, ApplicationDirectoryChangeReducer } from '../redux/reducers/Application';
-import Application from '../redux/actions/Application';
+import {
+	ApplicationConnectivityCheckReducer,
+	ApplicationDataDirectoryPayLoad,
+	ApplicationDirectoryChangeReducer,
+	KeystoreListReducer,
+	Store
+} from '../redux';
+
+import redux from '../redux.config';
 import Defaults from '../classes/Defaults';
 
 import './styles/Header.css';
@@ -20,7 +25,7 @@ interface StoreProps {
 }
 
 interface DispatchProps {
-	handleDataDirectoryInit: (directory: string) => void;
+	handleDataDirectoryInit: (directory: ApplicationDataDirectoryPayLoad) => void;
 }
 
 interface OwnProps {
@@ -28,8 +33,6 @@ interface OwnProps {
 }
 
 type LocalProps = OwnProps & StoreProps & DispatchProps;
-
-const application = new Application();
 
 class Header extends React.Component<LocalProps, any> {
 	public state = { width: 0, height: 0 };
@@ -100,7 +103,7 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleDataDirectoryInit: directory => dispatch(application.handlers.directory.init(directory))
+	handleDataDirectoryInit: directory => dispatch(redux.actions.application.handlers.directory.init(directory))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

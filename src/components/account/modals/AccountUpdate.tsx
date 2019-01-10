@@ -3,13 +3,12 @@ import * as React from 'react';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { connect } from 'react-redux';
 import { Button, Divider, Form, Header, Modal } from 'semantic-ui-react';
+import { BaseAccount } from 'evm-lite-lib';
 
-import { BaseAccount, Store } from '../../../redux';
-import { KeystoreUpdateReducer } from '../../../redux/reducers/Keystore';
-
-import Keystore, { KeystoreUpdatePayLoad } from '../../../redux/actions/Keystore';
+import { KeystoreUpdatePayLoad, KeystoreUpdateReducer, Store } from '../../../redux';
 
 import '../styles/Account.css';
+import redux from '../../../redux.config';
 
 
 interface AlertProps {
@@ -39,8 +38,6 @@ interface State {
 		verifyNewPassword: string;
 	}
 }
-
-const keystore = new Keystore();
 
 class AccountUpdate extends React.Component<LocalProps, State> {
 	public state = {
@@ -171,7 +168,7 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleUpdatePassword: payload => dispatch(keystore.handlers.update.init(payload))
+	handleUpdatePassword: payload => dispatch(redux.actions.keystore.handlers.update.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

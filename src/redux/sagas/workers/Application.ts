@@ -7,7 +7,7 @@ import { keystoreListWorker } from './Keystore';
 
 import Configuration from '../../actions/Configuration';
 import Keystore from '../../actions/Keystore';
-import Application, { AppConnectivityPayLoad } from '../../actions/Application';
+import Application, { ApplicationConnectivityPayLoad } from '../../actions/Application';
 
 
 interface DirectoryChangeInitAction {
@@ -17,7 +17,7 @@ interface DirectoryChangeInitAction {
 
 interface ConnectivityCheckInitAction {
 	type: string;
-	payload: AppConnectivityPayLoad;
+	payload: ApplicationConnectivityPayLoad;
 }
 
 const app = new Application();

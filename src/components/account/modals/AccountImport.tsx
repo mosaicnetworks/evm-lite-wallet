@@ -1,20 +1,26 @@
 import * as React from 'react';
 
-import { withAlert } from 'react-alert';
 import { connect } from 'react-redux';
 import { Button, Form, Icon, Message, Modal, TextArea } from 'semantic-ui-react';
 
-import { BaseAccount, DefaultProps, Store } from '../../../redux';
+import { Store } from '../../../redux';
 
-export interface AccountImportLocalProps extends DefaultProps {
-	// redux states
-	response: string,
-	error: string,
-	isLoading: boolean
 
-	// thunk action handlers
-	handleImportAccount: (v3JSONKeystore: string) => Promise<BaseAccount[]>;
+interface DispatchProps {
+	response?: string,
+	error?: string,
+	isLoading?: boolean
 }
+
+interface StoreProps {
+	empty?: string;
+}
+
+interface OwnProps {
+	empty?: string;
+}
+
+type LocalProps = DispatchProps & StoreProps & OwnProps
 
 interface State {
 	open: boolean;
@@ -22,7 +28,7 @@ interface State {
 	parseError: string;
 }
 
-class AccountImport extends React.Component<AccountImportLocalProps, any & State> {
+class AccountImport extends React.Component<LocalProps, State> {
 	public state = {
 		open: false,
 		v3JSONKeystore: '',
@@ -33,22 +39,22 @@ class AccountImport extends React.Component<AccountImportLocalProps, any & State
 	public close = () => this.setState({ open: false });
 
 	public handleImport = () => {
-		this.setState({ parseError: '' });
-
-		if (this.state.v3JSONKeystore === '') {
-			this.setState({ parseError: 'Account JSON cannot be empty.' });
-			return;
-		}
-
-		this.props.handleImportAccount(this.state.v3JSONKeystore)
-			.then(() => {
-				if (this.props.response) {
-					this.props.alert.success('Account imported!');
-				} else {
-					this.props.alert.error('Import failed!');
-				}
-			})
-			.then(() => this.close());
+		// this.setState({ parseError: '' });
+		//
+		// if (this.state.v3JSONKeystore === '') {
+		// 	this.setState({ parseError: 'Account JSON cannot be empty.' });
+		// 	return;
+		// }
+		//
+		// this.props.handleImportAccount(this.state.v3JSONKeystore)
+		// 	.then(() => {
+		// 		if (this.props.response) {
+		// 			this.props.alert.success('Account imported!');
+		// 		} else {
+		// 			this.props.alert.error('Import failed!');
+		// 		}
+		// 	})
+		// 	.then(() => this.close());
 	};
 
 	public handleOnChange = (e: any) => {
@@ -105,8 +111,6 @@ class AccountImport extends React.Component<AccountImportLocalProps, any & State
 
 const mapStoreToProps = (store: Store) => ({});
 
-const mapDispatchToProps = (dispatch: any) => ({
-	// handleImportAccount: (v3JSONKeystore: string) => dispatch(keystore.handleImportThenFetch(v3JSONKeystore)),
-});
+const mapDispatchToProps = (dispatch: any) => ({});
 
-export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountImport));
+export default connect(mapStoreToProps, mapDispatchToProps)(AccountImport);

@@ -4,11 +4,9 @@ import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Button, Divider, Form, Header, Label, Modal } from 'semantic-ui-react';
 
-import { EVMLDispatch, Store } from '../../../redux';
-import { ConfigLoadReducer } from '../../../redux/reducers/Configuration';
-import { KeystoreCreateReducer } from '../../../redux/reducers/Keystore';
+import { ConfigLoadReducer, KeystoreCreatePayLoad, KeystoreCreateReducer, Store } from '../../../redux';
 
-import Keystore, { KeystoreCreatePayLoad } from '../../../redux/actions/Keystore';
+import redux from '../../../redux.config';
 
 
 interface AlertProps {
@@ -40,8 +38,6 @@ interface State {
 		fieldError: string;
 	}
 }
-
-const keystore = new Keystore();
 
 class AccountCreate extends React.Component<LocalProps, State> {
 	public state = {
@@ -168,8 +164,8 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 	keystoreCreateTask: store.keystore.create
 });
 
-const mapDispatchToProps = (dispatch: EVMLDispatch<string, string>): DispatchProps => ({
-	handleCreateAccount: payload => dispatch(keystore.handlers.create.init(payload))
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({
+	handleCreateAccount: payload => dispatch(redux.actions.keystore.handlers.create.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

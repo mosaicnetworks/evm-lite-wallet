@@ -1,14 +1,14 @@
 import * as React from 'react';
 
-import { SentTX, Static } from 'evm-lite-lib';
 import { Label, Table } from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import { withAlert } from 'react-alert';
+import { BaseAccount, SentTX, Static } from 'evm-lite-lib';
 
-import { DefaultProps, Store } from '../../../redux';
+import { Store } from '../../../redux';
 
 
-export interface AccountsHistoryLocalProps extends DefaultProps {
+export interface AccountsHistoryLocalProps {
+	account: BaseAccount;
 	txs: SentTX[]
 }
 
@@ -56,4 +56,4 @@ const mapStoreToProps = (store: Store) => ({});
 
 const mapDispatchToProps = (dispatch: any) => ({});
 
-export default connect(mapStoreToProps, mapDispatchToProps)(withAlert(AccountHistory));
+export default connect(mapStoreToProps, mapDispatchToProps)(AccountHistory);

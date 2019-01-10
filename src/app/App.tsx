@@ -5,14 +5,18 @@ import { HashRouter, Route } from 'react-router-dom';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-import { Store } from '../redux';
-import { ApplicationDirectoryChangeReducer } from '../redux/reducers/Application';
+import {
+	ApplicationConnectivityCheckReducer,
+	ApplicationDataDirectoryPayLoad,
+	ApplicationDirectoryChangeReducer,
+	Store
+} from '../redux';
 
+import redux from '../redux.config';
 import Accounts from '../pages/Accounts';
 import Index from '../pages/Index';
 import Configuration from '../pages/Configuration';
 import Wrapper from '../components/Wrapper';
-import Application from '../redux/actions/Application';
 import Defaults from '../classes/Defaults';
 
 import './styles/App.css';
@@ -24,12 +28,11 @@ interface AlertProps {
 
 interface StoreProps {
 	directorySetTask: ApplicationDirectoryChangeReducer;
-	connectivityError: string | null;
-	connectivityResponse: string | null;
+	connectivityTask: ApplicationConnectivityCheckReducer;
 }
 
 interface DispatchProps {
-	handleDataDirectoryInit: (directory: string) => void;
+	handleDataDirectoryChange: (directory: ApplicationDataDirectoryPayLoad) => void;
 }
 
 interface OwnProps {
@@ -39,29 +42,27 @@ interface OwnProps {
 type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
 
-const application = new Application();
-
 class App extends React.Component<LocalProps, any> {
 
 	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<any>, nextContext: any): void {
-		if (this.props.connectivityError === null && nextProps.connectivityError !== this.props.connectivityError) {
+		if (!this.props.connectivityTask.error &&
+			nextProps.connectivityTask.error !== this.props.connectivityTask.error) {
 			nextProps.alert.error('A connection to a node could not be established.');
 		}
 
-		if (this.props.connectivityResponse === null &&
-			nextProps.connectivityResponse !== this.props.connectivityResponse) {
+		if (!this.props.connectivityTask.response &&
+			nextProps.connectivityTask.response !== this.props.connectivityTask.response) {
 			nextProps.alert.success('Connection to node has been established.');
 		}
 
-		if (this.props.directorySetTask.payload === null &&
+		if (!this.props.directorySetTask.payload &&
 			nextProps.directorySetTask.error !== this.props.directorySetTask.error) {
 			nextProps.alert.error('There was a problem setting the data directory.');
 		}
 	}
 
 	public componentDidMount = () => {
-		const directory = this.props.directorySetTask.payload;
-		this.props.handleDataDirectoryInit(directory || Defaults.dataDirectory);
+		this.props.handleDataDirectoryChange(this.props.directorySetTask.payload || Defaults.dataDirectory);
 	};
 
 	public render() {
@@ -70,12 +71,7 @@ class App extends React.Component<LocalProps, any> {
 				<React.Fragment>
 					<Wrapper>
 						<TransitionGroup>
-							<CSSTransition
-								in={true}
-								appear={true}
-								timeout={1000}
-								classNames="fade"
-							>
+							<CSSTransition in={true} appear={true} timeout={1000} classNames="fade">
 								<div>
 									<Route exact={true} path="/" component={Index}/>
 									<Route path="/accounts" component={Accounts}/>
@@ -88,16 +84,16 @@ class App extends React.Component<LocalProps, any> {
 			</HashRouter>
 		);
 	}
+
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
 	directorySetTask: store.app.directory,
-	connectivityError: store.app.connectivity.error,
-	connectivityResponse: store.app.connectivity.response
+	connectivityTask: store.app.connectivity
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleDataDirectoryInit: directory => dispatch(application.handlers.directory.init(directory))
+	handleDataDirectoryChange: directory => dispatch(redux.actions.application.handlers.directory.init(directory))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

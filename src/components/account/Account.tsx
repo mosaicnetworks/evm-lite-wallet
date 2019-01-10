@@ -6,8 +6,7 @@ import { InjectedAlertProp, withAlert } from 'react-alert';
 
 import { BaseAccount, SentTX } from 'evm-lite-lib';
 
-import { Store } from '../../redux';
-import { TransactionHistoryReducer } from '../../redux/reducers/Transactions';
+import { Store, TransactionHistoryReducer } from '../../redux';
 
 import AccountUpdate from './modals/AccountUpdate';
 import AccountExport from './modals/AccountExport';

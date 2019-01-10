@@ -5,12 +5,18 @@ import { connect } from 'react-redux';
 import { ConfigSchema } from 'evm-lite-lib';
 import { Button, Card, Divider, Form, Header } from 'semantic-ui-react';
 
-import { Store } from '../redux';
-import { ConfigLoadReducer, ConfigSaveReducer } from '../redux/reducers/Configuration';
-import { ApplicationConnectivityCheckReducer, ApplicationDirectoryChangeReducer } from '../redux/reducers/Application';
+import {
+	ApplicationConnectivityCheckReducer,
+	ApplicationConnectivityPayLoad,
+	ApplicationDataDirectoryPayLoad,
+	ApplicationDirectoryChangeReducer,
+	ConfigLoadReducer,
+	ConfigSavePayLoad,
+	ConfigSaveReducer,
+	Store
+} from '../redux';
 
-import Config, { ConfigSavePayLoad } from '../redux/actions/Configuration';
-import Application, { AppConnectivityPayLoad } from '../redux/actions/Application';
+import redux from '../redux.config';
 import Defaults from '../classes/Defaults';
 
 
@@ -20,15 +26,15 @@ interface AlertProps {
 
 interface StoreProps {
 	dataDirectoryTask: ApplicationDirectoryChangeReducer;
+	connectivityTask: ApplicationConnectivityCheckReducer;
 	configLoadTask: ConfigLoadReducer;
 	configSaveTask: ConfigSaveReducer;
-	connectivityTask: ApplicationConnectivityCheckReducer;
 }
 
 interface DispatchProps {
-	handleDataDirectoryChange: (payload: string) => void;
+	handleDataDirectoryChange: (payload: ApplicationDataDirectoryPayLoad) => void;
 	handleSaveConfig: (payload: ConfigSavePayLoad) => void;
-	handleCheckConnectivity: (payload: AppConnectivityPayLoad) => void;
+	handleCheckConnectivity: (payload: ApplicationConnectivityPayLoad) => void;
 }
 
 interface OwnProps {
@@ -55,9 +61,6 @@ interface State {
 		}
 	}
 }
-
-const configuration = new Config();
-const app = new Application();
 
 class Configuration extends React.Component<LocalProps, State> {
 	public state = {
@@ -283,14 +286,14 @@ class Configuration extends React.Component<LocalProps, State> {
 									</Card.Description>
 								</Card.Content>
 								<Card.Content extra={true}>
-								<div className=''>
-								<Button color={'blue'} fluid={true}
-								content='Test Connection'
-								loading={this.props.connectivityTask.isLoading}
-								disabled={this.props.connectivityTask.isLoading}
-								onClick={this.handleConnectivityCheck}
-								/>
-								</div>
+									<div className=''>
+										<Button color={'blue'} fluid={true}
+												content='Test Connection'
+												loading={this.props.connectivityTask.isLoading}
+												disabled={this.props.connectivityTask.isLoading}
+												onClick={this.handleConnectivityCheck}
+										/>
+									</div>
 								</Card.Content>
 							</Card>
 							<Card fluid={true}>
@@ -398,9 +401,9 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleSaveConfig: payload => dispatch(configuration.handlers.save.init(payload)),
-	handleCheckConnectivity: payload => dispatch(app.handlers.connectivity.init(payload)),
-	handleDataDirectoryChange: payload => dispatch(app.handlers.directory.init(payload))
+	handleSaveConfig: payload => dispatch(redux.actions.configuration.handlers.save.init(payload)),
+	handleCheckConnectivity: payload => dispatch(redux.actions.application.handlers.connectivity.init(payload)),
+	handleDataDirectoryChange: payload => dispatch(redux.actions.application.handlers.directory.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

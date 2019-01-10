@@ -1,14 +1,16 @@
 import BaseActions, { ActionCreatorHandlers, ActionInterface, ActionValue } from '../common/BaseActions';
 
 
-export interface AppConnectivityPayLoad {
+export interface ApplicationConnectivityPayLoad {
 	host: string;
 	port: number;
 }
 
+export type ApplicationDataDirectoryPayLoad = string;
+
 interface HandlerSchema {
 	directory: ActionCreatorHandlers<string, string, string>
-	connectivity: ActionCreatorHandlers<AppConnectivityPayLoad, string, string>
+	connectivity: ActionCreatorHandlers<ApplicationConnectivityPayLoad, string, string>
 }
 
 interface ActionSchema extends ActionInterface {
@@ -27,7 +29,7 @@ export default class Application extends BaseActions<HandlerSchema, ActionSchema
 
 		this.handlers = {
 			directory: this.generateHandlers<string, string, string>('Directory'),
-			connectivity: this.generateHandlers<AppConnectivityPayLoad, string, string>('Connectivity')
+			connectivity: this.generateHandlers<ApplicationConnectivityPayLoad, string, string>('Connectivity')
 		};
 	}
 

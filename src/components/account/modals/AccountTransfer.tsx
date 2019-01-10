@@ -3,12 +3,18 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Button, Form, Modal } from 'semantic-ui-react';
+import { BaseAccount } from 'evm-lite-lib';
 
-import { BaseAccount, Store } from '../../../redux';
-import { AccountsDecryptReducer, AccountsTransferReducer } from '../../../redux/reducers/Accounts';
-import { ConfigLoadReducer } from '../../../redux/reducers/Configuration';
+import {
+	AccountsDecryptPayload,
+	AccountsDecryptReducer,
+	AccountsTransferPayLoad,
+	AccountsTransferReducer,
+	ConfigLoadReducer,
+	Store
+} from '../../../redux';
 
-import Accounts, { AccountsDecryptPayload, AccountsTransferPayLoad } from '../../../redux/actions/Accounts';
+import redux from '../../../redux.config';
 
 
 interface AlertProps {
@@ -44,8 +50,6 @@ interface State {
 		gasPrice: string;
 	};
 }
-
-const accounts = new Accounts();
 
 class AccountTransfer extends React.Component<LocalProps, State> {
 	public state = {
@@ -247,8 +251,8 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleDecryption: payload => dispatch(accounts.handlers.decrypt.init(payload)),
-	handleTransfer: payload => dispatch(accounts.handlers.transfer.init(payload))
+	handleDecryption: payload => dispatch(redux.actions.accounts.handlers.decrypt.init(payload)),
+	handleTransfer: payload => dispatch(redux.actions.accounts.handlers.transfer.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

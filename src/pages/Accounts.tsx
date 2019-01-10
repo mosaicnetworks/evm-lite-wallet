@@ -5,15 +5,14 @@ import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Divider, Header } from 'semantic-ui-react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-import { ConfigSchema } from 'evm-lite-lib';
+import { BaseAccount, ConfigSchema } from 'evm-lite-lib';
 
-import { BaseAccount, Store } from '../redux';
-import { KeystoreListReducer } from '../redux/reducers/Keystore';
+import { KeystoreListPayLoad, KeystoreListReducer, Store } from '../redux';
 
+import redux from '../redux.config';
 import Account from '../components/account/Account';
 import AccountCreate from '../components/account/modals/AccountCreate';
 import AccountImport from '../components/account/modals/AccountImport';
-import Keystore, { KeystoreListPayLoad } from '../redux/actions/Keystore';
 import LoadingButton from '../components/modals/LoadingButton';
 
 import './styles/Accounts.css';
@@ -30,7 +29,7 @@ interface StoreProps {
 }
 
 interface DispatchProps {
-	handleListAccountInit: (payload: KeystoreListPayLoad) => void,
+	handleListKeystoreAccounts: (payload: KeystoreListPayLoad) => void,
 }
 
 interface OwnProps {
@@ -38,8 +37,6 @@ interface OwnProps {
 }
 
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
-
-const keystore = new Keystore();
 
 class Accounts extends React.Component<LocalProps, any> {
 
@@ -64,7 +61,7 @@ class Accounts extends React.Component<LocalProps, any> {
 
 			const keystoreParentDirectory = list.join('/');
 
-			this.props.handleListAccountInit({
+			this.props.handleListKeystoreAccounts({
 				directory: keystoreParentDirectory,
 				name: popped!
 			});
@@ -119,7 +116,7 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleListAccountInit: (payload) => dispatch(keystore.handlers.list.init(payload))
+	handleListKeystoreAccounts: (payload) => dispatch(redux.actions.keystore.handlers.list.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
