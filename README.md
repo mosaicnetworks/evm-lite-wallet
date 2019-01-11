@@ -16,7 +16,7 @@ rendering the contents of the built project from the `dist` folder.
 If the installation was successful you should see the electron window 
 that looks something similar to this:
 
-![Alt Wallet Homepage](assets/homepage.png?raw=true "Wallet")
+![](assets/wallet.gif?raw=true "Wallet")
 
 ### Data Directory
 All accounts created, transactions sent and configuration changes will
