@@ -19,13 +19,17 @@ that looks something similar to this:
 ![Alt Wallet Homepage](artifacts/homepage.png?raw=true "Wallet")
 
 ### Data Directory
-All accounts created, transactions set and configuration changes will
+All accounts created, transactions sent and configuration changes will
 be saved to the data directory specified in the `Settings` tab of the
 wallet. The data directory by default with be set to 
 `~/.evmlc` which is the same as 
 [`evm-lite-cli`](https://github.com/mosaicnetworks/evm-lite-cli).
 
 If you decide to change the data directory to a new location where
-the keystore folder or the configuration file are not present they will
+the keystore folder or the configuration file are not present, they will
 be generated.
 
+![Alt Data Directory](artifacts/datadirectory.png?raw=true "Data Dir")
+
+Note: The keystore is relative to the configuration file and not the 
+data directory. 
