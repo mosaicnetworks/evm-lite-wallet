@@ -58,7 +58,7 @@ class Account extends React.Component<LocalProps, any> {
 			<Card fluid={true}>
 				<Card.Content className={'sticky-account-heading'}>
 					<Image floated='right' size='mini'>
-						<Icon name="bitcoin" bordered={false} size={'big'}/>
+						{/*<Icon name="bitcoin" bordered={false} size={'big'}/>*/}
 					</Image>
 					<Card.Header className={'address'}>
 						{this.props.account.address}

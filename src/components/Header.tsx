@@ -64,7 +64,7 @@ class Header extends React.Component<LocalProps, any> {
 				<div className="header-main">
 					<div className="logo">
 						<Link to="/">
-							<Icon fitted={false} color="orange" size={'large'} name="google wallet"/>
+							EVM-Lite Wallet
 						</Link>
 					</div>
 					<div className="links">
