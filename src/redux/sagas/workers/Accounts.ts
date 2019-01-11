@@ -93,13 +93,11 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 			action.payload.tx.from
 		);
 
-		console.log(transaction.tx);
-
 		transaction.gas(action.payload.tx.gas);
 		transaction.gasPrice(action.payload.tx.gasPrice);
 
-		const signedTransaction: Transaction = yield transaction.sign(decryptedAccount);
-		const txHash: string = yield (signedTransaction.submit());
+		yield transaction.sign(decryptedAccount);
+		yield transaction.submit();
 
 		const database = new Database(state.app.directory.payload!, 'db.json');
 		const schema = database.transactions.create({
@@ -110,7 +108,7 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 			nonce: 1,
 			gasPrice: action.payload.tx.gas,
 			date: new Date(),
-			txHash
+			txHash: transaction.hash!
 		});
 
 		yield database.transactions.insert(schema);
@@ -123,7 +121,7 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 			}))
 		);
 
-		yield put(success(txHash));
+		yield put(success(transaction.hash!));
 	} catch (e) {
 		yield put(failure(e.text || 'Something went wrong while transferring.'));
 	}
