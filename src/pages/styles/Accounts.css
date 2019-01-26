@@ -5,9 +5,9 @@
 .header-section {
 	background: rgba(255, 255, 255, 1) !important;
 	padding: 20px !important;
-	border-top: rgba(34, 36, 38, .1) 1px solid !important;
-	border-right: rgba(34, 36, 38, .1) 1px solid !important;
-	border-left: rgba(34, 36, 38, .1) 1px solid !important;
+	border-top: rgba(34, 36, 38, 0.1) 1px solid !important;
+	border-right: rgba(34, 36, 38, 0.1) 1px solid !important;
+	border-left: rgba(34, 36, 38, 0.1) 1px solid !important;
 }
 
 .header-section-buttons {
@@ -16,11 +16,10 @@
 	top: -2px;
 	z-index: 200;
 	padding: 20px !important;
-	border-right: rgba(34, 36, 38, .1) 1px solid !important;
-	border-left: rgba(34, 36, 38, .1) 1px solid !important;
+	border-right: rgba(34, 36, 38, 0.1) 1px solid !important;
+	border-left: rgba(34, 36, 38, 0.1) 1px solid !important;
 	margin-bottom: -5px !important;
 }
-
 
 .fade-appear {
 	opacity: 0;
@@ -72,7 +71,6 @@
 .slide1-exit {
 	opacity: 1;
 	transform: scale(1) translateY(0);
-
 }
 
 .slide1-exit.slide1-exit-active {

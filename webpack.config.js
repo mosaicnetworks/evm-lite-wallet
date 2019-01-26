@@ -11,8 +11,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const autoprefixer = require('autoprefixer');
 
-
-const resolveRelativeToApp = relativePath => path.resolve(fs.realpathSync(process.cwd()), relativePath);
+const resolveRelativeToApp = relativePath =>
+	path.resolve(fs.realpathSync(process.cwd()), relativePath);
 const paths = {
 	dist: resolveRelativeToApp('dist'),
 	indexHTML: resolveRelativeToApp('src/index.html'),
@@ -62,9 +62,7 @@ const config = {
 						test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/]
 					},
 					{
-						include: [
-							paths.src
-						],
+						include: [paths.src],
 						loader: require.resolve('babel-loader'),
 						options: {
 							compact: true
@@ -72,9 +70,7 @@ const config = {
 						test: /\.(js|jsx|mjs)$/
 					},
 					{
-						include: [
-							paths.src
-						],
+						include: [paths.src],
 						test: /\.(ts|tsx)$/,
 						use: [
 							{
@@ -138,41 +134,51 @@ const config = {
 };
 
 module.exports = [
-	Object.assign({
-		entry: { index: './src/index.ts' },
-		mode: 'development',
-		output: {
-			filename: '[name].js',
-			path: paths.dist
+	Object.assign(
+		{
+			entry: { index: './src/index.ts' },
+			mode: 'development',
+			output: {
+				filename: '[name].js',
+				path: paths.dist
+			},
+			plugins: [
+				new Webpack.SourceMapDevToolPlugin({
+					filename: '[name].js.map'
+				})
+			],
+			target: 'electron-main'
 		},
-		plugins: [new Webpack.SourceMapDevToolPlugin({ filename: '[name].js.map' })],
-		target: 'electron-main'
-	}, config),
-	Object.assign({
-		entry: [paths.indexJS],
-		mode: 'development',
-		output: {
-			chunkFilename: 'static/js/[name].chunk.js',
-			filename: 'static/js/bundle.js',
-			path: paths.dist
+		config
+	),
+	Object.assign(
+		{
+			entry: [paths.indexJS],
+			mode: 'development',
+			output: {
+				chunkFilename: 'static/js/[name].chunk.js',
+				filename: 'static/js/bundle.js',
+				path: paths.dist
+			},
+			plugins: [
+				new Webpack.DefinePlugin({
+					'process.env.NODE_ENV': JSON.stringify('development')
+				}),
+				new CleanWebpackPlugin(['dist'], { exclude: ['index.js'] }),
+				new HTMLWebpackPlugin({
+					inject: true,
+					template: paths.indexHTML
+				}),
+				new ForkTSCheckerWebpackPlugin({
+					async: false,
+					tsconfigPath: paths.tsConfig,
+					tslintPath: paths.tsLint,
+					watch: paths.src
+				}),
+				new WatchMissingNodeModulesPlugin(paths.nodeModules)
+			],
+			target: 'electron-renderer'
 		},
-		plugins: [
-			new Webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify('development')
-			}),
-			new CleanWebpackPlugin(['dist'], { exclude: ['index.js'] }),
-			new HTMLWebpackPlugin({
-				inject: true,
-				template: paths.indexHTML
-			}),
-			new ForkTSCheckerWebpackPlugin({
-				async: false,
-				tsconfigPath: paths.tsConfig,
-				tslintPath: paths.tsLint,
-				watch: paths.src
-			}),
-			new WatchMissingNodeModulesPlugin(paths.nodeModules)
-		],
-		target: 'electron-renderer'
-	}, config)
+		config
+	)
 ];

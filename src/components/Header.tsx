@@ -17,7 +17,6 @@ import Defaults from '../classes/Defaults';
 
 import './styles/Header.css';
 
-
 interface StoreProps {
 	keystoreListTask: KeystoreListReducer;
 	directorySetTask: ApplicationDirectoryChangeReducer;
@@ -25,7 +24,9 @@ interface StoreProps {
 }
 
 interface DispatchProps {
-	handleDataDirectoryInit: (directory: ApplicationDataDirectoryPayLoad) => void;
+	handleDataDirectoryInit: (
+		directory: ApplicationDataDirectoryPayLoad
+	) => void;
 }
 
 interface OwnProps {
@@ -63,29 +64,41 @@ class Header extends React.Component<LocalProps, any> {
 			<Container fluid={true} style={{ paddingLeft: '20px !important' }}>
 				<div className="header-main">
 					<div className="logo">
-						<Link to="/">
-							EVM-Lite Wallet
-						</Link>
+						<Link to="/">EVM-Lite Wallet</Link>
 					</div>
 					<div className="links">
 						<li>
 							<Link to="/">
 								<Label>
-									{keystoreListTask.response && keystoreListTask.response.length || '0'}
+									{(keystoreListTask.response &&
+										keystoreListTask.response.length) ||
+										'0'}
 								</Label>
-								<Icon size={'big'} color={'black'} name="list alternate outline"/>
+								<Icon
+									size={'big'}
+									color={'black'}
+									name="list alternate outline"
+								/>
 							</Link>
 						</li>
 						<li>
 							<Link to="/configuration">
-								<Icon size={'big'} color={'black'} name="cog"/>
+								<Icon size={'big'} color={'black'} name="cog" />
 							</Link>
 						</li>
 						<li>
 							<a>
-								<Label horizontal={true}
-									   color={this.props.connectivityTask.response ? 'green' : 'red'}>
-									{this.props.connectivityTask.response ? 'Online' : 'Offline'}
+								<Label
+									horizontal={true}
+									color={
+										this.props.connectivityTask.response
+											? 'green'
+											: 'red'
+									}
+								>
+									{this.props.connectivityTask.response
+										? 'Online'
+										: 'Offline'}
 								</Label>
 							</a>
 						</li>
@@ -103,7 +116,8 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleDataDirectoryInit: directory => dispatch(redux.actions.application.directory.init(directory))
+	handleDataDirectoryInit: directory =>
+		dispatch(redux.actions.application.directory.init(directory))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

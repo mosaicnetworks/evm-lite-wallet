@@ -20,7 +20,6 @@ import Defaults from '../classes/Defaults';
 
 import './styles/App.css';
 
-
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
@@ -31,7 +30,9 @@ interface StoreProps {
 }
 
 interface DispatchProps {
-	handleDataDirectoryChange: (directory: ApplicationDataDirectoryPayLoad) => void;
+	handleDataDirectoryChange: (
+		directory: ApplicationDataDirectoryPayLoad
+	) => void;
 }
 
 interface OwnProps {
@@ -40,28 +41,45 @@ interface OwnProps {
 
 type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
-
 class App extends React.Component<LocalProps, any> {
-
-	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<any>, nextContext: any): void {
-		if (!this.props.connectivityTask.error &&
-			nextProps.connectivityTask.error !== this.props.connectivityTask.error) {
-			nextProps.alert.error('A connection to a node could not be established.');
+	public componentWillUpdate(
+		nextProps: Readonly<LocalProps>,
+		nextState: Readonly<any>,
+		nextContext: any
+	): void {
+		if (
+			!this.props.connectivityTask.error &&
+			nextProps.connectivityTask.error !==
+				this.props.connectivityTask.error
+		) {
+			nextProps.alert.error(
+				'A connection to a node could not be established.'
+			);
 		}
 
-		if (!this.props.connectivityTask.response &&
-			nextProps.connectivityTask.response !== this.props.connectivityTask.response) {
+		if (
+			!this.props.connectivityTask.response &&
+			nextProps.connectivityTask.response !==
+				this.props.connectivityTask.response
+		) {
 			nextProps.alert.success('Connection to node has been established.');
 		}
 
-		if (!this.props.directorySetTask.payload &&
-			nextProps.directorySetTask.error !== this.props.directorySetTask.error) {
-			nextProps.alert.error('There was a problem setting the data directory.');
+		if (
+			!this.props.directorySetTask.payload &&
+			nextProps.directorySetTask.error !==
+				this.props.directorySetTask.error
+		) {
+			nextProps.alert.error(
+				'There was a problem setting the data directory.'
+			);
 		}
 	}
 
 	public componentDidMount = () => {
-		this.props.handleDataDirectoryChange(this.props.directorySetTask.payload || Defaults.dataDirectory);
+		this.props.handleDataDirectoryChange(
+			this.props.directorySetTask.payload || Defaults.dataDirectory
+		);
 	};
 
 	public render() {
@@ -70,10 +88,22 @@ class App extends React.Component<LocalProps, any> {
 				<React.Fragment>
 					<Wrapper>
 						<TransitionGroup>
-							<CSSTransition in={true} appear={true} timeout={1000} classNames="slide1">
+							<CSSTransition
+								in={true}
+								appear={true}
+								timeout={1000}
+								classNames="slide1"
+							>
 								<div>
-									<Route exact={true} path="/" component={Accounts}/>
-									<Route path="/configuration" component={Configuration}/>
+									<Route
+										exact={true}
+										path="/"
+										component={Accounts}
+									/>
+									<Route
+										path="/configuration"
+										component={Configuration}
+									/>
 								</div>
 							</CSSTransition>
 						</TransitionGroup>
@@ -82,7 +112,6 @@ class App extends React.Component<LocalProps, any> {
 			</HashRouter>
 		);
 	}
-
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
@@ -91,7 +120,8 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleDataDirectoryChange: directory => dispatch(redux.actions.application.directory.init(directory))
+	handleDataDirectoryChange: directory =>
+		dispatch(redux.actions.application.directory.init(directory))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

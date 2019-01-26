@@ -15,7 +15,6 @@ import AccountHistory from './modals/AccountHistory';
 
 import './styles/Account.css';
 
-
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
@@ -40,7 +39,7 @@ class Account extends React.Component<LocalProps, any> {
 	};
 
 	public onTXHistoryClick = () => {
-		this.setState({ showTxHistory: !(this.state.showTxHistory) });
+		this.setState({ showTxHistory: !this.state.showTxHistory });
 	};
 
 	public transactionHistory = (): SentTX[] => {
@@ -57,7 +56,7 @@ class Account extends React.Component<LocalProps, any> {
 		return (
 			<Card fluid={true}>
 				<Card.Content className={'sticky-account-heading'}>
-					<Image floated='right' size='mini'>
+					<Image floated="right" size="mini">
 						{/*<Icon name="bitcoin" bordered={false} size={'big'}/>*/}
 					</Image>
 					<Card.Header className={'address'}>
@@ -66,27 +65,39 @@ class Account extends React.Component<LocalProps, any> {
 					<Card.Description>
 						<Label>
 							Balance
-							<Label.Detail>{this.props.account.balance}</Label.Detail>
+							<Label.Detail>
+								{this.props.account.balance}
+							</Label.Detail>
 						</Label>
 						<Label>
 							Nonce
-							<Label.Detail>{this.props.account.nonce}</Label.Detail>
+							<Label.Detail>
+								{this.props.account.nonce}
+							</Label.Detail>
 						</Label>
 					</Card.Description>
 				</Card.Content>
-				<Card.Content extra={true} className={'sticky-account-heading-buttons'}>
-					<div className='ui small four buttons'>
+				<Card.Content
+					extra={true}
+					className={'sticky-account-heading-buttons'}
+				>
+					<div className="ui small four buttons">
 						<Button primary={true} onClick={this.onTXHistoryClick}>
-							<Icon name="list"/> Transaction History
+							<Icon name="list" /> Transaction History
 						</Button>
-						<AccountTransfer account={this.props.account}/>
-						<AccountUpdate account={this.props.account}/>
-						<AccountExport account={this.props.account}/>
+						<AccountTransfer account={this.props.account} />
+						<AccountUpdate account={this.props.account} />
+						<AccountExport account={this.props.account} />
 					</div>
 				</Card.Content>
-				{(this.state.showTxHistory) ?
-					(<Card.Content><AccountHistory
-						account={this.props.account} txs={this.transactionHistory()}/></Card.Content>) : null}
+				{this.state.showTxHistory ? (
+					<Card.Content>
+						<AccountHistory
+							account={this.props.account}
+							txs={this.transactionHistory()}
+						/>
+					</Card.Content>
+				) : null}
 			</Card>
 		);
 	}

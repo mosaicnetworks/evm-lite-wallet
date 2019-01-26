@@ -4,8 +4,10 @@ import { Database } from 'evm-lite-lib';
 
 import { Store } from '../..';
 
-import Transactions, { AccountTransactionHistory, TransactionHistoryPayload } from '../../actions/Transactions';
-
+import Transactions, {
+	AccountTransactionHistory,
+	TransactionHistoryPayload
+} from '../../actions/Transactions';
 
 interface TransactionHistoryAction {
 	type: string;
@@ -21,12 +23,19 @@ export function* transactionHistoryWorker(action: TransactionHistoryAction) {
 		const state: Store = yield select();
 
 		if (state.app.directory.response && state.app.directory.payload) {
-			const database: Database = new Database(state.app.directory.payload, 'db.json');
+			const database: Database = new Database(
+				state.app.directory.payload,
+				'db.json'
+			);
 			const history: AccountTransactionHistory = {};
 
-			const filter: { sender: any } = yield database.transactions.filter();
+			const filter: {
+				sender: any;
+			} = yield database.transactions.filter();
 
-			action.payload.addresses.forEach(address => history[address] = filter.sender(address));
+			action.payload.addresses.forEach(
+				address => (history[address] = filter.sender(address))
+			);
 
 			yield put(success(history));
 		} else {

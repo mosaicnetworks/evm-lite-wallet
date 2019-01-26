@@ -7,8 +7,9 @@ import { keystoreListWorker } from './Keystore';
 
 import Configuration from '../../actions/Configuration';
 import Keystore from '../../actions/Keystore';
-import Application, { ApplicationConnectivityPayLoad } from '../../actions/Application';
-
+import Application, {
+	ApplicationConnectivityPayLoad
+} from '../../actions/Application';
 
 interface DirectoryChangeInitAction {
 	type: string;
@@ -30,14 +31,15 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 	try {
 		const directory = yield new DataDirectory(action.payload);
 
-
 		const configurationForkData: ConfigSchema = yield join(
-			yield fork(configurationReadWorker, config.handlers.load.init({
-				directory: directory.path,
-				name: 'config.toml'
-			}))
+			yield fork(
+				configurationReadWorker,
+				config.handlers.load.init({
+					directory: directory.path,
+					name: 'config.toml'
+				})
+			)
 		);
-
 
 		yield put(success('Data Directory change successful.'));
 
@@ -52,10 +54,13 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 			const keystoreParentDir = list.join('/');
 
 			yield join(
-				yield fork(keystoreListWorker, keystore.handlers.list.init({
-					directory: keystoreParentDir,
-					name: popped!
-				}))
+				yield fork(
+					keystoreListWorker,
+					keystore.handlers.list.init({
+						directory: keystoreParentDir,
+						name: popped!
+					})
+				)
 			);
 		}
 	} catch (e) {
@@ -67,11 +72,15 @@ export function* checkConnectivityWorker(action: ConnectivityCheckInitAction) {
 	const { success, failure } = app.handlers.connectivity;
 
 	try {
-		const connection: EVMLC = new EVMLC(action.payload.host, action.payload.port, {
-			from: '',
-			gas: 0,
-			gasPrice: 0
-		});
+		const connection: EVMLC = new EVMLC(
+			action.payload.host,
+			action.payload.port,
+			{
+				from: '',
+				gas: 0,
+				gasPrice: 0
+			}
+		);
 
 		const result: boolean = yield connection.testConnection();
 
@@ -87,9 +96,4 @@ export function* checkConnectivityWorker(action: ConnectivityCheckInitAction) {
 
 		return null;
 	}
-
 }
-
-
-
-

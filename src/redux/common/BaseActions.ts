@@ -1,8 +1,9 @@
-import BasicReducerFactory, { IBasicReducer } from './reducers/BasicReducerFactory';
-
+import BasicReducerFactory, {
+	IBasicReducer
+} from './reducers/BasicReducerFactory';
 
 interface ActionTypes {
-	[key: string]: string
+	[key: string]: string;
 }
 
 export interface ActionInterface {
@@ -11,7 +12,7 @@ export interface ActionInterface {
 		success: string;
 		failure: string;
 		reset: string;
-	}
+	};
 }
 
 export interface ActionValue {
@@ -23,56 +24,55 @@ export interface ActionValue {
 
 type ActionPrefixes = string[];
 
-type InitHandler<I> = (payload: I) => {
-	type: string;
+type InitHandler<I> = (
 	payload: I
-}
+) => {
+	type: string;
+	payload: I;
+};
 
 type ResetHandler = () => {
 	type: string;
-}
+};
 
-type SuccessHandler<S> = (payload: S) => {
-	type: string,
+type SuccessHandler<S> = (
 	payload: S
-}
+) => {
+	type: string;
+	payload: S;
+};
 
-type FailureHandler<F> = (payload: F) => {
-	type: string,
+type FailureHandler<F> = (
 	payload: F
-}
+) => {
+	type: string;
+	payload: F;
+};
 
 export interface ActionCreatorHandlers<I, S, F> {
-	init: InitHandler<I>,
-	success: SuccessHandler<S>,
-	failure: FailureHandler<F>
-	reset: ResetHandler
+	init: InitHandler<I>;
+	success: SuccessHandler<S>;
+	failure: FailureHandler<F>;
+	reset: ResetHandler;
 }
 
 type ActionSuffixes = Readonly<'INIT' | 'SUCCESS' | 'FAILURE' | 'RESET'>;
 
-
-/**
- * Base BaseActions Handler Class
- *
- * @remarks
- * This class is the base actions call which all action handler classes can be built from. It provides some
- * useful function for handling simple REST requests to an API. Also has methods to generate a simple reducer
- * to parse the actions dispatched to redux.
- *
- * @alpha
- */
 export default abstract class BaseActions<Handlers, Actions> {
-
 	public abstract handlers: Handlers;
 
 	private readonly delimiter = '_';
-	private readonly suffixes: ActionSuffixes[] = ['INIT', 'SUCCESS', 'FAILURE', 'RESET'];
+	private readonly suffixes: ActionSuffixes[] = [
+		'INIT',
+		'SUCCESS',
+		'FAILURE',
+		'RESET'
+	];
 	private readonly prefixCollection: ActionPrefixes;
 	private readonly actionTypes: ActionTypes;
 
 	private readonly handlerGeneratorFunctions: {
-		[key: string]: <I, S, F>() => Readonly<ActionCreatorHandlers<I, S, F>>
+		[key: string]: <I, S, F>() => Readonly<ActionCreatorHandlers<I, S, F>>;
 	};
 
 	private readonly actionsObject: ActionInterface | Actions;
@@ -107,11 +107,34 @@ export default abstract class BaseActions<Handlers, Actions> {
 				actionTypes[`${key}`] = `${val}`;
 			}
 
-			this.handlerGeneratorFunctions[prefix.toUpperCase()] = <I, S, F>() => ({
-				init: (payload) => ({ type: this.types[this.joinWithUpperCase(prefix, this.suffixes[0])], payload }),
-				success: (payload) => ({ type: this.types[this.joinWithUpperCase(prefix, this.suffixes[1])], payload }),
-				failure: (payload) => ({ type: this.types[this.joinWithUpperCase(prefix, this.suffixes[2])], payload }),
-				reset: () => ({ type: this.types[this.joinWithUpperCase(prefix, this.suffixes[3])] })
+			this.handlerGeneratorFunctions[prefix.toUpperCase()] = <
+				I,
+				S,
+				F
+			>() => ({
+				init: payload => ({
+					type: this.types[
+						this.joinWithUpperCase(prefix, this.suffixes[0])
+					],
+					payload
+				}),
+				success: payload => ({
+					type: this.types[
+						this.joinWithUpperCase(prefix, this.suffixes[1])
+					],
+					payload
+				}),
+				failure: payload => ({
+					type: this.types[
+						this.joinWithUpperCase(prefix, this.suffixes[2])
+					],
+					payload
+				}),
+				reset: () => ({
+					type: this.types[
+						this.joinWithUpperCase(prefix, this.suffixes[3])
+					]
+				})
 			});
 
 			this.actionsObject[prefix.toLowerCase()] = {
@@ -125,19 +148,32 @@ export default abstract class BaseActions<Handlers, Actions> {
 		}
 	}
 
-	public SimpleReducer<I, S, F>(prefix: string, initial?: IBasicReducer<I, S, F>) {
-		return BasicReducerFactory<BaseActions<Handlers, Actions>, I, S, F>(this, prefix, initial);
+	public SimpleReducer<I, S, F>(
+		prefix: string,
+		initial?: IBasicReducer<I, S, F>
+	) {
+		return BasicReducerFactory<BaseActions<Handlers, Actions>, I, S, F>(
+			this,
+			prefix,
+			initial
+		);
 	}
 
-	protected generateHandlers<I, S, F>(prefix: string): Readonly<ActionCreatorHandlers<I, S, F>> {
+	protected generateHandlers<I, S, F>(
+		prefix: string
+	): Readonly<ActionCreatorHandlers<I, S, F>> {
 		return this.handlerGeneratorFunctions[prefix.toUpperCase()]<I, S, F>();
 	}
 
 	protected generateActions(prefix: string): ActionValue {
 		return {
 			init: this.actionTypes[this.joinWithUpperCase(prefix, 'Init')],
-			success: this.actionTypes[this.joinWithUpperCase(prefix, 'Success')],
-			failure: this.actionTypes[this.joinWithUpperCase(prefix, 'Failure')],
+			success: this.actionTypes[
+				this.joinWithUpperCase(prefix, 'Success')
+			],
+			failure: this.actionTypes[
+				this.joinWithUpperCase(prefix, 'Failure')
+			],
 			reset: this.actionTypes[this.joinWithUpperCase(prefix, 'Reset')]
 		};
 	}
@@ -145,5 +181,4 @@ export default abstract class BaseActions<Handlers, Actions> {
 	private joinWithUpperCase(...words: string[]) {
 		return words.join(this.delimiter).toUpperCase();
 	}
-
 }

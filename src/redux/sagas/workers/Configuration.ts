@@ -5,9 +5,11 @@ import { Config, ConfigSchema } from 'evm-lite-lib';
 
 import { keystoreListWorker } from './Keystore';
 
-import Configuration, { ConfigLoadPayLoad, ConfigSavePayLoad } from '../../actions/Configuration';
+import Configuration, {
+	ConfigLoadPayLoad,
+	ConfigSavePayLoad
+} from '../../actions/Configuration';
 import Keystore from '../../actions/Keystore';
-
 
 interface ConfigFileLoadAction {
 	type: string;
@@ -26,7 +28,10 @@ export function* configurationReadWorker(action: ConfigFileLoadAction) {
 	const { success, failure } = config.handlers.load;
 
 	try {
-		const evmlConfig: Config = new Config(action.payload.directory, action.payload.name);
+		const evmlConfig: Config = new Config(
+			action.payload.directory,
+			action.payload.name
+		);
 		const data: ConfigSchema = yield evmlConfig.load();
 
 		yield put(success(data));
@@ -45,14 +50,22 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 	yield delay(1000);
 
 	try {
-		const evmlConfig: Config = new Config(action.payload.directory, action.payload.name);
-		const response: string = yield evmlConfig.save(action.payload.configSchema);
+		const evmlConfig: Config = new Config(
+			action.payload.directory,
+			action.payload.name
+		);
+		const response: string = yield evmlConfig.save(
+			action.payload.configSchema
+		);
 
 		const configurationData: ConfigSchema = yield join(
-			yield fork(configurationReadWorker, config.handlers.load.init({
-				directory: action.payload.directory,
-				name: action.payload.name
-			}))
+			yield fork(
+				configurationReadWorker,
+				config.handlers.load.init({
+					directory: action.payload.directory,
+					name: action.payload.name
+				})
+			)
 		);
 
 		if (configurationData) {
@@ -66,10 +79,13 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 			const keystoreParentDir = list.join('/');
 
 			yield join(
-				yield fork(keystoreListWorker, keystore.handlers.list.init({
-					directory: keystoreParentDir,
-					name: popped!
-				}))
+				yield fork(
+					keystoreListWorker,
+					keystore.handlers.list.init({
+						directory: keystoreParentDir,
+						name: popped!
+					})
+				)
 			);
 		}
 
@@ -83,5 +99,4 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 
 		return null;
 	}
-
 }

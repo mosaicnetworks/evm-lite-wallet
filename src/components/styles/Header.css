@@ -2,13 +2,13 @@
 	position: -webkit-sticky;
 	/*position: sticky;*/
 	top: 0;
-	background: #FFF;
+	background: #fff;
 	height: 70px;
 	line-height: 70px !important;
-	color: #FFF;
+	color: #fff;
 	z-index: 2000;
 	margin-bottom: 4px !important;
-	border: 1px solid #EEE !important;
+	border: 1px solid #eee !important;
 }
 
 .logo {
