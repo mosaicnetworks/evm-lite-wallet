@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "evm-lite-lib": "0.1.14",
+    "evm-lite-lib": "0.1.22",
     "react": "^16.6.1",
     "react-alert": "^4.0.4",
     "react-alert-template-basic": "^1.0.0",
