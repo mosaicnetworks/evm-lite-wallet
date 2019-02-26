@@ -54,10 +54,13 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 			action.payload.directory,
 			action.payload.name
 		);
+
+		console.log(evmlConfig);
 		const response: string = yield evmlConfig.save(
 			action.payload.configSchema
 		);
 
+		console.log(response);
 		const configurationData: ConfigSchema = yield join(
 			yield fork(
 				configurationReadWorker,
@@ -67,6 +70,8 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 				})
 			)
 		);
+
+		console.log(configurationData);
 
 		if (configurationData) {
 			const list = configurationData.storage.keystore.split('/');

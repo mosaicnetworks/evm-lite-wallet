@@ -96,7 +96,7 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 			return;
 		}
 
-		const transaction: Transaction = yield evmlc.prepareTransfer(
+		const transaction: Transaction = yield evmlc.accounts.prepareTransfer(
 			action.payload.tx.to,
 			action.payload.tx.value,
 			action.payload.tx.from
@@ -123,12 +123,17 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 		yield database.transactions.insert(schema);
 		console.log(schema);
 
+		const config = state.config.load.response.storage.keystore;
+
+		const list = config.split('/');
+		const name = list.pop() || 'keystore';
+		const parent = list.join('/');
 		yield join(
 			yield fork(
 				keystoreListWorker,
 				keystore.handlers.list.init({
-					directory: state.app.directory.payload!,
-					name: 'keystore'
+					directory: parent,
+					name
 				})
 			)
 		);
