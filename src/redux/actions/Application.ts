@@ -1,5 +1,8 @@
-import BaseActions, { ActionCreatorHandlers, ActionInterface, ActionValue } from '../common/BaseActions';
-
+import BaseActions, {
+	ActionCreatorHandlers,
+	ActionInterface,
+	ActionValue
+} from '../common/BaseActions';
 
 export interface ApplicationConnectivityPayLoad {
 	host: string;
@@ -9,8 +12,12 @@ export interface ApplicationConnectivityPayLoad {
 export type ApplicationDataDirectoryPayLoad = string;
 
 interface HandlerSchema {
-	directory: ActionCreatorHandlers<string, string, string>
-	connectivity: ActionCreatorHandlers<ApplicationConnectivityPayLoad, string, string>
+	directory: ActionCreatorHandlers<string, string, string>;
+	connectivity: ActionCreatorHandlers<
+		ApplicationConnectivityPayLoad,
+		string,
+		string
+	>;
 }
 
 interface ActionSchema extends ActionInterface {
@@ -18,8 +25,10 @@ interface ActionSchema extends ActionInterface {
 	connectivity: ActionValue;
 }
 
-export default class Application extends BaseActions<HandlerSchema, ActionSchema> {
-
+export default class Application extends BaseActions<
+	HandlerSchema,
+	ActionSchema
+> {
 	public handlers: HandlerSchema;
 
 	constructor() {
@@ -28,10 +37,14 @@ export default class Application extends BaseActions<HandlerSchema, ActionSchema
 		this.prefixes = ['Directory', 'Connectivity'];
 
 		this.handlers = {
-			directory: this.generateHandlers<string, string, string>('Directory'),
-			connectivity: this.generateHandlers<ApplicationConnectivityPayLoad, string, string>('Connectivity')
+			directory: this.generateHandlers<string, string, string>(
+				'Directory'
+			),
+			connectivity: this.generateHandlers<
+				ApplicationConnectivityPayLoad,
+				string,
+				string
+			>('Connectivity')
 		};
 	}
-
-
 }

@@ -1,6 +1,9 @@
 import * as path from 'path';
 
 export default class Defaults {
-	// @ts-ignore
-	public static dataDirectory = path.join(window.require('os').homedir(), '.evmlc');
+	public static dataDirectory = path.join(
+		// @ts-ignore
+		window.require('os').homedir(),
+		'.evmlc'
+	);
 }

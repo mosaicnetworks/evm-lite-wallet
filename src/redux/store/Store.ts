@@ -14,16 +14,17 @@ import AccountSagas from '../sagas/watchers/Accounts';
 import ConfigRootReducer, { ConfigReducer } from '../reducers/Configuration';
 import AppRootReducer, { AppReducer } from '../reducers/Application';
 import KeystoreRootReducer, { KeystoreReducer } from '../reducers/Keystore';
-import TransactionsRootReducer, { ITransactionsReducer } from '../reducers/Transactions';
+import TransactionsRootReducer, {
+	ITransactionsReducer
+} from '../reducers/Transactions';
 import AccountsRootReducer, { IAccountsReducer } from '../reducers/Accounts';
-
 
 export interface Store {
 	accounts: IAccountsReducer;
 	keystore: KeystoreReducer;
 	config: ConfigReducer;
 	app: AppReducer;
-	transactions: ITransactionsReducer
+	transactions: ITransactionsReducer;
 }
 
 const persistConfig: PersistConfig = {
@@ -55,4 +56,4 @@ export default () => {
 	saga.run(AccountSagas);
 
 	return { store, persistor };
-}
+};

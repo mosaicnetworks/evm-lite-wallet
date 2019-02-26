@@ -13,7 +13,6 @@ import App from './App';
 import './styles/index.css';
 import 'semantic-ui-css/semantic.min.css';
 
-
 const options = {
 	timeout: 5000,
 	offset: '20px',
@@ -21,12 +20,17 @@ const options = {
 };
 
 ReactDOM.render(
-	(<Provider store={redux.stores.store}>
-		<AlertProvider template={AlertTemplate} position={'bottom right'} {...options} transition={'scale'}>
+	<Provider store={redux.stores.store}>
+		<AlertProvider
+			template={AlertTemplate}
+			position={'bottom right'}
+			{...options}
+			transition={'scale'}
+		>
 			<PersistGate loading={null} persistor={redux.stores.persistor}>
-				<App/>
+				<App />
 			</PersistGate>
 		</AlertProvider>
-	</Provider>),
+	</Provider>,
 	document.getElementById('root') as HTMLElement
 );

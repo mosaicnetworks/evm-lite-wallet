@@ -10,7 +10,6 @@ import { KeystoreUpdatePayLoad, KeystoreUpdateReducer, Store } from '../../../re
 import '../styles/Account.css';
 import redux from '../../../redux.config';
 
-
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
@@ -27,7 +26,7 @@ interface OwnProps {
 	account: BaseAccount;
 }
 
-type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps
+type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
 interface State {
 	open: boolean;
@@ -36,7 +35,7 @@ interface State {
 		oldPassword: string;
 		newPassword: string;
 		verifyNewPassword: string;
-	}
+	};
 }
 
 class AccountUpdate extends React.Component<LocalProps, State> {
@@ -50,15 +49,24 @@ class AccountUpdate extends React.Component<LocalProps, State> {
 		}
 	};
 
-	public componentWillReceiveProps(nextProps: Readonly<LocalProps>, nextContext: any): void {
-		if (!this.props.keystoreUpdateTask.response && !!nextProps.keystoreUpdateTask.response
-			&& this.state.fields.oldPassword) {
+	public componentWillReceiveProps(
+		nextProps: Readonly<LocalProps>,
+		nextContext: any
+	): void {
+		if (
+			!this.props.keystoreUpdateTask.response &&
+			!!nextProps.keystoreUpdateTask.response &&
+			this.state.fields.oldPassword
+		) {
 			nextProps.alert.success('Account updated successfully.');
 			this.close();
 		}
 
-		if (!this.props.keystoreUpdateTask.error && !!nextProps.keystoreUpdateTask.error
-			&& this.state.fields.oldPassword) {
+		if (
+			!this.props.keystoreUpdateTask.error &&
+			!!nextProps.keystoreUpdateTask.error &&
+			this.state.fields.oldPassword
+		) {
 			nextProps.alert.error(nextProps.keystoreUpdateTask.error);
 		}
 	}
@@ -77,7 +85,9 @@ class AccountUpdate extends React.Component<LocalProps, State> {
 		}
 
 		if (newPassword !== verifyNewPassword) {
-			this.props.alert.error('New password & verify password must match!');
+			this.props.alert.error(
+				'New password & verify password must match!'
+			);
 		} else {
 			this.props.handleUpdatePassword({
 				address: this.props.account.address,
@@ -117,34 +127,57 @@ class AccountUpdate extends React.Component<LocalProps, State> {
 	public render() {
 		return (
 			<React.Fragment>
-				<Modal open={this.state.open} onClose={this.close}
-					   trigger={<Button basic={false} onClick={this.open} color='yellow'>Change Password</Button>}>
-					<Modal.Header>Update: {this.props.account.address}</Modal.Header>
+				<Modal
+					open={this.state.open}
+					onClose={this.close}
+					trigger={
+						<Button
+							basic={false}
+							onClick={this.open}
+							color="yellow"
+						>
+							Change Password
+						</Button>
+					}
+				>
+					<Modal.Header>
+						Update: {this.props.account.address}
+					</Modal.Header>
 					<Modal.Content>
-						<Header as={'h4'}>
-							Information
-						</Header>
-						Account will be encrypted with the new password and the current v3JSONKeystore file will be
-						overwritten with the new JSON data.
-						<br/><br/>
+						<Header as={'h4'}>Information</Header>
+						Account will be encrypted with the new password and the
+						current v3JSONKeystore file will be overwritten with the
+						new JSON data.
+						<br/>
+						<br/>
 						<Divider/>
 						<br/>
 						<Modal.Description>
 							<Form>
 								<Form.Field>
 									<label>Old Password: </label>
-									<input type={'password'} placeholder='Old Password'
-										   onChange={this.handleChangeOldPassword}/>
+									<input
+										type={'password'}
+										placeholder="Old Password"
+										onChange={this.handleChangeOldPassword}
+									/>
 								</Form.Field>
 								<Form.Field>
 									<label>New Password</label>
-									<input type={'password'} placeholder='New Password'
-										   onChange={this.handleChangeNewPassword}/>
+									<input
+										type={'password'}
+										placeholder="New Password"
+										onChange={this.handleChangeNewPassword}
+									/>
 								</Form.Field>
 								<Form.Field>
 									<label>Verify New Password</label>
-									<input type={'password'} placeholder='Verify New Password'
-										   onChange={this.handleChangeVerifyNewPassword}
+									<input
+										type={'password'}
+										placeholder="Verify New Password"
+										onChange={
+											this.handleChangeVerifyNewPassword
+										}
 									/>
 								</Form.Field>
 							</Form>
@@ -152,10 +185,15 @@ class AccountUpdate extends React.Component<LocalProps, State> {
 					</Modal.Content>
 					<Modal.Actions>
 						<Button onClick={this.close}>Close</Button>
-						<Button disabled={this.props.keystoreUpdateTask.isLoading}
-								loading={this.props.keystoreUpdateTask.isLoading}
-								onClick={this.handleSave} color={'green'}
-								type='submit'>Update</Button>
+						<Button
+							disabled={this.props.keystoreUpdateTask.isLoading}
+							loading={this.props.keystoreUpdateTask.isLoading}
+							onClick={this.handleSave}
+							color={'green'}
+							type="submit"
+						>
+							Update
+						</Button>
 					</Modal.Actions>
 				</Modal>
 			</React.Fragment>
@@ -168,7 +206,8 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleUpdatePassword: payload => dispatch(redux.actions.keystore.update.init(payload))
+	handleUpdatePassword: payload =>
+		dispatch(redux.actions.keystore.update.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

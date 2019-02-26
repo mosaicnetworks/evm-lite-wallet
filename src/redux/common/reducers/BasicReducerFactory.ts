@@ -7,8 +7,17 @@ export interface IBasicReducer<I, S, F> {
 	error: F | null;
 }
 
-const BasicReducerFactory = <A extends Actions<any, any>, I, S, F>(instance: A, prefix: string, initial?: IBasicReducer<I, S, F>) => {
-	const start = initial || { payload: null, isLoading: false, response: null, error: null };
+const BasicReducerFactory = <A extends Actions<any, any>, I, S, F>(
+	instance: A,
+	prefix: string,
+	initial?: IBasicReducer<I, S, F>
+) => {
+	const start = initial || {
+		payload: null,
+		isLoading: false,
+		response: null,
+		error: null
+	};
 	prefix = prefix.toUpperCase();
 
 	return (state = start, action: any): IBasicReducer<I, S, F> => {

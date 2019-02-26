@@ -5,7 +5,6 @@ import Keystore from '../actions/Keystore';
 import Transactions from '../actions/Transactions';
 import Accounts from '../actions/Accounts';
 
-
 export interface EVMLiteReduxConfig {
 	host: 'localhost' | '127.0.0.1' | string;
 	port: 8080 | 8000 | 80 | number;
@@ -19,7 +18,6 @@ interface Stores {
 }
 
 export default class EVMLCRedux {
-
 	private readonly application: Application;
 	private readonly configuration: Configuration;
 	private readonly keystore: Keystore;
@@ -44,7 +42,7 @@ export default class EVMLCRedux {
 			configuration: this.configuration.handlers,
 			keystore: this.keystore.handlers,
 			transaction: this.transactions.handlers,
-			accounts: this.accounts.handlers,
+			accounts: this.accounts.handlers
 		};
 	}
 
@@ -54,5 +52,4 @@ export default class EVMLCRedux {
 			persistor: this.defaultStores.persistor
 		};
 	}
-
 }

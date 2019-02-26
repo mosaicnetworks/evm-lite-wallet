@@ -8,7 +8,6 @@ import { ConfigLoadReducer, KeystoreCreatePayLoad, KeystoreCreateReducer, Store 
 
 import redux from '../../../redux.config';
 
-
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
@@ -26,7 +25,7 @@ interface OwnProps {
 	empty?: null;
 }
 
-type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps
+type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
 interface State {
 	open: boolean;
@@ -36,7 +35,7 @@ interface State {
 	};
 	errors: {
 		fieldError: string;
-	}
+	};
 }
 
 class AccountCreate extends React.Component<LocalProps, State> {
@@ -54,13 +53,26 @@ class AccountCreate extends React.Component<LocalProps, State> {
 	public open = () => this.setState({ open: true });
 	public close = () => this.setState({ open: false });
 
-	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextContext: any): void {
-		if (!this.props.keystoreCreateTask.error && !!nextProps.keystoreCreateTask.error) {
+	public componentWillUpdate(
+		nextProps: Readonly<LocalProps>,
+		nextContext: any
+	): void {
+		if (
+			!this.props.keystoreCreateTask.error &&
+			!!nextProps.keystoreCreateTask.error
+		) {
 			nextProps.alert.error(nextProps.keystoreCreateTask.error);
 		}
 
-		if (!this.props.keystoreCreateTask.response && !!nextProps.keystoreCreateTask.response) {
-			nextProps.alert.success(`Account created: ${nextProps.keystoreCreateTask.response.address}`);
+		if (
+			!this.props.keystoreCreateTask.response &&
+			!!nextProps.keystoreCreateTask.response
+		) {
+			nextProps.alert.success(
+				`Account created: ${
+					nextProps.keystoreCreateTask.response.address
+					}`
+			);
 			this.close();
 		}
 	}
@@ -113,45 +125,66 @@ class AccountCreate extends React.Component<LocalProps, State> {
 
 		return (
 			<React.Fragment>
-				<Modal open={this.state.open}
-					   onClose={this.close}
-					   trigger={
-						   <Button content='Create' color={'green'} icon='plus'
-								   onClick={this.open}
-								   labelPosition='left'/>
-					   }>
+				<Modal
+					open={this.state.open}
+					onClose={this.close}
+					trigger={
+						<Button
+							content="Create"
+							color={'green'}
+							icon="plus"
+							onClick={this.open}
+							labelPosition="left"
+						/>
+					}
+				>
 					<Modal.Header>Create an Account</Modal.Header>
 					<Modal.Content>
-						<Header as={'h4'}>
-							Information
-						</Header>
-						Enter a password to encrypt your account. The created account will be placed in the keystore
-						directory specified in the configuration tab. If you would like to create the account in a
-						different
-						directory, update the configuration for keystore. <br/><br/>
+						<Header as={'h4'}>Information</Header>
+						Enter a password to encrypt your account. The created
+						account will be placed in the keystore directory
+						specified in the configuration tab. If you would like to
+						create the account in a different directory, update the
+						configuration for keystore. <br/>
+						<br/>
 						<Label>
 							Keystore
 							<Label.Detail>
-								{configLoadTask.response && configLoadTask.response.storage.keystore}
+								{configLoadTask.response &&
+								configLoadTask.response.storage.keystore}
 							</Label.Detail>
-						</Label><br/><br/>
+						</Label>
+						<br/>
+						<br/>
 						<Divider/>
 						<Modal.Description>
 							<Form>
 								<Form.Field>
 									<label>Password: </label>
-									<input onChange={this.handleChangePassword}/>
+									<input
+										onChange={this.handleChangePassword}
+									/>
 								</Form.Field>
 								<Form.Field>
 									<label>Verify Password: </label>
-									<input onChange={this.handleChangeVerifyPassword}/>
+									<input
+										onChange={
+											this.handleChangeVerifyPassword
+										}
+									/>
 								</Form.Field>
 							</Form>
 						</Modal.Description>
 					</Modal.Content>
 					<Modal.Actions>
 						<Button onClick={this.close}>Close</Button>
-						<Button onClick={this.handleCreate} color={'green'} type='submit'>Create</Button>
+						<Button
+							onClick={this.handleCreate}
+							color={'green'}
+							type="submit"
+						>
+							Create
+						</Button>
 					</Modal.Actions>
 				</Modal>
 			</React.Fragment>
@@ -165,7 +198,8 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleCreateAccount: payload => dispatch(redux.actions.keystore.create.init(payload))
+	handleCreateAccount: payload =>
+		dispatch(redux.actions.keystore.create.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

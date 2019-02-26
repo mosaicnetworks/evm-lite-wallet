@@ -17,7 +17,6 @@ import LoadingButton from '../components/modals/LoadingButton';
 
 import './styles/Accounts.css';
 
-
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
@@ -29,7 +28,7 @@ interface StoreProps {
 }
 
 interface DispatchProps {
-	handleListKeystoreAccounts: (payload: KeystoreListPayLoad) => void,
+	handleListKeystoreAccounts: (payload: KeystoreListPayLoad) => void;
 }
 
 interface OwnProps {
@@ -39,13 +38,22 @@ interface OwnProps {
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
 class Accounts extends React.Component<LocalProps, any> {
-
-	public componentWillUpdate(nextProps: Readonly<LocalProps>, nextState: Readonly<any>, nextContext: any): void {
-		if (!this.props.keystoreListTask.response && nextProps.keystoreListTask.response) {
+	public componentWillUpdate(
+		nextProps: Readonly<LocalProps>,
+		nextState: Readonly<any>,
+		nextContext: any
+	): void {
+		if (
+			!this.props.keystoreListTask.response &&
+			nextProps.keystoreListTask.response
+		) {
 			nextProps.alert.success('Local accounts refreshed.');
 		}
 
-		if (!this.props.keystoreListTask.error && nextProps.keystoreListTask.error) {
+		if (
+			!this.props.keystoreListTask.error &&
+			nextProps.keystoreListTask.error
+		) {
 			nextProps.alert.error(nextProps.keystoreListTask.error);
 		}
 	}
@@ -66,7 +74,9 @@ class Accounts extends React.Component<LocalProps, any> {
 				name: popped!
 			});
 		} else {
-			this.props.alert.info('Looks like there was a problem reading the config file.');
+			this.props.alert.info(
+				'Looks like there was a problem reading the config file.'
+			);
 		}
 	};
 
@@ -74,34 +84,48 @@ class Accounts extends React.Component<LocalProps, any> {
 		const { keystoreListTask } = this.props;
 		return (
 			<React.Fragment>
-				<Header as='h2' className={'header-section-buttons'}>
+				<Header as="h2" className={'header-section-buttons'}>
 					<Header.Content>
-						<AccountCreate/>
-						<AccountImport/>
-						<LoadingButton isLoading={keystoreListTask.isLoading}
-									   onClickHandler={this.handleRefreshAccounts}
-									   right={true}/>
+						<AccountCreate />
+						<AccountImport />
+						<LoadingButton
+							isLoading={keystoreListTask.isLoading}
+							onClickHandler={this.handleRefreshAccounts}
+							right={true}
+						/>
 					</Header.Content>
 				</Header>
 				<div className={'page'}>
 					<TransitionGroup>
-						{keystoreListTask.response && keystoreListTask.response.map((account: BaseAccount) => {
-							return (
-								<CSSTransition key={account.address}
-											   in={true}
-											   appear={!this.props.keystoreListTask.isLoading}
-											   timeout={2000}
-											   classNames="slide1"
-								>
-									<Account key={account.address} account={account}/>
-								</CSSTransition>
-							);
-						})}
+						{keystoreListTask.response &&
+							keystoreListTask.response.map(
+								(account: BaseAccount) => {
+									return (
+										<CSSTransition
+											key={account.address}
+											in={true}
+											appear={
+												!this.props.keystoreListTask
+													.isLoading
+											}
+											timeout={2000}
+											classNames="slide1"
+										>
+											<Account
+												key={account.address}
+												account={account}
+											/>
+										</CSSTransition>
+									);
+								}
+							)}
 					</TransitionGroup>
-					{!keystoreListTask.isLoading &&
-					keystoreListTask.error && <div className={'error_message'}>{keystoreListTask.error}</div>}
+					{!keystoreListTask.isLoading && keystoreListTask.error && (
+						<div className={'error_message'}>
+							{keystoreListTask.error}
+						</div>
+					)}
 				</div>
-
 			</React.Fragment>
 		);
 	}
@@ -114,7 +138,8 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleListKeystoreAccounts: (payload) => dispatch(redux.actions.keystore.list.init(payload))
+	handleListKeystoreAccounts: payload =>
+		dispatch(redux.actions.keystore.list.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

@@ -5,11 +5,14 @@ import { BaseAccount, Keystore as EVMLKeystore } from 'evm-lite-lib';
 import { Store } from '../..';
 import { checkConnectivityWorker } from './Application';
 
-import Keystore, { KeystoreCreatePayLoad, KeystoreListPayLoad, KeystoreUpdatePayLoad } from '../../actions/Keystore';
+import Keystore, {
+	KeystoreCreatePayLoad,
+	KeystoreListPayLoad,
+	KeystoreUpdatePayLoad
+} from '../../actions/Keystore';
 import Transactions from '../../actions/Transactions';
 import Application from '../../actions/Application';
 import { delay } from 'redux-saga';
-
 
 interface KeystoreListAction {
 	type: string;
@@ -34,7 +37,10 @@ export function* keystoreListWorker(action: KeystoreListAction) {
 	const { success, failure } = keystore.handlers.list;
 
 	try {
-		const evmlKeystore: EVMLKeystore = new EVMLKeystore(action.payload.directory, action.payload.name);
+		const evmlKeystore: EVMLKeystore = new EVMLKeystore(
+			action.payload.directory,
+			action.payload.name
+		);
 		const state: Store = yield select();
 
 		let fetch: boolean = false;
@@ -42,10 +48,13 @@ export function* keystoreListWorker(action: KeystoreListAction) {
 
 		if (state.config.load.response) {
 			const connected = yield join(
-				yield fork(checkConnectivityWorker, app.handlers.connectivity.init({
-					host: state.config.load.response.connection.host,
-					port: state.config.load.response.connection.port
-				}))
+				yield fork(
+					checkConnectivityWorker,
+					app.handlers.connectivity.init({
+						host: state.config.load.response.connection.host,
+						port: state.config.load.response.connection.port
+					})
+				)
 			);
 
 			if (connected) {
@@ -54,12 +63,17 @@ export function* keystoreListWorker(action: KeystoreListAction) {
 			}
 		}
 
-		const accounts: BaseAccount[] = yield evmlKeystore.list(fetch, connection || null);
+		const accounts: BaseAccount[] = yield evmlKeystore.list(
+			fetch,
+			connection || null
+		);
 		yield put(success(accounts));
 
-		yield put(transactions.handlers.history.init({
-			addresses: accounts.map((account) => account.address)
-		}));
+		yield put(
+			transactions.handlers.history.init({
+				addresses: accounts.map(account => account.address)
+			})
+		);
 	} catch (e) {
 		yield put(failure('Error: ' + e));
 	}
@@ -72,7 +86,6 @@ export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
 		const state: Store = yield select();
 
 		if (state.config.load.response) {
-
 			yield delay(1000);
 
 			const list = state.config.load.response.storage.keystore.split('/');
@@ -83,7 +96,10 @@ export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
 			}
 
 			const keystoreParentDir = list.join('/');
-			const evmlKeystore: EVMLKeystore = new EVMLKeystore(keystoreParentDir, popped);
+			const evmlKeystore: EVMLKeystore = new EVMLKeystore(
+				keystoreParentDir,
+				popped
+			);
 
 			const account = yield evmlKeystore.update(
 				action.payload.address,
@@ -93,7 +109,6 @@ export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
 
 			yield put(success(JSON.parse(account)));
 		}
-
 	} catch (e) {
 		yield put(failure(e));
 	}
@@ -115,22 +130,28 @@ export function* keystoreCreateWorker(action: KeystoreCreateAction) {
 		const keystoreParentDir = list.join('/');
 		const evmlKeystore = new EVMLKeystore(keystoreParentDir, popped!);
 
-		const account = JSON.parse(yield evmlKeystore.create(action.payload.password));
-
-		yield join(
-			yield fork(keystoreListWorker, keystore.handlers.list.init({
-				directory: keystoreParentDir,
-				name: 'keystore'
-			}))
+		const account = JSON.parse(
+			yield evmlKeystore.create(action.payload.password)
 		);
 
-		yield put(success({
-			address: account.address,
-			nonce: 0,
-			balance: 0
-		}));
+		yield join(
+			yield fork(
+				keystoreListWorker,
+				keystore.handlers.list.init({
+					directory: keystoreParentDir,
+					name: 'keystore'
+				})
+			)
+		);
+
+		yield put(
+			success({
+				address: account.address,
+				nonce: 0,
+				balance: 0
+			})
+		);
 	} catch (e) {
 		yield put(failure(e));
 	}
 }
-

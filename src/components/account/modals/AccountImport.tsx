@@ -5,11 +5,10 @@ import { Button, Form, Icon, Message, Modal, TextArea } from 'semantic-ui-react'
 
 import { Store } from '../../../redux';
 
-
 interface DispatchProps {
-	response?: string,
-	error?: string,
-	isLoading?: boolean
+	response?: string;
+	error?: string;
+	isLoading?: boolean;
 }
 
 interface StoreProps {
@@ -20,7 +19,7 @@ interface OwnProps {
 	empty?: string;
 }
 
-type LocalProps = DispatchProps & StoreProps & OwnProps
+type LocalProps = DispatchProps & StoreProps & OwnProps;
 
 interface State {
 	open: boolean;
@@ -71,37 +70,63 @@ class AccountImport extends React.Component<LocalProps, State> {
 
 		return (
 			<React.Fragment>
-				<Modal open={this.state.open} onClose={this.close}
-					   trigger={<Button content='Import' color={'orange'}
-										onClick={this.open} icon='upload'
-										labelPosition='left'/>}>
+				<Modal
+					open={this.state.open}
+					onClose={this.close}
+					trigger={
+						<Button
+							content="Import"
+							color={'orange'}
+							onClick={this.open}
+							icon="upload"
+							labelPosition="left"
+						/>
+					}
+				>
 					<Modal.Header>Import an Account</Modal.Header>
-					{(parseError || error) && (<Modal.Content>
-						<Message icon={true} error={true}>
-							<Icon name={'times'}/>
-							<Message.Content>
-								<Message.Header>
-									Oops! {parseError ? parseError : error}
-								</Message.Header>
-							</Message.Content>
-						</Message>
-					</Modal.Content>)}
+					{(parseError || error) && (
+						<Modal.Content>
+							<Message icon={true} error={true}>
+								<Icon name={'times'}/>
+								<Message.Content>
+									<Message.Header>
+										Oops! {parseError ? parseError : error}
+									</Message.Header>
+								</Message.Content>
+							</Message>
+						</Modal.Content>
+					)}
 					<Modal.Content>
 						<Modal.Description>
 							<Form>
 								<Form.Field>
 									<label>v3 JSON Keystore</label>
-									<TextArea autoHeight={true} onChange={this.handleOnChange}/>
+									<TextArea
+										autoHeight={true}
+										onChange={this.handleOnChange}
+									/>
 								</Form.Field>
 							</Form>
 						</Modal.Description>
 					</Modal.Content>
 					<Modal.Actions>
-						{isLoading && !response &&
-						(<span className={'m-2'}>
-                            <Icon color={'green'} name={'circle notch'} loading={true}/> Importing...
-                        </span>)}
-						<Button onClick={this.handleImport} color={'green'} type='submit'>Import</Button>
+						{isLoading && !response && (
+							<span className={'m-2'}>
+								<Icon
+									color={'green'}
+									name={'circle notch'}
+									loading={true}
+								/>{' '}
+								Importing...
+							</span>
+						)}
+						<Button
+							onClick={this.handleImport}
+							color={'green'}
+							type="submit"
+						>
+							Import
+						</Button>
 					</Modal.Actions>
 				</Modal>
 			</React.Fragment>
@@ -113,4 +138,7 @@ const mapStoreToProps = (store: Store) => ({});
 
 const mapDispatchToProps = (dispatch: any) => ({});
 
-export default connect(mapStoreToProps, mapDispatchToProps)(AccountImport);
+export default connect(
+	mapStoreToProps,
+	mapDispatchToProps
+)(AccountImport);

@@ -1,15 +1,17 @@
 import { fork, join, put, select } from 'redux-saga/effects';
 
-import { Account, Database, Keystore, Transaction } from 'evm-lite-lib';
+import { Database, Keystore, Transaction } from 'evm-lite-lib';
 
 import { Store } from '../..';
 import { checkConnectivityWorker } from './Application';
 import { default as KeystoreActions } from '../../actions/Keystore';
 import { keystoreListWorker } from './Keystore';
 
-import Accounts, { AccountsDecryptPayload, AccountsTransferPayLoad } from '../../actions/Accounts';
+import Accounts, {
+	AccountsDecryptPayload,
+	AccountsTransferPayLoad
+} from '../../actions/Accounts';
 import Application from '../../actions/Application';
-
 
 interface AccountsDecryptAction {
 	type: string;
@@ -36,8 +38,10 @@ export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 			const popped = list.pop();
 			const keystoreParentDir = list.join('/');
 			const evmlKeystore = new Keystore(keystoreParentDir, popped!);
-			const account = yield evmlKeystore.get(action.payload.address);
-			const decryptedAccount: Account = yield Account.decrypt(account, action.payload.password);
+			const decryptedAccount = yield evmlKeystore.decryptAccount(
+				action.payload.address,
+				action.payload.password
+			);
 
 			yield put(success('Account decryption was successful.'));
 
@@ -49,7 +53,6 @@ export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 		yield put(failure('Error: ' + e));
 		yield put(reset());
 	}
-
 }
 
 export function* accountsTransferWorker(action: AccountsTransferAction) {
@@ -64,10 +67,13 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 		}
 
 		const evmlc = yield join(
-			yield fork(checkConnectivityWorker, app.handlers.connectivity.init({
-				host: state.config.load.response.connection.host,
-				port: state.config.load.response.connection.port
-			}))
+			yield fork(
+				checkConnectivityWorker,
+				app.handlers.connectivity.init({
+					host: state.config.load.response.connection.host,
+					port: state.config.load.response.connection.port
+				})
+			)
 		);
 
 		if (!evmlc) {
@@ -76,10 +82,13 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 		}
 
 		const decryptedAccount = yield join(
-			yield fork(accountsDecryptWorker, accounts.handlers.decrypt.init({
-				address: action.payload.tx.from,
-				password: action.payload.password
-			}))
+			yield fork(
+				accountsDecryptWorker,
+				accounts.handlers.decrypt.init({
+					address: action.payload.tx.from,
+					password: action.payload.password
+				})
+			)
 		);
 
 		if (!decryptedAccount) {
@@ -87,7 +96,7 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 			return;
 		}
 
-		const transaction: Transaction = yield evmlc.prepareTransfer(
+		const transaction: Transaction = yield evmlc.accounts.prepareTransfer(
 			action.payload.tx.to,
 			action.payload.tx.value,
 			action.payload.tx.from
@@ -114,16 +123,26 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 		yield database.transactions.insert(schema);
 		console.log(schema);
 
+		const config = state.config.load.response.storage.keystore;
+
+		const list = config.split('/');
+		const name = list.pop() || 'keystore';
+		const parent = list.join('/');
 		yield join(
-			yield fork(keystoreListWorker, keystore.handlers.list.init({
-				directory: state.app.directory.payload!,
-				name: 'keystore'
-			}))
+			yield fork(
+				keystoreListWorker,
+				keystore.handlers.list.init({
+					directory: parent,
+					name
+				})
+			)
 		);
 
 		yield put(success(transaction.hash!));
 	} catch (e) {
-		yield put(failure(e.text || 'Something went wrong while transferring.'));
+		yield put(
+			failure(e.text || 'Something went wrong while transferring.')
+		);
 	}
 
 	yield put(reset());

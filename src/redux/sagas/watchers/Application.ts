@@ -1,9 +1,11 @@
 import { all, takeLatest } from 'redux-saga/effects';
 
-import { checkConnectivityWorker, dataDirectoryChangeWorker } from '../workers/Application';
+import {
+	checkConnectivityWorker,
+	dataDirectoryChangeWorker
+} from '../workers/Application';
 
 import Application from '../../actions/Application';
-
 
 const app = new Application();
 
@@ -15,10 +17,9 @@ function* checkConnectivityInitWatcher() {
 	yield takeLatest(app.actions.connectivity.init, checkConnectivityWorker);
 }
 
-export default function* () {
-	yield all([checkConnectivityInitWatcher(), dataDirectoryChangeInitWatcher()]);
+export default function*() {
+	yield all([
+		checkConnectivityInitWatcher(),
+		dataDirectoryChangeInitWatcher()
+	]);
 }
-
-
-
-

@@ -3,13 +3,12 @@ import * as React from 'react';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Button } from 'semantic-ui-react';
 
-
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
 
 interface OwnProps {
-	isLoading: boolean
+	isLoading: boolean;
 	right: boolean;
 	onClickHandler: any;
 }
@@ -22,14 +21,16 @@ class LoadingButton extends React.Component<LocalProps, any> {
 
 		return (
 			<React.Fragment>
-				<Button className={right ? 'right' : ''}
-						onClick={onClickHandler}
-						icon={'circle notch'}
-						labelPosition='left'
-						loading={isLoading}
-						disabled={isLoading}
-						content={isLoading ? 'Loading' : 'Refresh'}
-						color={isLoading ? 'grey' : 'teal'}/>
+				<Button
+					className={right ? 'right' : ''}
+					onClick={onClickHandler}
+					icon={'circle notch'}
+					labelPosition="left"
+					loading={isLoading}
+					disabled={isLoading}
+					content={isLoading ? 'Loading' : 'Refresh'}
+					color={isLoading ? 'grey' : 'teal'}
+				/>
 			</React.Fragment>
 		);
 	}
