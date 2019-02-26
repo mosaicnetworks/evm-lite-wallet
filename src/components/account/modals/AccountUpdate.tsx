@@ -5,11 +5,7 @@ import { connect } from 'react-redux';
 import { Button, Divider, Form, Header, Modal } from 'semantic-ui-react';
 import { BaseAccount } from 'evm-lite-lib';
 
-import {
-	KeystoreUpdatePayLoad,
-	KeystoreUpdateReducer,
-	Store
-} from '../../../redux';
+import { KeystoreUpdatePayLoad, KeystoreUpdateReducer, Store } from '../../../redux';
 
 import '../styles/Account.css';
 import redux from '../../../redux.config';
@@ -152,10 +148,10 @@ class AccountUpdate extends React.Component<LocalProps, State> {
 						Account will be encrypted with the new password and the
 						current v3JSONKeystore file will be overwritten with the
 						new JSON data.
-						<br />
-						<br />
-						<Divider />
-						<br />
+						<br/>
+						<br/>
+						<Divider/>
+						<br/>
 						<Modal.Description>
 							<Form>
 								<Form.Field>

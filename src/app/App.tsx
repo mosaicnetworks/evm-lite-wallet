@@ -17,6 +17,7 @@ import Accounts from '../pages/Accounts';
 import Configuration from '../pages/Configuration';
 import Wrapper from '../components/Wrapper';
 import Defaults from '../classes/Defaults';
+import Contract from '../pages/Contract';
 
 import './styles/App.css';
 
@@ -103,6 +104,10 @@ class App extends React.Component<LocalProps, any> {
 									<Route
 										path="/configuration"
 										component={Configuration}
+									/>
+									<Route
+										path="/contract"
+										component={Contract}
 									/>
 								</div>
 							</CSSTransition>

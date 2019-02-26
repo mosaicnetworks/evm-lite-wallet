@@ -11,8 +11,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const autoprefixer = require('autoprefixer');
 
-const resolveRelativeToApp = relativePath =>
-	path.resolve(fs.realpathSync(process.cwd()), relativePath);
+const resolveRelativeToApp = relativePath => path.resolve(fs.realpathSync(process.cwd()), relativePath);
 const paths = {
 	dist: resolveRelativeToApp('dist'),
 	indexHTML: resolveRelativeToApp('src/index.html'),
@@ -98,12 +97,7 @@ const config = {
 									plugins: () => [
 										require('postcss-flexbugs-fixes'),
 										autoprefixer({
-											browsers: [
-												'>1%',
-												'last 4 versions',
-												'Firefox ESR',
-												'not ie < 9'
-											],
+											browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 9'],
 											flexbox: 'no-2009'
 										})
 									]

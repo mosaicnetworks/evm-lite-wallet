@@ -17,10 +17,8 @@ interface State {
 	open: boolean;
 }
 
-class AccountExport extends React.Component<
-	AccountExportLocalProps,
-	any & State
-> {
+class AccountExport extends React.Component<AccountExportLocalProps,
+	any & State> {
 	public state = {
 		open: false
 	};

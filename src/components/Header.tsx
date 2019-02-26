@@ -14,6 +14,8 @@ import {
 
 import redux from '../redux.config';
 import Defaults from '../classes/Defaults';
+// @ts-ignore
+import logo from '../assets/evmlite.jpg';
 
 import './styles/Header.css';
 
@@ -64,7 +66,9 @@ class Header extends React.Component<LocalProps, any> {
 			<Container fluid={true} style={{ paddingLeft: '20px !important' }}>
 				<div className="header-main">
 					<div className="logo">
-						<Link to="/">EVM-Lite Wallet</Link>
+						<Link to="/">
+							<img src={logo} width={55} />
+						</Link>
 					</div>
 					<div className="links">
 						<li>
@@ -84,6 +88,15 @@ class Header extends React.Component<LocalProps, any> {
 						<li>
 							<Link to="/configuration">
 								<Icon size={'big'} color={'black'} name="cog" />
+							</Link>
+						</li>
+						<li>
+							<Link to="/contract">
+								<Icon
+									size={'big'}
+									color={'black'}
+									name="file"
+								/>
 							</Link>
 						</li>
 						<li>

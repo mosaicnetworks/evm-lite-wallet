@@ -1,6 +1,6 @@
 import { fork, join, put, select } from 'redux-saga/effects';
 
-import { Account, Database, Keystore, Transaction } from 'evm-lite-lib';
+import { Database, Keystore, Transaction } from 'evm-lite-lib';
 
 import { Store } from '../..';
 import { checkConnectivityWorker } from './Application';
@@ -38,9 +38,8 @@ export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 			const popped = list.pop();
 			const keystoreParentDir = list.join('/');
 			const evmlKeystore = new Keystore(keystoreParentDir, popped!);
-			const account = yield evmlKeystore.get(action.payload.address);
-			const decryptedAccount: Account = yield Account.decrypt(
-				account,
+			const decryptedAccount = yield evmlKeystore.decryptAccount(
+				action.payload.address,
 				action.payload.password
 			);
 

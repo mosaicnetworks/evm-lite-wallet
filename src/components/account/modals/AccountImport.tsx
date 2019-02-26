@@ -1,14 +1,7 @@
 import * as React from 'react';
 
 import { connect } from 'react-redux';
-import {
-	Button,
-	Form,
-	Icon,
-	Message,
-	Modal,
-	TextArea
-} from 'semantic-ui-react';
+import { Button, Form, Icon, Message, Modal, TextArea } from 'semantic-ui-react';
 
 import { Store } from '../../../redux';
 
@@ -94,7 +87,7 @@ class AccountImport extends React.Component<LocalProps, State> {
 					{(parseError || error) && (
 						<Modal.Content>
 							<Message icon={true} error={true}>
-								<Icon name={'times'} />
+								<Icon name={'times'}/>
 								<Message.Content>
 									<Message.Header>
 										Oops! {parseError ? parseError : error}

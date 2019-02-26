@@ -4,12 +4,7 @@ import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Button, Divider, Form, Header, Label, Modal } from 'semantic-ui-react';
 
-import {
-	ConfigLoadReducer,
-	KeystoreCreatePayLoad,
-	KeystoreCreateReducer,
-	Store
-} from '../../../redux';
+import { ConfigLoadReducer, KeystoreCreatePayLoad, KeystoreCreateReducer, Store } from '../../../redux';
 
 import redux from '../../../redux.config';
 
@@ -76,7 +71,7 @@ class AccountCreate extends React.Component<LocalProps, State> {
 			nextProps.alert.success(
 				`Account created: ${
 					nextProps.keystoreCreateTask.response.address
-				}`
+					}`
 			);
 			this.close();
 		}
@@ -150,18 +145,18 @@ class AccountCreate extends React.Component<LocalProps, State> {
 						account will be placed in the keystore directory
 						specified in the configuration tab. If you would like to
 						create the account in a different directory, update the
-						configuration for keystore. <br />
-						<br />
+						configuration for keystore. <br/>
+						<br/>
 						<Label>
 							Keystore
 							<Label.Detail>
 								{configLoadTask.response &&
-									configLoadTask.response.storage.keystore}
+								configLoadTask.response.storage.keystore}
 							</Label.Detail>
 						</Label>
-						<br />
-						<br />
-						<Divider />
+						<br/>
+						<br/>
+						<Divider/>
 						<Modal.Description>
 							<Form>
 								<Form.Field>
