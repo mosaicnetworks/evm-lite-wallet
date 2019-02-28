@@ -15,7 +15,7 @@ import {
 import redux from '../redux.config';
 import Defaults from '../classes/Defaults';
 // @ts-ignore
-import logo from '../assets/evmlite.jpg';
+import logo from '../assets/logo.png';
 
 import './styles/Header.css';
 
@@ -67,7 +67,7 @@ class Header extends React.Component<LocalProps, any> {
 				<div className="header-main">
 					<div className="logo">
 						<Link to="/">
-							<img src={logo} width={55} />
+							<img src={logo} width={45} />
 						</Link>
 					</div>
 					<div className="links">
