@@ -10,10 +10,10 @@ import { BaseAccount, ConfigSchema } from 'evm-lite-lib';
 import { KeystoreListPayLoad, KeystoreListReducer, Store } from '../redux';
 
 import redux from '../redux.config';
-import Account from '../components/account/Account';
-import AccountCreate from '../components/account/modals/AccountCreate';
-import AccountImport from '../components/account/modals/AccountImport';
-import LoadingButton from '../components/modals/LoadingButton';
+import Account from '../components/Account';
+import AccountCreate from '../components/AccountCreate';
+import AccountImport from '../components/AccountImport';
+import LoadingButton from '../components/LoadingButton';
 
 import './styles/Accounts.css';
 

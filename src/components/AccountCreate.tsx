@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Button, Divider, Form, Header, Label, Modal } from 'semantic-ui-react';
 
-import { ConfigLoadReducer, KeystoreCreatePayLoad, KeystoreCreateReducer, Store } from '../../../redux';
+import { ConfigLoadReducer, KeystoreCreatePayLoad, KeystoreCreateReducer, Store } from '../redux';
 
-import redux from '../../../redux.config';
+import redux from '../redux.config';
 
 interface AlertProps {
 	alert: InjectedAlertProp;

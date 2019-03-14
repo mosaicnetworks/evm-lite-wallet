@@ -12,9 +12,9 @@ import {
 	AccountsTransferReducer,
 	ConfigLoadReducer,
 	Store
-} from '../../../redux';
+} from '../redux';
 
-import redux from '../../../redux.config';
+import redux from '../redux.config';
 
 interface AlertProps {
 	alert: InjectedAlertProp;
@@ -216,7 +216,7 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 					onClose={this.close}
 					open={this.state.open}
 					trigger={
-						<Button onClick={this.open} basic={false} color="green">
+						<Button color="green" onClick={this.open} basic={false}>
 							Transfer
 						</Button>
 					}

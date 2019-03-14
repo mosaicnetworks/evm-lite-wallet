@@ -1,4 +1,4 @@
-up: install build electron
+up: install build start
 
 install:
 	bash -c "npm install"
@@ -9,7 +9,7 @@ build:
 start-dev:
 	bash -c "npm run start:dev"
 
-electron:
+start:
 	bash -c "npm run start:electron"
 
 link:

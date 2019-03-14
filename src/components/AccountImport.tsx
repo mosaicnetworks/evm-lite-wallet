@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Button, Form, Icon, Message, Modal, TextArea } from 'semantic-ui-react';
 
-import { Store } from '../../../redux';
+import { Store } from '../redux';
 
 interface DispatchProps {
 	response?: string;

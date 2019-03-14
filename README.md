@@ -6,19 +6,12 @@ A user interface to interact with EVM-Lite.
 
 To build and run `EVM-Lite Wallet`, simply execute the command:
 
-```
+```console
 make
 ```
 
 This will install all dependencies and run an electron window
 rendering the contents of the built project from the `dist` folder.
-
-## Usage
-
-If the installation was successful you should see the electron window
-that looks something similar to this:
-
-![](assets/wallet.gif?raw=true 'Wallet')
 
 ### Data Directory
 

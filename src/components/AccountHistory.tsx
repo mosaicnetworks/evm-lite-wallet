@@ -4,7 +4,7 @@ import { Label, Table } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { BaseAccount, SentTX, Static } from 'evm-lite-lib';
 
-import { Store } from '../../../redux';
+import { Store } from '../redux';
 
 export interface AccountsHistoryLocalProps {
 	account: BaseAccount;
@@ -26,23 +26,28 @@ class AccountHistory extends React.Component<AccountsHistoryLocalProps, any> {
 
 					<Table.Body>
 						{this.props.txs &&
-						this.props.txs.map((tx: any) => {
-							return (
-								<Table.Row key={tx.txHash || tx.hash}>
-									<Table.Cell>
-										{Static.cleanAddress(
-											tx.to
-										).toLowerCase()}
-									</Table.Cell>
-									<Table.Cell>{tx.value}</Table.Cell>
-									<Table.Cell>
-										<Label color={'green'}>
-											Successful
-										</Label>
-									</Table.Cell>
-								</Table.Row>
-							);
-						})}
+							this.props.txs.map((tx: any) => {
+								return (
+									<Table.Row key={tx.txHash || tx.hash}>
+										<Table.Cell
+											style={{
+												fontFamily:
+													'Courier New, monospace'
+											}}
+										>
+											{Static.cleanAddress(
+												tx.to
+											).toUpperCase()}
+										</Table.Cell>
+										<Table.Cell>{tx.value}</Table.Cell>
+										<Table.Cell>
+											<Label color={'green'}>
+												Successful
+											</Label>
+										</Table.Cell>
+									</Table.Row>
+								);
+							})}
 						{!this.props.txs.length && (
 							<Table.Row>
 								<Table.Cell width={3}>

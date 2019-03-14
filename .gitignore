@@ -5,6 +5,7 @@
 .idea
 package-lock.json
 bin/
+dist/
 # testing
 /coverage
 

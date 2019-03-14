@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "evm-lite-lib": "^0.2.12",
+    "evm-lite-lib": "^0.2.15",
     "react": "^16.6.1",
     "react-alert": "^4.0.4",
     "react-alert-template-basic": "^1.0.0",
@@ -17,7 +17,7 @@
     "start:dev": "webpack-dev-server --config webpack.config.js --hot --inline",
     "start:electron": "electron ./dist",
     "start:evml": "cd /Users/danu/code/src/github.com/mosaicnetworks/evm-lite/cmd/evml/ && ./evml solo",
-    "bin": "electron-packager ./dist EVM-Lite-Wallet --out ./bin --overwrite --icon ./src/assets/monet.png"
+    "bin": "electron-packager ./dist EVM-Lite-Wallet --platform=win32 --out ./bin --overwrite --icon src/assets/logo.png"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",
