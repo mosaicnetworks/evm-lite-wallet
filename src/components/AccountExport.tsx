@@ -5,7 +5,7 @@ import { Button, Form, Modal, TextArea } from 'semantic-ui-react';
 
 import { BaseAccount } from 'evm-lite-lib';
 
-import { Store } from '../../../redux';
+import { Store } from '../redux';
 
 import './styles/AccountExport.css';
 
@@ -17,8 +17,10 @@ interface State {
 	open: boolean;
 }
 
-class AccountExport extends React.Component<AccountExportLocalProps,
-	any & State> {
+class AccountExport extends React.Component<
+	AccountExportLocalProps,
+	any & State
+> {
 	public state = {
 		open: false
 	};
@@ -55,7 +57,13 @@ class AccountExport extends React.Component<AccountExportLocalProps,
 		};
 		return (
 			<React.Fragment>
-				<Modal trigger={<Button basic={false}>Export</Button>}>
+				<Modal
+					trigger={
+						<Button basic={false} disabled={true}>
+							Export
+						</Button>
+					}
+				>
 					<Modal.Header>
 						Export: {this.props.account.address}
 					</Modal.Header>

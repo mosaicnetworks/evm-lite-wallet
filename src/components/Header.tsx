@@ -90,7 +90,7 @@ class Header extends React.Component<LocalProps, any> {
 								<Icon size={'big'} color={'black'} name="cog" />
 							</Link>
 						</li>
-						<li>
+						{/* <li>
 							<Link to="/contract">
 								<Icon
 									size={'big'}
@@ -98,7 +98,7 @@ class Header extends React.Component<LocalProps, any> {
 									name="file"
 								/>
 							</Link>
-						</li>
+						</li> */}
 						<li>
 							<a>
 								<Label

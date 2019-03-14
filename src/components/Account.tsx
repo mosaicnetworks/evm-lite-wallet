@@ -6,12 +6,12 @@ import { InjectedAlertProp, withAlert } from 'react-alert';
 
 import { BaseAccount, SentTX } from 'evm-lite-lib';
 
-import { Store, TransactionHistoryReducer } from '../../redux';
+import { Store, TransactionHistoryReducer } from '../redux';
 
-import AccountUpdate from './modals/AccountUpdate';
-import AccountExport from './modals/AccountExport';
-import AccountTransfer from './modals/AccountTransfer';
-import AccountHistory from './modals/AccountHistory';
+import AccountUpdate from './AccountUpdate';
+import AccountExport from './AccountExport';
+import AccountTransfer from './AccountTransfer';
+import AccountHistory from './AccountHistory';
 
 import './styles/Account.css';
 
