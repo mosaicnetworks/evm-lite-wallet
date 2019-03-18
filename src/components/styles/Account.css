@@ -8,7 +8,7 @@
 
 .sticky-account-heading {
 	position: sticky;
-	top: 71px;
+	top: -2px;
 	background: #fff !important;
 	z-index: 199;
 	box-shadow: 0 8px 6px -6px #ddd !important;

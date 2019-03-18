@@ -33,6 +33,13 @@ interface OwnProps {
 
 type LocalProps = AlertProps & DispatchProps & OwnProps & StoreProps;
 
+const hashCode = function(s) {
+	return s.split('').reduce((a: any, b: any) => {
+		a = (a << 5) - a + b.charCodeAt(0);
+		return a & a;
+	}, 0);
+};
+
 class Account extends React.Component<LocalProps, any> {
 	public state = {
 		showTxHistory: true
@@ -53,10 +60,14 @@ class Account extends React.Component<LocalProps, any> {
 	};
 
 	public render() {
+		const src =
+			'https://www.gravatar.com/avatar/' +
+			hashCode(this.props.account.address) +
+			'?s=128&d=identicon&r=PG';
 		return (
 			<Card fluid={true}>
 				<Card.Content className={'sticky-account-heading'}>
-					<Image floated="right" size="mini">
+					<Image src={src} floated="right" size="mini">
 						{/*<Icon name="bitcoin" bordered={false} size={'big'}/>*/}
 					</Image>
 					<Card.Header className={'address'}>

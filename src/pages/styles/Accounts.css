@@ -12,8 +12,7 @@
 
 .header-section-buttons {
 	background: rgba(255, 255, 255, 1) !important;
-	position: sticky !important;
-	top: -2px;
+	/* position: sticky !important; */
 	z-index: 200;
 	padding: 20px !important;
 	border-right: rgba(34, 36, 38, 0.1) 1px solid !important;
@@ -59,6 +58,10 @@
 	opacity: 0;
 	transform: scale(0) translateX(0px);
 	z-index: 1;
+}
+
+.slide1-enter-done {
+	margin: 0 !important;
 }
 
 .slide1-enter.slide1-enter-active {

@@ -11,6 +11,7 @@ import KeystoreSagas from '../sagas/watchers/Keystore';
 import TransactionSagas from '../sagas/watchers/Transactions';
 import AccountSagas from '../sagas/watchers/Accounts';
 
+// import CoreRootReducer, { CoreReducer } from '../reducers/Core';
 import ConfigRootReducer, { ConfigReducer } from '../reducers/Configuration';
 import AppRootReducer, { AppReducer } from '../reducers/Application';
 import KeystoreRootReducer, { KeystoreReducer } from '../reducers/Keystore';
@@ -20,6 +21,7 @@ import TransactionsRootReducer, {
 import AccountsRootReducer, { IAccountsReducer } from '../reducers/Accounts';
 
 export interface Store {
+	// core: CoreReducer;
 	accounts: IAccountsReducer;
 	keystore: KeystoreReducer;
 	config: ConfigReducer;
@@ -34,6 +36,7 @@ const persistConfig: PersistConfig = {
 };
 
 const rootReducer = combineReducers({
+	// core: CoreRootReducer,
 	accounts: AccountsRootReducer,
 	keystore: KeystoreRootReducer,
 	config: ConfigRootReducer,

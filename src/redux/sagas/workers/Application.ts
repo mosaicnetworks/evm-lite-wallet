@@ -77,7 +77,6 @@ export function* checkConnectivityWorker(action: ConnectivityCheckInitAction) {
 
 		if (result) {
 			yield put(success('A connection to a node was established.'));
-			// yield put(reset());
 
 			return connection;
 		}
