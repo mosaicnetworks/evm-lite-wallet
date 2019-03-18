@@ -10,8 +10,8 @@ function createWindow() {
 		height: 820,
 		icon: path.join(__dirname, 'assets/monet.png')
 	});
-	main.loadURL(`file://${__dirname}/index.html`);
-	// main.loadURL(`http://localhost:8081`);
+	// main.loadURL(`file://${__dirname}/index.html`);
+	main.loadURL(`http://localhost:8081`);
 
 	main.on('closed', () => {
 		main = null;

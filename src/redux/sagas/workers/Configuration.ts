@@ -28,10 +28,7 @@ export function* configurationReadWorker(action: ConfigFileLoadAction) {
 	const { success, failure } = config.handlers.load;
 
 	try {
-		const evmlConfig: Config = new Config(
-			action.payload.directory,
-			action.payload.name
-		);
+		const evmlConfig: Config = new Config(action.payload.path);
 		const data: ConfigSchema = yield evmlConfig.load();
 
 		yield put(success(data));
@@ -50,10 +47,7 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 	yield delay(1000);
 
 	try {
-		const evmlConfig: Config = new Config(
-			action.payload.directory,
-			action.payload.name
-		);
+		const evmlConfig: Config = new Config(action.payload.path);
 
 		console.log(evmlConfig);
 		const response: string = yield evmlConfig.save(
@@ -65,8 +59,7 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 			yield fork(
 				configurationReadWorker,
 				config.handlers.load.init({
-					directory: action.payload.directory,
-					name: action.payload.name
+					path: action.payload.path
 				})
 			)
 		);
@@ -74,21 +67,11 @@ export function* configurationSaveWorker(action: ConfigFileSaveAction) {
 		console.log(configurationData);
 
 		if (configurationData) {
-			const list = configurationData.storage.keystore.split('/');
-			let popped = list.pop();
-
-			if (popped === '/') {
-				popped = list.pop();
-			}
-
-			const keystoreParentDir = list.join('/');
-
 			yield join(
 				yield fork(
 					keystoreListWorker,
 					keystore.handlers.list.init({
-						directory: keystoreParentDir,
-						name: popped!
+						path: configurationData.storage.keystore
 					})
 				)
 			);

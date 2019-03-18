@@ -60,18 +60,8 @@ class Accounts extends React.Component<LocalProps, any> {
 
 	public handleRefreshAccounts = () => {
 		if (this.props.config) {
-			const list = this.props.config.storage.keystore.split('/');
-			let popped = list.pop();
-
-			if (popped === '/') {
-				popped = list.pop();
-			}
-
-			const keystoreParentDirectory = list.join('/');
-
 			this.props.handleListKeystoreAccounts({
-				directory: keystoreParentDirectory,
-				name: popped!
+				path: this.props.config.storage.keystore
 			});
 		} else {
 			this.props.alert.info(

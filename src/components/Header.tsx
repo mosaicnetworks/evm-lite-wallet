@@ -110,8 +110,8 @@ class Header extends React.Component<LocalProps, any> {
 									}
 								>
 									{this.props.connectivityTask.response
-										? 'Online'
-										: 'Offline'}
+										? 'Connected'
+										: 'Not Connected'}
 								</Label>
 							</a>
 						</li>

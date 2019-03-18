@@ -38,12 +38,10 @@ export function* keystoreListWorker(action: KeystoreListAction) {
 
 	try {
 		const evmlKeystore: EVMLKeystore = new EVMLKeystore(
-			action.payload.directory,
-			action.payload.name
+			action.payload.path
 		);
 		const state: Store = yield select();
 
-		let fetch: boolean = false;
 		let connection: any;
 
 		if (state.config.load.response) {
@@ -58,13 +56,11 @@ export function* keystoreListWorker(action: KeystoreListAction) {
 			);
 
 			if (connected) {
-				fetch = true;
 				connection = connected;
 			}
 		}
 
 		const accounts: BaseAccount[] = yield evmlKeystore.list(
-			fetch,
 			connection || null
 		);
 		yield put(success(accounts));
@@ -88,17 +84,8 @@ export function* keystoreUpdateWorker(action: KeystoreUpdateAction) {
 		if (state.config.load.response) {
 			yield delay(1000);
 
-			const list = state.config.load.response.storage.keystore.split('/');
-			let popped: string = list.pop() || 'keystore';
-
-			if (popped === '/') {
-				popped = list.pop() || 'keystore';
-			}
-
-			const keystoreParentDir = list.join('/');
 			const evmlKeystore: EVMLKeystore = new EVMLKeystore(
-				keystoreParentDir,
-				popped
+				state.config.load.response.storage.keystore
 			);
 
 			const account = yield evmlKeystore.update(
@@ -120,16 +107,7 @@ export function* keystoreCreateWorker(action: KeystoreCreateAction) {
 	const { success, failure } = keystore.handlers.create;
 
 	try {
-		const list = action.payload.keystore.split('/');
-		let popped = list.pop();
-
-		if (popped === '/') {
-			popped = list.pop();
-		}
-
-		const keystoreParentDir = list.join('/');
-		const evmlKeystore = new EVMLKeystore(keystoreParentDir, popped!);
-
+		const evmlKeystore = new EVMLKeystore(action.payload.keystore);
 		const account = JSON.parse(
 			yield evmlKeystore.create(action.payload.password)
 		);
@@ -138,8 +116,7 @@ export function* keystoreCreateWorker(action: KeystoreCreateAction) {
 			yield fork(
 				keystoreListWorker,
 				keystore.handlers.list.init({
-					directory: keystoreParentDir,
-					name: 'keystore'
+					path: action.payload.keystore
 				})
 			)
 		);

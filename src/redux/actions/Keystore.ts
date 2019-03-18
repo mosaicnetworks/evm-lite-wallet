@@ -7,8 +7,7 @@ import BaseActions, {
 } from '../common/BaseActions';
 
 export interface KeystoreListPayLoad {
-	directory: string;
-	name: string;
+	path: string;
 }
 
 export interface KeystoreUpdatePayLoad {

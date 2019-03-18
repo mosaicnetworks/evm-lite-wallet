@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import { fork, join, put } from 'redux-saga/effects';
 
 import { ConfigSchema, DataDirectory, EVMLC } from 'evm-lite-lib';
@@ -35,8 +37,7 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 			yield fork(
 				configurationReadWorker,
 				config.handlers.load.init({
-					directory: directory.path,
-					name: 'config.toml'
+					path: path.join(directory.path, 'config.toml')
 				})
 			)
 		);
@@ -44,21 +45,11 @@ export function* dataDirectoryChangeWorker(action: DirectoryChangeInitAction) {
 		yield put(success('Data Directory change successful.'));
 
 		if (configurationForkData) {
-			const list = configurationForkData.storage.keystore.split('/');
-			let popped = list.pop();
-
-			if (popped === '/') {
-				popped = list.pop();
-			}
-
-			const keystoreParentDir = list.join('/');
-
 			yield join(
 				yield fork(
 					keystoreListWorker,
 					keystore.handlers.list.init({
-						directory: keystoreParentDir,
-						name: popped!
+						path: configurationForkData.storage.keystore
 					})
 				)
 			);

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as path from 'path';
 
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { connect } from 'react-redux';
@@ -206,8 +207,10 @@ class Configuration extends React.Component<LocalProps, State> {
 		if (this.props.dataDirectoryTask.payload) {
 			this.props.handleSaveConfig({
 				configSchema: config,
-				directory: this.props.dataDirectoryTask.payload,
-				name: 'config.toml'
+				path: path.join(
+					this.props.dataDirectoryTask.payload,
+					'config.toml'
+				)
 			});
 		} else {
 			this.props.alert.error(

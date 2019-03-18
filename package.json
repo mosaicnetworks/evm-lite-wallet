@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "evm-lite-lib": "^0.2.15",
     "react": "^16.6.1",
     "react-alert": "^4.0.4",
     "react-alert-template-basic": "^1.0.0",
@@ -13,8 +12,8 @@
     "redux-saga": "^0.16.2"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js && cp ./package.json ./dist/",
-    "start:dev": "webpack-dev-server --config webpack.config.js --hot --inline",
+    "build": "webpack --config config/webpack.config.js && cp ./package.json ./dist/",
+    "start:dev": "webpack-dev-server --config config/webpack.config.js --hot --inline",
     "start:electron": "electron ./dist",
     "start:evml": "cd /Users/danu/code/src/github.com/mosaicnetworks/evm-lite/cmd/evml/ && ./evml solo",
     "bin": "electron-packager ./dist EVM-Lite-Wallet --platform=win32 --out ./bin --overwrite --icon src/assets/logo.png"

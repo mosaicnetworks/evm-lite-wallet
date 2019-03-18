@@ -1,11 +1,13 @@
+import * as path from 'path';
+
 import { fork, join, put, select } from 'redux-saga/effects';
 
 import { Database, Keystore, Transaction } from 'evm-lite-lib';
 
 import { Store } from '../..';
 import { checkConnectivityWorker } from './Application';
-import { default as KeystoreActions } from '../../actions/Keystore';
 import { keystoreListWorker } from './Keystore';
+import { default as KeystoreActions } from '../../actions/Keystore';
 
 import Accounts, {
 	AccountsDecryptPayload,
@@ -34,11 +36,10 @@ export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 		const state: Store = yield select();
 
 		if (state.config.load.response) {
-			const list = state.config.load.response.storage.keystore.split('/');
-			const popped = list.pop();
-			const keystoreParentDir = list.join('/');
-			const evmlKeystore = new Keystore(keystoreParentDir, popped!);
-			const decryptedAccount = yield evmlKeystore.decryptAccount(
+			const evmlKeystore = new Keystore(
+				state.config.load.response.storage.keystore
+			);
+			const decryptedAccount = yield evmlKeystore.decrypt(
 				action.payload.address,
 				action.payload.password
 			);
@@ -105,10 +106,11 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 		transaction.gas(action.payload.tx.gas);
 		transaction.gasPrice(action.payload.tx.gasPrice);
 
-		yield transaction.sign(decryptedAccount);
-		yield transaction.submit();
+		yield transaction.submit(decryptedAccount);
 
-		const database = new Database(state.app.directory.payload!, 'db.json');
+		const database = new Database(
+			path.join(state.app.directory.payload!, 'db.json')
+		);
 		const schema = database.transactions.create({
 			from: action.payload.tx.from,
 			to: action.payload.tx.to,
@@ -123,17 +125,11 @@ export function* accountsTransferWorker(action: AccountsTransferAction) {
 		yield database.transactions.insert(schema);
 		console.log(schema);
 
-		const config = state.config.load.response.storage.keystore;
-
-		const list = config.split('/');
-		const name = list.pop() || 'keystore';
-		const parent = list.join('/');
 		yield join(
 			yield fork(
 				keystoreListWorker,
 				keystore.handlers.list.init({
-					directory: parent,
-					name
+					path: state.config.load.response.storage.keystore
 				})
 			)
 		);

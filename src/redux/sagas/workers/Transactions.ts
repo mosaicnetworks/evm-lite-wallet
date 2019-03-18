@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import { put, select } from 'redux-saga/effects';
 
 import { Database } from 'evm-lite-lib';
@@ -24,8 +26,7 @@ export function* transactionHistoryWorker(action: TransactionHistoryAction) {
 
 		if (state.app.directory.response && state.app.directory.payload) {
 			const database: Database = new Database(
-				state.app.directory.payload,
-				'db.json'
+				path.join(state.app.directory.payload, 'db.json')
 			);
 			const history: AccountTransactionHistory = {};
 
