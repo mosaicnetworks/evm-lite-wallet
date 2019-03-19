@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Button, Card, Icon, Image, Label } from 'semantic-ui-react';
+import { Button, Card, Icon, Label, Image } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 
@@ -68,7 +68,7 @@ class Account extends React.Component<LocalProps, any> {
 			<Card fluid={true}>
 				<Card.Content className={'sticky-account-heading'}>
 					<Image src={src} floated="right" size="mini">
-						{/*<Icon name="bitcoin" bordered={false} size={'big'}/>*/}
+						{/* <Icon name="bitcoin" bordered={false} size={'big'} /> */}
 					</Image>
 					<Card.Header className={'address'}>
 						{this.props.account.address}

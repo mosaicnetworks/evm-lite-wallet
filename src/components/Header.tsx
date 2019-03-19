@@ -38,7 +38,7 @@ interface OwnProps {
 type LocalProps = OwnProps & StoreProps & DispatchProps;
 
 class Header extends React.Component<LocalProps, any> {
-	public state = { width: 0, height: 0 };
+	public state = {};
 
 	public handleReloadApp = () => {
 		const directory = this.props.directorySetTask.payload;
@@ -46,24 +46,11 @@ class Header extends React.Component<LocalProps, any> {
 		this.props.handleDataDirectoryInit(directory || Defaults.dataDirectory);
 	};
 
-	public updateWindowDimensions = () => {
-		this.setState({ width: window.innerWidth, height: window.innerHeight });
-	};
-
-	public componentDidMount() {
-		this.updateWindowDimensions();
-		window.addEventListener('resize', this.updateWindowDimensions);
-	}
-
-	public componentWillUnmount() {
-		window.removeEventListener('resize', this.updateWindowDimensions);
-	}
-
 	public render() {
 		const { keystoreListTask } = this.props;
 
 		return (
-			<Container fluid={true} style={{ paddingLeft: '20px !important' }}>
+			<Container fluid={true}>
 				<div className="header-main">
 					<div className="logo">
 						<Link to="/">
@@ -86,17 +73,17 @@ class Header extends React.Component<LocalProps, any> {
 							</Link>
 						</li>
 						<li>
-							<Link to="/configuration">
-								<Icon size={'big'} color={'black'} name="cog" />
-							</Link>
-						</li>
-						<li>
 							<Link to="/contract">
 								<Icon
 									size={'big'}
 									color={'black'}
-									name="file"
+									name="file alternate"
 								/>
+							</Link>
+						</li>
+						<li>
+							<Link to="/configuration">
+								<Icon size={'big'} color={'black'} name="cog" />
 							</Link>
 						</li>
 						<li>

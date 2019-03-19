@@ -18,7 +18,7 @@
 		"start:electron": "electron ./dist",
 		"start:evml": "cd /Users/danu/code/src/github.com/mosaicnetworks/evm-lite/cmd/evml/ && ./evml solo",
 		"bin": "electron-packager ./dist EVM-Lite-Wallet --platform=win32 --out ./bin --overwrite --icon src/assets/logo.png",
-		"start": "npm run install && npm run build && npm run start:electron"
+		"start": "npm install && npm run build && npm run start:electron"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.1.6",
