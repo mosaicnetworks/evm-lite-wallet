@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Contract, EVMLC, Keystore, Account } from 'evm-lite-lib';
+import { Contract, EVMLC, Keystore, Account, Transaction } from 'evm-lite-lib';
 import {
 	Accordion,
 	Button,
@@ -68,7 +68,9 @@ class Accounts extends React.Component<LocalProps, State> {
 		fields: {
 			params: [],
 			abi:
-				'[{"constant":false,"inputs":[{"name":"pubKey"' +
+				'[{"constant":false,"inputs":[],"name":"getKeys","outputs":[],' +
+				'"payable":false,"stateMutability":"nonpayable","type":' +
+				'"function"},{"constant":false,"inputs":[{"name":"pubKey"' +
 				',"type":"string"},{"name":"rating","type":"uint256"}],"name"' +
 				':"addKey","outputs":[],"payable":false,"stateMutability":' +
 				'"nonpayable","type":"function"},{"constant":true,"inputs":' +
@@ -77,7 +79,7 @@ class Accounts extends React.Component<LocalProps, State> {
 				':"uint256"}],"payable":false,"stateMutability":"view","type"' +
 				':"function"},{"inputs":[],"payable":false,"stateMutability' +
 				'":"nonpayable","type":"constructor"}]',
-			address: '0x547fa88574bfc6c2f9dee7d817f368908de02189',
+			address: '0x6494966e0bf2460510d41f98dddf80b1f2bc3514',
 			gas:
 				(this.props.configLoadTask.response &&
 					this.props.configLoadTask.response.defaults.gas.toString()) ||
@@ -112,6 +114,8 @@ class Accounts extends React.Component<LocalProps, State> {
 					gasPrice: config.defaults.gasPrice
 				}
 			);
+
+			console.log(evmlc);
 
 			const contract = await evmlc.contracts.load(
 				JSON.parse(this.state.fields.abi),
@@ -318,7 +322,7 @@ class Accounts extends React.Component<LocalProps, State> {
 		const contract: Contract<any> = this.state.contract;
 		const method = e.target.value;
 		const constants = this.checkConstantOrPayable(method);
-		const transaction = await contract.methods[method](
+		const transaction: Transaction = await contract.methods[method](
 			...this.state.fields.params
 		);
 		const keystore = new Keystore(
@@ -334,10 +338,11 @@ class Accounts extends React.Component<LocalProps, State> {
 			);
 		}
 
-		console.log(transaction.parse());
+		console.log('Transaction', transaction.parse());
 
 		if (!constants.constant) {
 			await transaction.submit(account, {
+				timeout: 2,
 				from: this.state.fields.from,
 				gas: parseInt(this.state.fields.gas, 10),
 				gasPrice: parseInt(this.state.fields.gasPrice, 10)
@@ -348,7 +353,7 @@ class Accounts extends React.Component<LocalProps, State> {
 				submitLoading: false
 			});
 		} else {
-			const response = await transaction.submit(account, {
+			const response = await transaction.submit(null, {
 				from: this.state.fields.from,
 				gas: parseInt(this.state.fields.gas, 10),
 				gasPrice: parseInt(this.state.fields.gasPrice, 10)
