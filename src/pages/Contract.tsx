@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Contract, EVMLC } from 'evm-lite-lib';
+import { Contract, EVMLC, Keystore, Account } from 'evm-lite-lib';
 import {
 	Accordion,
 	Button,
@@ -13,7 +13,8 @@ import {
 	Input,
 	Select,
 	Label,
-	TextArea
+	TextArea,
+	Grid
 } from 'semantic-ui-react';
 
 import { Store, ConfigLoadReducer, KeystoreListReducer } from '../redux';
@@ -29,10 +30,14 @@ interface State {
 		gas: string;
 		gasPrice: string;
 		value: string;
+		params: any[];
+		password: string;
 	};
 	loading: boolean;
+	submitLoading: boolean;
 	contract: Contract<any> | null;
 	activeIndex: number;
+	transactionResponse: any;
 }
 
 interface AlertProps {
@@ -56,9 +61,12 @@ type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
 class Accounts extends React.Component<LocalProps, State> {
 	public state = {
+		transactionResponse: null,
 		loading: false,
+		submitLoading: false,
 		contract: null,
 		fields: {
+			params: [],
 			abi:
 				'[{"constant":false,"inputs":[{"name":"pubKey"' +
 				',"type":"string"},{"name":"rating","type":"uint256"}],"name"' +
@@ -69,7 +77,7 @@ class Accounts extends React.Component<LocalProps, State> {
 				':"uint256"}],"payable":false,"stateMutability":"view","type"' +
 				':"function"},{"inputs":[],"payable":false,"stateMutability' +
 				'":"nonpayable","type":"constructor"}]',
-			address: '0x6494966e0bf2460510d41f98dddf80b1f2bc3514',
+			address: '0x547fa88574bfc6c2f9dee7d817f368908de02189',
 			gas:
 				(this.props.configLoadTask.response &&
 					this.props.configLoadTask.response.defaults.gas.toString()) ||
@@ -82,7 +90,8 @@ class Accounts extends React.Component<LocalProps, State> {
 			from:
 				(this.props.configLoadTask.response &&
 					this.props.configLoadTask.response.defaults.from.toString()) ||
-				''
+				'',
+			password: ''
 		},
 		activeIndex: 0
 	};
@@ -134,13 +143,37 @@ class Accounts extends React.Component<LocalProps, State> {
 
 		const inputs = abi.inputs;
 
-		return inputs.map(input => {
+		return inputs.map((input, index) => {
 			return (
 				<Form.Field key={input.name}>
 					<label>
 						{input.name} ({input.type})
 					</label>
 					<Input
+						onChange={(e: any) => {
+							const params: any[] = this.state.fields.params;
+
+							while (params.length > inputs.length) {
+								params.pop();
+							}
+
+							let value: any = e.target.value;
+
+							if (input.type.includes('int')) {
+								value = parseInt(value, 10);
+							}
+
+							params[index] = value;
+
+							this.setState({
+								fields: {
+									...this.state.fields,
+									params
+								}
+							});
+
+							console.log(this.state.fields.params);
+						}}
 						type={input.type.includes('int') ? 'number' : 'text'}
 					/>
 				</Form.Field>
@@ -207,13 +240,40 @@ class Accounts extends React.Component<LocalProps, State> {
 									<Form.Field>
 										<label>From</label>
 										<Select
+											onChange={this.handleChangeFrom}
 											placeholder="Select an Account"
 											options={accounts}
 										/>
 									</Form.Field>
+									{!constants.constant ? (
+										<Form.Field>
+											<label>Password</label>
+											<Input
+												onChange={
+													this.handlePasswordChange
+												}
+												type={'password'}
+											/>
+										</Form.Field>
+									) : null}
+								</Form.Group>
+
+								<Form.Group widths="equal">
+									{constants.payable ? (
+										<Form.Field>
+											<label>Value</label>
+											<Input
+												onChange={
+													this.handleChangeValue
+												}
+												type={'number'}
+											/>
+										</Form.Field>
+									) : null}
 									<Form.Field>
 										<label>Gas</label>
 										<Input
+											onChange={this.handleChangeGas}
 											type={'number'}
 											defaultValue={this.state.fields.gas}
 										/>
@@ -221,6 +281,7 @@ class Accounts extends React.Component<LocalProps, State> {
 									<Form.Field>
 										<label>Gas Price</label>
 										<Input
+											onChange={this.handleChangeGasPrice}
 											type={'number'}
 											defaultValue={
 												this.state.fields.gasPrice
@@ -228,14 +289,13 @@ class Accounts extends React.Component<LocalProps, State> {
 										/>
 									</Form.Field>
 								</Form.Group>
-								{constants.payable ? (
-									<Form.Field>
-										<label>Value</label>
-										<Input type={'number'} />
-									</Form.Field>
-								) : null}
 								<Form.Field>
-									<Button type={'submit'} color="green">
+									<Button
+										value={key}
+										type={'submit'}
+										color="green"
+										onClick={this.handleSubmitMethod}
+									>
 										Submit
 									</Button>
 								</Form.Field>
@@ -246,6 +306,58 @@ class Accounts extends React.Component<LocalProps, State> {
 			});
 		} else {
 			return;
+		}
+	};
+
+	public handleSubmitMethod = async (e: any) => {
+		this.setState({
+			submitLoading: true
+		});
+
+		// @ts-ignore
+		const contract: Contract<any> = this.state.contract;
+		const method = e.target.value;
+		const constants = this.checkConstantOrPayable(method);
+		const transaction = await contract.methods[method](
+			...this.state.fields.params
+		);
+		const keystore = new Keystore(
+			this.props.configLoadTask.response!.storage.keystore
+		);
+
+		let account: Account | null = null;
+
+		if (!constants.constant) {
+			account = await keystore.decrypt(
+				this.state.fields.from,
+				this.state.fields.password
+			);
+		}
+
+		console.log(transaction.parse());
+
+		if (!constants.constant) {
+			await transaction.submit(account, {
+				from: this.state.fields.from,
+				gas: parseInt(this.state.fields.gas, 10),
+				gasPrice: parseInt(this.state.fields.gasPrice, 10)
+			});
+
+			this.setState({
+				transactionResponse: await transaction.receipt,
+				submitLoading: false
+			});
+		} else {
+			const response = await transaction.submit(account, {
+				from: this.state.fields.from,
+				gas: parseInt(this.state.fields.gas, 10),
+				gasPrice: parseInt(this.state.fields.gasPrice, 10)
+			});
+
+			this.setState({
+				transactionResponse: response,
+				submitLoading: false
+			});
 		}
 	};
 
@@ -263,6 +375,52 @@ class Accounts extends React.Component<LocalProps, State> {
 			fields: {
 				...this.state.fields,
 				abi: e.target.value
+			}
+		});
+	};
+
+	public handleChangeFrom = (e: any, { value }) => {
+		this.setState({
+			fields: {
+				...this.state.fields,
+				from: value
+			}
+		});
+	};
+
+	public handleChangeGas = (e: any, { value }) => {
+		this.setState({
+			fields: {
+				...this.state.fields,
+				gas: value
+			}
+		});
+	};
+
+	public handleChangeGasPrice = (e: any, { value }) => {
+		this.setState({
+			fields: {
+				...this.state.fields,
+				gasPrice: value
+			}
+		});
+	};
+
+	public handleChangeValue = (e: any, { value }) => {
+		this.setState({
+			fields: {
+				...this.state.fields,
+				value
+			}
+		});
+	};
+
+	public handlePasswordChange = (e: any, { value }) => {
+		console.log(value);
+		this.setState({
+			fields: {
+				...this.state.fields,
+				password: value
 			}
 		});
 	};
@@ -328,9 +486,21 @@ class Accounts extends React.Component<LocalProps, State> {
 							<Card.Header>Methods</Card.Header>
 							<Divider hidden={true} />
 							<div className="">
-								<Accordion fluid={true} styled={true}>
-									{this.getMethods()}
-								</Accordion>
+								<Grid coloums={2}>
+									<Grid.Column width={8}>
+										<Accordion fluid={true} styled={true}>
+											{this.getMethods()}
+										</Accordion>
+									</Grid.Column>
+									<Grid.Column width={8}>
+										{this.state.transactionResponse &&
+											JSON.stringify(
+												this.state.transactionResponse,
+												null,
+												4
+											)}
+									</Grid.Column>
+								</Grid>
 							</div>
 						</Card.Content>
 					</Card>
