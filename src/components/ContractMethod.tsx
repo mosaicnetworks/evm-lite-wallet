@@ -71,12 +71,18 @@ class ContractMethod extends React.Component<LocalProps, State> {
 	};
 
 	public handleChangeFrom = (e: any, { value }) => {
-		this.setState({
-			fields: {
-				...this.state.fields,
-				from: value
+		console.log(value);
+		this.setState(
+			{
+				fields: {
+					...this.state.fields,
+					from: value
+				}
+			},
+			() => {
+				console.log(this.state.fields.from);
 			}
-		});
+		);
 	};
 
 	public handleChangeGas = (e: any, { value }) => {
@@ -158,18 +164,21 @@ class ContractMethod extends React.Component<LocalProps, State> {
 		this.setState({ loading: true });
 
 		const method = e.target.value;
+
 		const constants = {
 			constant: this.props.abi.constant,
 			payable: this.props.abi.payable
 		};
+
 		const transaction: Transaction = await this.props.contract.methods[
 			method
 		](...this.state.fields.params);
+
 		const keystore = new Keystore(
 			this.props.configLoadTask.response!.storage.keystore
 		);
 
-		let account: Account | null = null;
+		let account: Account | undefined;
 
 		if (!constants.constant) {
 			account = await keystore.decrypt(
@@ -179,19 +188,23 @@ class ContractMethod extends React.Component<LocalProps, State> {
 		}
 
 		if (!constants.constant) {
-			await transaction.submit(account, {
+			console.log('STATE', this.state);
+
+			await transaction.submit(account || null, {
 				timeout: 2,
 				from: this.state.fields.from,
 				gas: parseInt(this.state.fields.gas, 10),
 				gasPrice: parseInt(this.state.fields.gasPrice, 10)
 			});
 
+			console.log(this.state.fields.from);
+
 			this.setState({
 				response: await transaction.receipt,
 				loading: false
 			});
 		} else {
-			const response = await transaction.submit(null, {
+			const response = await transaction.submit(account || null, {
 				from: this.state.fields.from,
 				gas: parseInt(this.state.fields.gas, 10),
 				gasPrice: parseInt(this.state.fields.gasPrice, 10)

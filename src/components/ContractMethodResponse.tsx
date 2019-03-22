@@ -22,46 +22,56 @@ type LocalProps = OwnProps & AlertProps;
 class ContractMethodResponse extends React.Component<LocalProps, State> {
 	public state = {};
 
-	public renderReceipt = () => {
-		// pass
+	public renderTableHeader = (headings: string[]) => {
+		console.log('Heading', headings);
+		return (
+			<Table.Header>
+				<Table.Row>
+					{headings.map(heading => {
+						return (
+							<Table.HeaderCell key={heading}>
+								{heading}
+							</Table.HeaderCell>
+						);
+					})}
+				</Table.Row>
+			</Table.Header>
+		);
 	};
 
-	public renderResponse = () => {
-		// pass
+	public renderReceipt = (receipt: TXReceipt) => {
+		return Object.keys(receipt).map(key => {
+			return <Table.Cell key={key}>{receipt[key].toString()}</Table.Cell>;
+		});
+	};
+
+	public renderResponse = (response: any[]) => {
+		return response.map(item => {
+			return <Table.Cell key={item}>{item.toString()}</Table.Cell>;
+		});
 	};
 
 	public render() {
+		console.log('REDNER RESPONSE PROPS', this.props);
 		return (
 			<React.Fragment>
 				<Table celled={true}>
-					<Table.Header>
-						<Table.Row>
-							<Table.HeaderCell>Name</Table.HeaderCell>
-							<Table.HeaderCell>Status</Table.HeaderCell>
-							<Table.HeaderCell>Notes</Table.HeaderCell>
-						</Table.Row>
-					</Table.Header>
-
+					{this.props.outputs.length
+						? this.renderTableHeader(
+								this.props.outputs.map(output => {
+									return output.name;
+								})
+						  )
+						: this.renderTableHeader(
+								Object.keys(this.props.response)
+						  )}
 					<Table.Body>
-						<Table.Row disabled={true}>
-							<Table.Cell>Jamie</Table.Cell>
-							<Table.Cell>Approved</Table.Cell>
-							<Table.Cell>Requires call</Table.Cell>
-						</Table.Row>
 						<Table.Row>
-							<Table.Cell>John</Table.Cell>
-							<Table.Cell>Selected</Table.Cell>
-							<Table.Cell>None</Table.Cell>
-						</Table.Row>
-						<Table.Row>
-							<Table.Cell>Jamie</Table.Cell>
-							<Table.Cell>Approved</Table.Cell>
-							<Table.Cell>Requires call</Table.Cell>
-						</Table.Row>
-						<Table.Row>
-							<Table.Cell disabled={true}>Jill</Table.Cell>
-							<Table.Cell>Approved</Table.Cell>
-							<Table.Cell>None</Table.Cell>
+							{this.props.outputs.length
+								? this.renderResponse(this.props
+										.response as any[])
+								: this.renderReceipt(this.props
+										.response as TXReceipt)}
 						</Table.Row>
 					</Table.Body>
 				</Table>

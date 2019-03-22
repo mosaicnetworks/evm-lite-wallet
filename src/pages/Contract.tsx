@@ -94,6 +94,8 @@ class Accounts extends React.Component<LocalProps, State> {
 			this.setState({
 				contract
 			});
+
+			console.log(evmlc);
 		} catch (e) {
 			this.props.alert.error(
 				'Something went wrong trying to generate contract.'

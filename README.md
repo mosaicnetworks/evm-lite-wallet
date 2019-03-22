@@ -7,7 +7,7 @@ A user interface to interact with EVM-Lite.
 To build and run `EVM-Lite Wallet`, simply execute the command:
 
 ```console
-make
+npm run start
 ```
 
 This will install all dependencies and run an electron window
