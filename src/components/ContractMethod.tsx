@@ -7,15 +7,13 @@ import {
 	Accordion,
 	Form,
 	Input,
-	Select,
 	Icon,
 	Label,
 	Button,
-	Grid,
 	Divider
 } from 'semantic-ui-react';
 
-import { Store, ConfigLoadReducer, KeystoreListReducer } from '../redux';
+import { Store, ConfigLoadReducer } from '../redux';
 
 import ContractMethodResponse from './ContractMethodResponse';
 
@@ -24,11 +22,6 @@ interface State {
 	response: any;
 	fields: {
 		params: any[];
-		from: string;
-		gas: string;
-		gasPrice: string;
-		value: string;
-		password: string;
 	};
 }
 
@@ -38,7 +31,6 @@ interface AlertProps {
 
 interface StoreProps {
 	configLoadTask: ConfigLoadReducer;
-	keystoreListTask: KeystoreListReducer;
 }
 
 interface DispatchProps {
@@ -52,6 +44,13 @@ interface OwnProps {
 	abi: ABI;
 	handleClick: any;
 	activeIndex: number;
+	fields: {
+		gas: string;
+		gasPrice: string;
+		from: string;
+		password: string;
+		value: string;
+	};
 }
 
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
@@ -61,64 +60,8 @@ class ContractMethod extends React.Component<LocalProps, State> {
 		response: null,
 		loading: false,
 		fields: {
-			params: [],
-			from: '',
-			gas: '',
-			gasPrice: '',
-			value: '',
-			password: ''
+			params: []
 		}
-	};
-
-	public handleChangeFrom = (e: any, { value }) => {
-		console.log(value);
-		this.setState(
-			{
-				fields: {
-					...this.state.fields,
-					from: value
-				}
-			},
-			() => {
-				console.log(this.state.fields.from);
-			}
-		);
-	};
-
-	public handleChangeGas = (e: any, { value }) => {
-		this.setState({
-			fields: {
-				...this.state.fields,
-				gas: value
-			}
-		});
-	};
-
-	public handleChangeGasPrice = (e: any, { value }) => {
-		this.setState({
-			fields: {
-				...this.state.fields,
-				gasPrice: value
-			}
-		});
-	};
-
-	public handleChangeValue = (e: any, { value }) => {
-		this.setState({
-			fields: {
-				...this.state.fields,
-				value
-			}
-		});
-	};
-
-	public handlePasswordChange = (e: any, { value }) => {
-		this.setState({
-			fields: {
-				...this.state.fields,
-				password: value
-			}
-		});
 	};
 
 	public getInputs = () => {
@@ -182,8 +125,8 @@ class ContractMethod extends React.Component<LocalProps, State> {
 
 		if (!constants.constant) {
 			account = await keystore.decrypt(
-				this.state.fields.from,
-				this.state.fields.password
+				this.props.fields.from,
+				this.props.fields.password
 			);
 		}
 
@@ -191,13 +134,13 @@ class ContractMethod extends React.Component<LocalProps, State> {
 			console.log('STATE', this.state);
 
 			await transaction.submit(account || null, {
-				timeout: 2,
-				from: this.state.fields.from,
-				gas: parseInt(this.state.fields.gas, 10),
-				gasPrice: parseInt(this.state.fields.gasPrice, 10)
+				timeout: 4,
+				from: this.props.fields.from,
+				gas: parseInt(this.props.fields.gas, 10),
+				gasPrice: parseInt(this.props.fields.gasPrice, 10)
 			});
 
-			console.log(this.state.fields.from);
+			console.log(this.props.fields.from);
 
 			this.setState({
 				response: await transaction.receipt,
@@ -205,9 +148,10 @@ class ContractMethod extends React.Component<LocalProps, State> {
 			});
 		} else {
 			const response = await transaction.submit(account || null, {
-				from: this.state.fields.from,
-				gas: parseInt(this.state.fields.gas, 10),
-				gasPrice: parseInt(this.state.fields.gasPrice, 10)
+				timeout: 4,
+				from: this.props.fields.from,
+				gas: parseInt(this.props.fields.gas, 10),
+				gasPrice: parseInt(this.props.fields.gasPrice, 10)
 			});
 
 			this.setState({
@@ -224,16 +168,6 @@ class ContractMethod extends React.Component<LocalProps, State> {
 			constant: this.props.abi.constant,
 			payable: this.props.abi.payable
 		};
-
-		const accounts = this.props.keystoreListTask.response!.map(
-			({ address }) => {
-				return {
-					key: address,
-					value: address,
-					text: address
-				};
-			}
-		);
 
 		return (
 			<React.Fragment>
@@ -257,97 +191,35 @@ class ContractMethod extends React.Component<LocalProps, State> {
 					{this.props.method}
 				</Accordion.Title>
 				<Accordion.Content active={activeIndex === index}>
-					<Grid divided={true}>
-						<Grid.Column
-							style={{ background: '#FAFAFA !important' }}
-							width={8}
-						>
-							<Form>{this.getInputs()}</Form>
-							<Divider hidden={true} />
-							<Form>
-								<Form.Group widths="equal">
-									<Form.Field>
-										<label>From</label>
-										<Select
-											onChange={this.handleChangeFrom}
-											placeholder="Select an Account"
-											options={accounts}
-										/>
-									</Form.Field>
-									{!constants.constant ? (
-										<Form.Field>
-											<label>Password</label>
-											<Input
-												onChange={
-													this.handlePasswordChange
-												}
-												type={'password'}
-											/>
-										</Form.Field>
-									) : null}
-								</Form.Group>
-								<Form.Group widths="equal">
-									{constants.payable ? (
-										<Form.Field>
-											<label>Value</label>
-											<Input
-												onChange={
-													this.handleChangeValue
-												}
-												type={'number'}
-											/>
-										</Form.Field>
-									) : null}
-									<Form.Field>
-										<label>Gas</label>
-										<Input
-											onChange={this.handleChangeGas}
-											type={'number'}
-											defaultValue={this.state.fields.gas}
-										/>
-									</Form.Field>
-									<Form.Field>
-										<label>Gas Price</label>
-										<Input
-											onChange={this.handleChangeGasPrice}
-											type={'number'}
-											defaultValue={
-												this.state.fields.gasPrice
-											}
-										/>
-									</Form.Field>
-								</Form.Group>
-								<Form.Field>
-									<Button
-										value={this.props.method}
-										type={'submit'}
-										color="green"
-										onClick={this.handleSubmitMethod}
-									>
-										Submit
-									</Button>
-								</Form.Field>
-							</Form>
-						</Grid.Column>
-						<Grid.Column width={8}>
-							{this.state.response ? (
-								<ContractMethodResponse
-									response={this.state.response!}
-									outputs={this.props.abi.outputs || []}
-								/>
-							) : (
-								''
-							)}
-						</Grid.Column>
-					</Grid>
+					<Form>{this.getInputs()}</Form>
+					<Divider hidden={true} />
+					<Form>
+						<Form.Field>
+							<Button
+								value={this.props.method}
+								type={'submit'}
+								color="teal"
+								onClick={this.handleSubmitMethod}
+							>
+								Execute
+							</Button>
+						</Form.Field>
+					</Form>
+					{this.state.response ? (
+						<ContractMethodResponse
+							response={this.state.response!}
+							outputs={this.props.abi.outputs || []}
+						/>
+					) : (
+						''
+					)}
 				</Accordion.Content>
 			</React.Fragment>
 		);
 	}
 }
 const mapStoreToProps = (store: Store): StoreProps => ({
-	configLoadTask: store.config.load,
-	keystoreListTask: store.keystore.list
+	configLoadTask: store.config.load
 });
 
 const mapsDispatchToProps = (): DispatchProps => ({});

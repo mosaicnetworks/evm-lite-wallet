@@ -10,7 +10,9 @@ import ConfigurationSagas from '../sagas/watchers/Configuration';
 import KeystoreSagas from '../sagas/watchers/Keystore';
 import TransactionSagas from '../sagas/watchers/Transactions';
 import AccountSagas from '../sagas/watchers/Accounts';
+import ContractSagas from '../sagas/watchers/Contract';
 
+import ContractRootReducer, { ContractReducer } from '../reducers/Contract';
 import ConfigRootReducer, { ConfigReducer } from '../reducers/Configuration';
 import AppRootReducer, { AppReducer } from '../reducers/Application';
 import KeystoreRootReducer, { KeystoreReducer } from '../reducers/Keystore';
@@ -20,6 +22,7 @@ import TransactionsRootReducer, {
 import AccountsRootReducer, { IAccountsReducer } from '../reducers/Accounts';
 
 export interface Store {
+	contract: ContractReducer;
 	accounts: IAccountsReducer;
 	keystore: KeystoreReducer;
 	config: ConfigReducer;
@@ -34,6 +37,7 @@ const persistConfig: PersistConfig = {
 };
 
 const rootReducer = combineReducers({
+	contract: ContractRootReducer,
 	accounts: AccountsRootReducer,
 	keystore: KeystoreRootReducer,
 	config: ConfigRootReducer,
@@ -54,6 +58,7 @@ export default () => {
 	saga.run(KeystoreSagas);
 	saga.run(TransactionSagas);
 	saga.run(AccountSagas);
+	saga.run(ContractSagas);
 
 	return { store, persistor };
 };

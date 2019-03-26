@@ -1,16 +1,23 @@
 import { combineReducers } from 'redux';
-import { TXReceipt } from 'evm-lite-lib';
+import { TXReceipt, Contract as SolidityContract } from 'evm-lite-lib';
 
 import { IBasicReducer } from '../common/reducers/BasicReducerFactory';
 
 import Contract, {
 	ContractExecuteMethodPayload,
-	ContractExecuteConstantMethodPayload
+	ContractExecuteConstantMethodPayload,
+	ContractLoadPayload
 } from '../actions/Contract';
+
+export type ContractLoadReducer = IBasicReducer<
+	ContractLoadPayload,
+	SolidityContract<any>,
+	string
+>;
 
 export type ContractExecuteMethodReducer = IBasicReducer<
 	ContractExecuteMethodPayload,
-	TXReceipt,
+	SolidityContract<any>,
 	string
 >;
 
@@ -20,7 +27,8 @@ export type ContractExecuteConstantMethodReducer = IBasicReducer<
 	string
 >;
 
-export interface ConfigReducer {
+export interface ContractReducer {
+	load: ContractLoadReducer;
 	executeMethod: ContractExecuteMethodReducer;
 	executeConstantMethod: ContractExecuteConstantMethodReducer;
 }
@@ -28,8 +36,13 @@ export interface ConfigReducer {
 const contract = new Contract();
 
 const ContractReducer = combineReducers({
+	load: contract.SimpleReducer<
+		ContractLoadPayload,
+		SolidityContract<any>,
+		string
+	>('load'),
 	executeMethod: contract.SimpleReducer<
-		ContractExecuteMethodReducer,
+		ContractExecuteMethodPayload,
 		TXReceipt,
 		string
 	>('ExecuteMethod'),

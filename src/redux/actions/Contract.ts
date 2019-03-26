@@ -1,10 +1,15 @@
-import { TXReceipt } from 'evm-lite-lib';
+import { TXReceipt, ABI, Contract as SolidityContract } from 'evm-lite-lib';
 
 import BaseActions, {
 	ActionCreatorHandlers,
 	ActionInterface,
 	ActionValue
 } from '../common/BaseActions';
+
+export interface ContractLoadPayload {
+	address: string;
+	abi: ABI[];
+}
 
 export interface ContractExecuteMethodPayload {
 	params: any[];
@@ -16,6 +21,11 @@ export interface ContractExecuteConstantMethodPayload {
 }
 
 interface HandlerSchema {
+	load: ActionCreatorHandlers<
+		ContractLoadPayload,
+		SolidityContract<any>,
+		string
+	>;
 	executeMethod: ActionCreatorHandlers<
 		ContractExecuteMethodPayload,
 		TXReceipt,
@@ -29,6 +39,7 @@ interface HandlerSchema {
 }
 
 interface ActionSchema extends ActionInterface {
+	load: ActionValue;
 	executeMethod: ActionValue;
 	executeConstantMethod: ActionValue;
 }
@@ -39,9 +50,14 @@ export default class Contract extends BaseActions<HandlerSchema, ActionSchema> {
 	constructor() {
 		super(Contract.name);
 
-		this.prefixes = ['ExecuteMethod', 'ExecuteConstantMethod'];
+		this.prefixes = ['Load', 'ExecuteMethod', 'ExecuteConstantMethod'];
 
 		this.handlers = {
+			load: this.generateHandlers<
+				ContractLoadPayload,
+				SolidityContract<any>,
+				string
+			>('load'),
 			executeMethod: this.generateHandlers<
 				ContractExecuteMethodPayload,
 				TXReceipt,

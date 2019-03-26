@@ -42,4 +42,8 @@ export {
 	AccountsDecryptPayload
 } from './actions/Accounts';
 
+// contract
+export { ContractLoadPayload } from './actions/Contract';
+export { ContractLoadReducer } from './reducers/Contract';
+
 export default EVMLCRedux;
