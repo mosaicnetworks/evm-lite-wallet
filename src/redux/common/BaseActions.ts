@@ -92,8 +92,8 @@ export default abstract class BaseActions<Handlers, Actions> {
 		return this.actionTypes;
 	}
 
-	protected get prefixes(): Readonly<ActionPrefixes> {
-		return this.prefixCollection;
+	protected get prefixes(): ActionPrefixes {
+		return <ActionPrefixes>(this.prefixCollection);
 	}
 
 	protected set prefixes(value: ActionPrefixes) {
