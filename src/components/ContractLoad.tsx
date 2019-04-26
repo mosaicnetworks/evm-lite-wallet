@@ -91,6 +91,7 @@ class AccountCreate extends React.Component<LocalProps, State> {
 			this.close();
 		}
 	}
+
 	public loadContract = async (e: any) => {
 		this.props.handleContractLoad({
 			address: this.state.fields.address,

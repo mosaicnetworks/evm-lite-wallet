@@ -72,7 +72,7 @@ class Header extends React.Component<LocalProps, any> {
 								/>
 							</Link>
 						</li>
-						<li>
+						{/* <li>
 							<Link to="/contract">
 								<Icon
 									size={'big'}
@@ -80,7 +80,7 @@ class Header extends React.Component<LocalProps, any> {
 									name="file alternate"
 								/>
 							</Link>
-						</li>
+						</li> */}
 						<li>
 							<Link to="/configuration">
 								<Icon size={'big'} color={'black'} name="cog" />
