@@ -133,7 +133,7 @@ class ContractMethod extends React.Component<LocalProps, State> {
 		if (!constants.constant) {
 			console.log('STATE', this.state);
 
-			await transaction.submit(account || null, {
+			await transaction.submit(account || undefined, {
 				timeout: 4,
 				from: this.props.fields.from,
 				gas: parseInt(this.props.fields.gas, 10),
@@ -147,7 +147,7 @@ class ContractMethod extends React.Component<LocalProps, State> {
 				loading: false
 			});
 		} else {
-			const response = await transaction.submit(account || null, {
+			const response = await transaction.submit(account || undefined, {
 				timeout: 4,
 				from: this.props.fields.from,
 				gas: parseInt(this.props.fields.gas, 10),
