@@ -1,36 +1,28 @@
 import { combineReducers } from 'redux';
+import { BaseAccount } from 'evm-lite-lib';
+
 import { IBasicReducer } from '../common/reducers/BasicReducerFactory';
 
-import Accounts, {
-	AccountsDecryptPayload,
-	AccountsTransferPayLoad
-} from '../actions/Accounts';
+import Accounts, { AccountsFetchAllPayLoad } from '../actions/Accounts';
 
-export type AccountsTransferReducer = IBasicReducer<
-	AccountsTransferPayLoad,
-	string,
-	string
->;
-export type AccountsDecryptReducer = IBasicReducer<
-	AccountsDecryptPayload,
-	string,
+export type AccountsFetchAllReducer = IBasicReducer<
+	AccountsFetchAllPayLoad,
+	BaseAccount[],
 	string
 >;
 
 export interface IAccountsReducer {
-	transfer: AccountsTransferReducer;
-	decrypt: AccountsDecryptReducer;
+	fetchAll: AccountsFetchAllReducer;
 }
 
 const accounts = new Accounts();
 
 const AccountsReducer = combineReducers({
-	transfer: accounts.SimpleReducer<AccountsTransferPayLoad, string, string>(
-		'Transfer'
-	),
-	decrypt: accounts.SimpleReducer<AccountsDecryptPayload, string, string>(
-		'Decrypt'
-	)
+	fetchAll: accounts.SimpleReducer<
+		AccountsFetchAllPayLoad,
+		BaseAccount[],
+		string
+	>('FetchAll')
 });
 
 export default AccountsReducer;

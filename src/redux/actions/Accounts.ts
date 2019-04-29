@@ -1,8 +1,30 @@
+import { BaseAccount } from 'evm-lite-lib';
+
 import BaseActions, {
 	ActionCreatorHandlers,
 	ActionInterface,
 	ActionValue
 } from '../common/BaseActions';
+
+// Payloads
+
+export interface AccountsFetchAllPayLoad {
+	keystoreDirectory: string;
+}
+
+export interface AccountsFetchOnePayLoad extends AccountsFetchAllPayLoad {
+	address: string;
+}
+
+export interface AccountsCreatePayLoad {
+	password: string;
+	keystore: string;
+}
+export interface AccountsUpdatePayLoad {
+	address: string;
+	old: string;
+	new: string;
+}
 
 export interface AccountsDecryptPayload {
 	address: string;
@@ -20,14 +42,24 @@ export interface AccountsTransferPayLoad {
 	password: string;
 }
 
+// Framework
+
 interface HandlerSchema {
-	decrypt: ActionCreatorHandlers<AccountsDecryptPayload, string, string>;
-	transfer: ActionCreatorHandlers<AccountsTransferPayLoad, string, string>;
+	fetchAll: ActionCreatorHandlers<AccountsFetchAllPayLoad, any[], string>;
+	// fetchOne: ActionCreatorHandlers<AccountsFetchOnePayLoad, any[], string>;
+	// decrypt: ActionCreatorHandlers<AccountsDecryptPayload, string, string>;
+	// transfer: ActionCreatorHandlers<AccountsTransferPayLoad, string, string>;
+	// update: ActionCreatorHandlers<AccountsUpdatePayLoad, BaseAccount, string>;
+	// create: ActionCreatorHandlers<AccountsCreatePayLoad, BaseAccount, string>;
 }
 
 interface ActionSchema extends ActionInterface {
-	decrypt: ActionValue;
-	transfer: ActionValue;
+	fetchAll: ActionValue;
+	// fetchOne: ActionValue;
+	// decrypt: ActionValue;
+	// transfer: ActionValue;
+	// update: ActionValue;
+	// create: ActionValue;
 }
 
 export default class Accounts extends BaseActions<HandlerSchema, ActionSchema> {
@@ -36,19 +68,40 @@ export default class Accounts extends BaseActions<HandlerSchema, ActionSchema> {
 	constructor() {
 		super(Accounts.name);
 
-		this.prefixes = ['Transfer', 'Decrypt'];
+		// Not case sensitive
+		this.prefixes = ['FetchAll'];
 
 		this.handlers = {
-			decrypt: this.generateHandlers<
-				AccountsDecryptPayload,
-				string,
+			fetchAll: this.generateHandlers<
+				AccountsFetchAllPayLoad,
+				BaseAccount[],
 				string
-			>('Decrypt'),
-			transfer: this.generateHandlers<
-				AccountsTransferPayLoad,
-				string,
-				string
-			>('Transfer')
+			>('FetchAll')
+			// fetchOne: this.generateHandlers<
+			// 	AccountsFetchOnePayLoad,
+			// 	any[],
+			// 	string
+			// >('FetchAll'),
+			// decrypt: this.generateHandlers<
+			// 	AccountsDecryptPayload,
+			// 	string,
+			// 	string
+			// >('Decrypt'),
+			// transfer: this.generateHandlers<
+			// 	AccountsTransferPayLoad,
+			// 	string,
+			// 	string
+			// >('Transfer'),
+			// update: this.generateHandlers<
+			// 	AccountsUpdatePayLoad,
+			// 	BaseAccount,
+			// 	string
+			// >('Update'),
+			// create: this.generateHandlers<
+			// 	AccountsCreatePayLoad,
+			// 	BaseAccount,
+			// 	string
+			// >('Create')
 		};
 	}
 }

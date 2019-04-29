@@ -30,18 +30,6 @@ interface OwnProps {
 type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
 class App extends React.Component<LocalProps, any> {
-	public componentWillUpdate(
-		nextProps: Readonly<LocalProps>,
-		nextState: Readonly<any>,
-		nextContext: any
-	): void {
-		// pass
-	}
-
-	public componentDidMount = () => {
-		// pass
-	};
-
 	public render() {
 		return (
 			<HashRouter>

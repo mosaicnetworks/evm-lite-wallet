@@ -2,17 +2,17 @@ import BasicReducerFactory, {
 	IBasicReducer
 } from './reducers/BasicReducerFactory';
 
+export interface BaseAction<Payload> {
+	type: string;
+	payload: Payload;
+}
+
 interface ActionTypes {
 	[key: string]: string;
 }
 
 export interface ActionInterface {
-	[key: string]: {
-		init: string;
-		success: string;
-		failure: string;
-		reset: string;
-	};
+	[key: string]: ActionValue;
 }
 
 export interface ActionValue {
@@ -93,7 +93,7 @@ export default abstract class BaseActions<Handlers, Actions> {
 	}
 
 	protected get prefixes(): ActionPrefixes {
-		return <ActionPrefixes>(this.prefixCollection);
+		return this.prefixCollection as ActionPrefixes;
 	}
 
 	protected set prefixes(value: ActionPrefixes) {
@@ -137,7 +137,7 @@ export default abstract class BaseActions<Handlers, Actions> {
 				})
 			});
 
-			this.actionsObject[prefix.toLowerCase()] = {
+			this.actionsObject[this.lowerCaseFirstChar(prefix)] = {
 				init: this.joinWithUpperCase(identifier, prefix, 'Init'),
 				success: this.joinWithUpperCase(identifier, prefix, 'Success'),
 				failure: this.joinWithUpperCase(identifier, prefix, 'Failure'),
@@ -180,5 +180,9 @@ export default abstract class BaseActions<Handlers, Actions> {
 
 	private joinWithUpperCase(...words: string[]) {
 		return words.join(this.delimiter).toUpperCase();
+	}
+
+	private lowerCaseFirstChar(word: string) {
+		return word.charAt(0).toLowerCase() + word.slice(1);
 	}
 }

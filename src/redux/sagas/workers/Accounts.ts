@@ -1,18 +1,24 @@
-import Accounts, { AccountsDecryptPayload } from '../../actions/Accounts';
+import { put } from 'redux-saga/effects';
 
-interface AccountsDecryptAction {
-	type: string;
-	payload: AccountsDecryptPayload;
-}
+import { Keystore as EVMLKeystore } from 'evm-lite-lib';
+
+import { BaseAction } from '../../common/BaseActions';
+
+import Accounts, { AccountsFetchAllPayLoad } from '../../actions/Accounts';
 
 const accounts = new Accounts();
 
-console.log(accounts);
+export function* accountsFetchAllWorker(
+	action: BaseAction<AccountsFetchAllPayLoad>
+) {
+	const { success, failure } = accounts.handlers.fetchAll;
 
-export function* accountsDecryptWorker(action: AccountsDecryptAction) {
 	try {
-		// pass
+		const keystore: EVMLKeystore = new EVMLKeystore(
+			action.payload.keystoreDirectory
+		);
+		yield put(success(yield keystore.list()));
 	} catch (e) {
-		// pass
+		yield put(failure('_SAGA_ERROR_' + e));
 	}
 }
