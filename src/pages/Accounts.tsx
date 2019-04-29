@@ -2,20 +2,20 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Header } from 'semantic-ui-react';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { Card } from 'semantic-ui-react';
 
-import { BaseAccount, ConfigSchema } from 'evm-lite-lib';
+import { BaseAccount } from 'evm-lite-lib';
 
 import {
 	AccountsFetchAllPayLoad,
 	AccountsFetchAllReducer,
-	Store
+	Store,
+	ConfigLoadReducer
 } from '../redux';
 
 import redux from '../redux.config';
 
-import Account from '../components/Account';
+import AccountCard from '../components/AccountCard';
 import LoadingButton from '../components/LoadingButton';
 
 import './styles/Accounts.css';
@@ -26,7 +26,7 @@ interface AlertProps {
 
 interface StoreProps {
 	accountsFetchAllTask: AccountsFetchAllReducer;
-	config: ConfigSchema | null;
+	configLoadTask: ConfigLoadReducer;
 }
 
 interface DispatchProps {
@@ -40,30 +40,11 @@ interface OwnProps {
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
 class Accounts extends React.Component<LocalProps, any> {
-	public componentWillUpdate(
-		nextProps: Readonly<LocalProps>,
-		nextState: Readonly<any>,
-		nextContext: any
-	): void {
-		if (
-			!this.props.accountsFetchAllTask.response &&
-			nextProps.accountsFetchAllTask.response
-		) {
-			nextProps.alert.success('Local accounts refreshed.');
-		}
-
-		if (
-			!this.props.accountsFetchAllTask.error &&
-			nextProps.accountsFetchAllTask.error
-		) {
-			nextProps.alert.error(nextProps.accountsFetchAllTask.error);
-		}
-	}
-
-	public handleRefreshAccounts = () => {
-		if (this.props.config) {
+	public handleFetchAllAccounts = () => {
+		if (this.props.configLoadTask.response) {
 			this.props.handleFetchAllAccounts({
-				keystoreDirectory: this.props.config.storage.keystore
+				keystoreDirectory: this.props.configLoadTask.response.storage
+					.keystore
 			});
 		} else {
 			this.props.alert.info(
@@ -74,49 +55,35 @@ class Accounts extends React.Component<LocalProps, any> {
 
 	public render() {
 		const { accountsFetchAllTask } = this.props;
+
 		return (
 			<React.Fragment>
-				<Header as="h2" className={'header-section-buttons'}>
-					<Header.Content>
-						<LoadingButton
-							isLoading={accountsFetchAllTask.isLoading}
-							onClickHandler={this.handleRefreshAccounts}
-							right={true}
-						/>
-					</Header.Content>
-				</Header>
-				<div className={'page'}>
-					<TransitionGroup>
-						{accountsFetchAllTask.response &&
-							accountsFetchAllTask.response.map(
-								(account: BaseAccount) => {
-									return (
-										<CSSTransition
-											key={account.address}
-											in={true}
-											appear={
-												!this.props.accountsFetchAllTask
-													.isLoading
-											}
-											timeout={2000}
-											classNames="slide1"
-										>
-											<Account
-												key={account.address}
-												account={account}
-											/>
-										</CSSTransition>
-									);
-								}
-							)}
-					</TransitionGroup>
+				<div className="action-buttons">
+					<LoadingButton
+						isLoading={this.props.accountsFetchAllTask.isLoading}
+						onClickHandler={this.handleFetchAllAccounts}
+						right={true}
+					/>
+				</div>
+				<Card.Group>
+					{accountsFetchAllTask.response &&
+						accountsFetchAllTask.response.map(
+							(account: BaseAccount) => {
+								return (
+									<AccountCard
+										key={account.address}
+										account={account}
+									/>
+								);
+							}
+						)}
 					{!accountsFetchAllTask.isLoading &&
 						accountsFetchAllTask.error && (
 							<div className={'error_message'}>
 								{accountsFetchAllTask.error}
 							</div>
 						)}
-				</div>
+				</Card.Group>
 			</React.Fragment>
 		);
 	}
@@ -124,7 +91,7 @@ class Accounts extends React.Component<LocalProps, any> {
 
 const mapStoreToProps = (store: Store): StoreProps => ({
 	accountsFetchAllTask: store.accounts.fetchAll,
-	config: store.config.load.response
+	configLoadTask: store.config.load
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({

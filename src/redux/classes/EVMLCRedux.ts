@@ -1,5 +1,8 @@
 import getStores from '../store/Store';
+
 import Accounts from '../actions/Accounts';
+import Config from '../actions/Config';
+import DataDirectory from '../actions/DataDirectory';
 
 export interface EVMLiteReduxConfig {
 	host: 'localhost' | '127.0.0.1' | string;
@@ -15,6 +18,8 @@ interface Stores {
 
 export default class EVMLCRedux {
 	private readonly accounts: Accounts;
+	private readonly config: Config;
+	private readonly dataDirectory: DataDirectory;
 
 	private readonly defaultStores: Stores;
 
@@ -22,11 +27,15 @@ export default class EVMLCRedux {
 		this.defaultStores = getStores();
 
 		this.accounts = new Accounts();
+		this.config = new Config();
+		this.dataDirectory = new DataDirectory();
 	}
 
 	public get actions() {
 		return {
-			accounts: this.accounts.handlers
+			accounts: this.accounts.handlers,
+			config: this.config.handlers,
+			dataDirectory: this.dataDirectory.handlers
 		};
 	}
 

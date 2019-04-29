@@ -10,8 +10,8 @@ import redux from '../redux.config';
 import AlertTemplate from 'react-alert-template-basic';
 import App from './App';
 
-import './styles/index.css';
 import 'semantic-ui-css/semantic.min.css';
+import './styles/index.css';
 
 const options = {
 	timeout: 5000,

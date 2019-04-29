@@ -4,6 +4,7 @@ import { delay } from 'redux-saga';
 import { Config, ConfigSchema } from 'evm-lite-lib';
 
 import { accountsFetchAllWorker } from './Accounts';
+import { BaseAction } from '../../common/BaseActions';
 
 import ConfigurationActions, {
 	ConfigLoadPayLoad,
@@ -11,20 +12,12 @@ import ConfigurationActions, {
 } from '../../actions/Config';
 import AccountsActions from '../../actions/Accounts';
 
-interface ConfigFileLoadAction {
-	type: string;
-	payload: ConfigLoadPayLoad;
-}
-
-interface ConfigFileSaveAction {
-	type: string;
-	payload: ConfigSavePayLoad;
-}
-
 const config = new ConfigurationActions();
 const accounts = new AccountsActions();
 
-export function* configurationReadWorker(action: ConfigFileLoadAction) {
+export function* configurationReadWorker(
+	action: BaseAction<ConfigLoadPayLoad>
+) {
 	const { success, failure } = config.handlers.load;
 
 	try {
@@ -41,7 +34,9 @@ export function* configurationReadWorker(action: ConfigFileLoadAction) {
 	}
 }
 
-export function* configurationSaveWorker(action: ConfigFileSaveAction) {
+export function* configurationSaveWorker(
+	action: BaseAction<ConfigSavePayLoad>
+) {
 	const { success, failure, reset } = config.handlers.save;
 
 	yield delay(1000);

@@ -1,14 +1,12 @@
 .header-main {
-	position: -webkit-sticky;
-	/*position: sticky;*/
-	top: 0;
-	background: #fff;
+	background: rgba(255, 255, 255, 0.9);
 	height: 70px;
 	line-height: 70px !important;
 	color: #fff;
 	z-index: 2000;
-	margin-bottom: 4px !important;
-	border: 1px solid #eee !important;
+	box-shadow: 0 4px 20px -6px #eee !important;
+	width: 100% !important;
+	position: fixed !important;
 }
 
 .logo {
@@ -37,7 +35,6 @@
 
 .links li a {
 	display: inline-block;
-	font-family: 'Lato', sans-serif;
 	padding: 0 20px;
 	color: #333;
 }
@@ -49,14 +46,4 @@
 
 .links li a.active {
 	background: #3157f1;
-}
-
-.stats {
-	float: right;
-}
-
-.stats li {
-	list-style: none;
-	display: inline-block;
-	padding: 5px 15px;
 }

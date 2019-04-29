@@ -5,10 +5,14 @@ const app = electron.app;
 let main: electron.BrowserWindow | null;
 
 function createWindow() {
+	const icon = electron.nativeImage.createFromPath(
+		path.join(__dirname, 'src/assets/logo.png')
+	);
+
 	main = new electron.BrowserWindow({
 		width: 1200,
 		height: 820,
-		icon: path.join(__dirname, 'assets/monet.png')
+		icon
 	});
 	// main.loadURL(`file://${__dirname}/index.html`);
 	main.loadURL(`http://localhost:8081`);

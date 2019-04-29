@@ -4,23 +4,26 @@ import { connect } from 'react-redux';
 import { HashRouter, Route } from 'react-router-dom';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 
-import { Store } from '../redux';
+import { Store, ConfigLoadReducer, ConfigLoadPayLoad } from '../redux';
 
-import Index from '../pages/Index';
+import Accounts from '../pages/Accounts';
+import Account from '../pages/Account';
 import Wrapper from '../components/Wrapper';
 
 import './styles/App.css';
+
+import redux from '../redux.config';
 
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
 
 interface StoreProps {
-	empty?: null;
+	configLoadTask: ConfigLoadReducer;
 }
 
 interface DispatchProps {
-	empty?: null;
+	handleConfigLoad: (payload: ConfigLoadPayLoad) => void;
 }
 
 interface OwnProps {
@@ -30,13 +33,24 @@ interface OwnProps {
 type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
 class App extends React.Component<LocalProps, any> {
+	public componentDidMount() {
+		console.log('mounted');
+		this.props.handleConfigLoad({
+			path: '/Users/danu/.evmlc/config.toml'
+		});
+	}
+
 	public render() {
 		return (
 			<HashRouter>
 				<React.Fragment>
 					<Wrapper>
 						<div>
-							<Route exact={true} path="/" component={Index} />
+							<Route exact={true} path="/" component={Accounts} />
+							<Route
+								path="/account/:address"
+								component={Account}
+							/>
 						</div>
 					</Wrapper>
 				</React.Fragment>
@@ -45,9 +59,14 @@ class App extends React.Component<LocalProps, any> {
 	}
 }
 
-const mapStoreToProps = (store: Store): StoreProps => ({});
+const mapStoreToProps = (store: Store): StoreProps => ({
+	configLoadTask: store.config.load
+});
 
-const mapsDispatchToProps = (dispatch: any): DispatchProps => ({});
+const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
+	handleConfigLoad: payload =>
+		dispatch(redux.actions.config.load.init(payload))
+});
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,
