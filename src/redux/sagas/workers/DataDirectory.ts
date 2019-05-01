@@ -4,7 +4,7 @@ import { fork, join, put } from 'redux-saga/effects';
 
 import { ConfigSchema, DataDirectory } from 'evm-lite-lib';
 
-import { BaseAction } from '../../common/BaseActions';
+import { BaseAction } from '../../common/ActionSet';
 
 import { configurationReadWorker } from './Config';
 import { accountsFetchAllWorker } from './Accounts';
@@ -18,7 +18,10 @@ const configActions = new ConfigurationActions();
 const accountsActions = new AccountsActions();
 
 export function* dataDirectorySetWorker(action: BaseAction<string>) {
-	const { success, failure } = directoryActions.handlers.setDirectory;
+	const {
+		success,
+		failure
+	} = directoryActions.actionStates.setDirectory.handlers;
 
 	try {
 		const directory = yield new DataDirectory(action.payload);
@@ -26,7 +29,7 @@ export function* dataDirectorySetWorker(action: BaseAction<string>) {
 		const configurationForkData: ConfigSchema = yield join(
 			yield fork(
 				configurationReadWorker,
-				configActions.handlers.load.init({
+				configActions.actionStates.load.handlers.init({
 					path: path.join(directory.path, 'config.toml')
 				})
 			)
@@ -38,7 +41,7 @@ export function* dataDirectorySetWorker(action: BaseAction<string>) {
 			yield join(
 				yield fork(
 					accountsFetchAllWorker,
-					accountsActions.handlers.fetchAll.init({
+					accountsActions.actionStates.fetchAll.handlers.init({
 						keystoreDirectory:
 							configurationForkData.storage.keystore
 					})

@@ -8,7 +8,7 @@ const dataDirectory = new DataDirectoryActions();
 
 function* dataDirectorySetWatcher() {
 	yield takeLatest(
-		dataDirectory.actions.setDirectory.init,
+		dataDirectory.actionStates.setDirectory.init,
 		dataDirectorySetWorker
 	);
 }

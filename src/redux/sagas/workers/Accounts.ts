@@ -3,7 +3,7 @@ import { delay } from 'redux-saga';
 
 import { Keystore as EVMLKeystore } from 'evm-lite-lib';
 
-import { BaseAction } from '../../common/BaseActions';
+import { BaseAction } from '../../common/ActionSet';
 
 import Accounts, { AccountsFetchAllPayLoad } from '../../actions/Accounts';
 
@@ -12,7 +12,7 @@ const accounts = new Accounts();
 export function* accountsFetchAllWorker(
 	action: BaseAction<AccountsFetchAllPayLoad>
 ) {
-	const { success, failure } = accounts.handlers.fetchAll;
+	const { success, failure } = accounts.actionStates.fetchAll.handlers;
 
 	try {
 		const keystore: EVMLKeystore = new EVMLKeystore(

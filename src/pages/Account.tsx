@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
 import {
 	Header,
 	Button,
@@ -32,12 +31,8 @@ interface DispatchProps {
 	empty?: null;
 }
 
-interface Params {
-	address: string;
-}
-
-interface OwnProps extends RouteComponentProps<Params> {
-	account: BaseAccount;
+interface OwnProps {
+	account?: BaseAccount;
 }
 
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
@@ -67,7 +62,7 @@ class Accounts extends React.Component<LocalProps, any> {
 				<div className="page-padding">
 					<Header as="h2" className={'address-heading'}>
 						0x
-						{this.props.match.params.address.toUpperCase()}
+						{/* {this.props.match.params.address.toUpperCase()} */}
 						<Header.Subheader>
 							Manage your account and transfer funds from here.
 						</Header.Subheader>
@@ -143,4 +138,4 @@ const mapsDispatchToProps = (dispatch: any): DispatchProps => ({});
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
-)(withAlert<AlertProps>(withRouter(Accounts)));
+)(withAlert<AlertProps>(Accounts));

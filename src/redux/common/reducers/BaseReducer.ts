@@ -1,4 +1,4 @@
-import Actions from '../BaseActions';
+import ActionSet from '../ActionSet';
 
 export interface IBasicReducer<I, S, F> {
 	payload: I | null;
@@ -7,7 +7,7 @@ export interface IBasicReducer<I, S, F> {
 	error: F | null;
 }
 
-const BasicReducerFactory = <A extends Actions<any, any>, I, S, F>(
+const BasicReducerFactory = <A extends ActionSet<any>, I, S, F>(
 	instance: A,
 	prefix: string,
 	initial?: IBasicReducer<I, S, F>
@@ -18,11 +18,10 @@ const BasicReducerFactory = <A extends Actions<any, any>, I, S, F>(
 		response: null,
 		error: null
 	};
-	prefix = prefix.toUpperCase();
 
 	return (state = start, action: any): IBasicReducer<I, S, F> => {
 		switch (action.type) {
-			case instance.types[`${prefix}_INIT`]:
+			case instance.actionStates[prefix].init:
 				return {
 					...state,
 					payload: action.payload,
@@ -31,21 +30,21 @@ const BasicReducerFactory = <A extends Actions<any, any>, I, S, F>(
 					error: null
 				};
 
-			case instance.types[`${prefix}_SUCCESS`]:
+			case instance.actionStates[prefix].success:
 				return {
 					...state,
 					isLoading: false,
 					response: action.payload,
 					error: null
 				};
-			case instance.types[`${prefix}_FAILURE`]:
+			case instance.actionStates[prefix].failure:
 				return {
 					...state,
 					isLoading: false,
 					response: null,
 					error: action.payload
 				};
-			case instance.types[`${prefix}_RESET`]:
+			case instance.actionStates[prefix].reset:
 				return start;
 			default:
 				return state;

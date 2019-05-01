@@ -10,11 +10,11 @@ import ConfigurationActions from '../../actions/Config';
 const config = new ConfigurationActions();
 
 function* configurationReadInitWatcher() {
-	yield takeLatest(config.actions.load.init, configurationReadWorker);
+	yield takeLatest(config.actionStates.load.init, configurationReadWorker);
 }
 
 function* configurationSaveInitWatcher() {
-	yield takeLatest(config.actions.save.init, configurationSaveWorker);
+	yield takeLatest(config.actionStates.save.init, configurationSaveWorker);
 }
 
 export default function*() {

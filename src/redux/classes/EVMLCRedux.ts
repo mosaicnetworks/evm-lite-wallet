@@ -33,9 +33,9 @@ export default class EVMLCRedux {
 
 	public get actions() {
 		return {
-			accounts: this.accounts.handlers,
-			config: this.config.handlers,
-			dataDirectory: this.dataDirectory.handlers
+			accounts: this.accounts.actionStates,
+			config: this.config.actionStates,
+			dataDirectory: this.dataDirectory.actionStates
 		};
 	}
 

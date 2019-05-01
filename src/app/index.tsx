@@ -15,7 +15,6 @@ import './styles/index.css';
 
 const options = {
 	timeout: 5000,
-	offset: '20px',
 	zIndex: 3000000
 };
 
@@ -23,7 +22,7 @@ ReactDOM.render(
 	<Provider store={redux.stores.store}>
 		<AlertProvider
 			template={AlertTemplate}
-			position={'bottom right'}
+			position={'bottom left'}
 			{...options}
 			transition={'scale'}
 		>

@@ -4,7 +4,7 @@ import { delay } from 'redux-saga';
 import { Config, ConfigSchema } from 'evm-lite-lib';
 
 import { accountsFetchAllWorker } from './Accounts';
-import { BaseAction } from '../../common/BaseActions';
+import { BaseAction } from '../../common/ActionSet';
 
 import ConfigurationActions, {
 	ConfigLoadPayLoad,
@@ -18,7 +18,7 @@ const accounts = new AccountsActions();
 export function* configurationReadWorker(
 	action: BaseAction<ConfigLoadPayLoad>
 ) {
-	const { success, failure } = config.handlers.load;
+	const { success, failure } = config.actionStates.load.handlers;
 
 	try {
 		const evmlConfig: Config = new Config(action.payload.path);
@@ -37,7 +37,7 @@ export function* configurationReadWorker(
 export function* configurationSaveWorker(
 	action: BaseAction<ConfigSavePayLoad>
 ) {
-	const { success, failure, reset } = config.handlers.save;
+	const { success, failure, reset } = config.actionStates.save.handlers;
 
 	yield delay(1000);
 
@@ -50,7 +50,7 @@ export function* configurationSaveWorker(
 		const configurationData: ConfigSchema = yield join(
 			yield fork(
 				configurationReadWorker,
-				config.handlers.load.init({
+				config.actionStates.load.handlers.init({
 					path: action.payload.path
 				})
 			)
@@ -60,7 +60,7 @@ export function* configurationSaveWorker(
 			yield join(
 				yield fork(
 					accountsFetchAllWorker,
-					accounts.handlers.fetchAll.init({
+					accounts.actionStates.fetchAll.handlers.init({
 						keystoreDirectory: configurationData.storage.keystore
 					})
 				)

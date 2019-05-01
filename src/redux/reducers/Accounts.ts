@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { BaseAccount } from 'evm-lite-lib';
 
-import { IBasicReducer } from '../common/reducers/BasicReducerFactory';
+import { IBasicReducer } from '../common/reducers/BaseReducer';
 
 import Accounts, { AccountsFetchAllPayLoad } from '../actions/Accounts';
 
@@ -18,11 +18,7 @@ export interface IAccountsReducer {
 const accounts = new Accounts();
 
 const AccountsReducer = combineReducers({
-	fetchAll: accounts.SimpleReducer<
-		AccountsFetchAllPayLoad,
-		BaseAccount[],
-		string
-	>('FetchAll')
+	fetchAll: accounts.actionStates.fetchAll.reducer
 });
 
 export default AccountsReducer;

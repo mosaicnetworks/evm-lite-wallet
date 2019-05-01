@@ -7,7 +7,10 @@ import AccountsActions from '../../actions/Accounts';
 const accounts = new AccountsActions();
 
 function* accountsFetchAllWatcher() {
-	yield takeLatest(accounts.actions.fetchAll.init, accountsFetchAllWorker);
+	yield takeLatest(
+		accounts.actionStates.fetchAll.init,
+		accountsFetchAllWorker
+	);
 }
 
 export default function*() {

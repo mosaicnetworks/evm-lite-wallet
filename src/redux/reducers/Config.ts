@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { ConfigSchema } from 'evm-lite-lib';
 
-import { IBasicReducer } from '../common/reducers/BasicReducerFactory';
+import { IBasicReducer } from '../common/reducers/BaseReducer';
 
 import Configuration, {
 	ConfigLoadPayLoad,
@@ -13,7 +13,11 @@ export type ConfigLoadReducer = IBasicReducer<
 	ConfigSchema,
 	string
 >;
-export type ConfigSaveReducer = IBasicReducer<any, string, string>;
+export type ConfigSaveReducer = IBasicReducer<
+	ConfigSavePayLoad,
+	string,
+	string
+>;
 
 export interface IConfigReducer {
 	load: ConfigLoadReducer;
@@ -23,10 +27,8 @@ export interface IConfigReducer {
 const configuration = new Configuration();
 
 const ConfigReducer = combineReducers({
-	load: configuration.SimpleReducer<ConfigLoadPayLoad, ConfigSchema, string>(
-		'Load'
-	),
-	save: configuration.SimpleReducer<ConfigSavePayLoad, string, string>('Save')
+	load: configuration.actionStates.load.reducer,
+	save: configuration.actionStates.save.reducer
 });
 
 export default ConfigReducer;

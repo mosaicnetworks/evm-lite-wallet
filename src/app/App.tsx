@@ -65,7 +65,7 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
 	handleConfigLoad: payload =>
-		dispatch(redux.actions.config.load.init(payload))
+		dispatch(redux.actions.config.load.handlers.init(payload))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
