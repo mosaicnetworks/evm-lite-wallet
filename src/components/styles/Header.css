@@ -4,8 +4,9 @@
 	line-height: 70px !important;
 	color: #fff;
 	z-index: 2000;
-	box-shadow: 0 4px 20px -6px #eee !important;
+	box-shadow: 0 4px 20px -6px #f1f1f1 !important;
 	width: 100% !important;
+	margin-bottom: 20px !important;
 }
 
 .logo {

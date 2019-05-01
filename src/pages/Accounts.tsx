@@ -2,9 +2,6 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Card } from 'semantic-ui-react';
-
-import { BaseAccount } from 'evm-lite-lib';
 
 import {
 	AccountsFetchAllPayLoad,
@@ -15,8 +12,8 @@ import {
 
 import redux from '../redux.config';
 
-import AccountCard from '../components/AccountCard';
 import LoadingButton from '../components/LoadingButton';
+import StatusBar from '../components/StatusBar';
 
 import './styles/Accounts.css';
 
@@ -54,33 +51,16 @@ class Accounts extends React.Component<LocalProps, any> {
 	};
 
 	public render() {
-		const { accountsFetchAllTask } = this.props;
-
 		return (
 			<React.Fragment>
-				<Card.Group>
-					{accountsFetchAllTask.response &&
-						accountsFetchAllTask.response.map(
-							(account: BaseAccount) => {
-								return (
-									<AccountCard
-										key={account.address}
-										account={account}
-									/>
-								);
-							}
-						)}
-				</Card.Group>
-				<br />
-				<br />
-				<br />
-				<div className="action-buttons">
+				<StatusBar>
 					<LoadingButton
 						isLoading={this.props.accountsFetchAllTask.isLoading}
 						onClickHandler={this.handleFetchAllAccounts}
 						right={true}
+						content={'Refresh accounts'}
 					/>
-				</div>
+				</StatusBar>
 			</React.Fragment>
 		);
 	}

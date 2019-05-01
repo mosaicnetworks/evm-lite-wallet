@@ -24,7 +24,7 @@ class Account extends React.Component<LocalProps, any> {
 
 	public render() {
 		return (
-			<Card fluid={false}>
+			<Card fluid={true}>
 				<Card.Content className={'sticky-account-heading'}>
 					<Card.Header className={'address'}>
 						<Link to={'/account/' + this.props.account.address}>

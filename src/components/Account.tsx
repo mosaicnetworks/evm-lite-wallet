@@ -15,7 +15,7 @@ import { BaseAccount } from 'evm-lite-lib';
 
 import { Store } from '../redux';
 
-import LoadingButton from '../components/LoadingButton';
+// import LoadingButton from '../components/LoadingButton';
 
 import './styles/Account.css';
 
@@ -53,11 +53,11 @@ class Accounts extends React.Component<LocalProps, any> {
 						content={'Update Password'}
 					/>
 					<Button basic={true} icon={'file'} color={'grey'} />
-					<LoadingButton
-						isLoading={false}
-						onClickHandler={this.fetchAccount}
-						right={true}
-					/>
+					{/* <LoadingButton */}
+					{/* isLoading={false} */}
+					{/* onClickHandler={this.fetchAccount} */}
+					{/* right={true} */}
+					{/* /> */}
 				</div>
 				<div className="page-padding">
 					<Header as="h2" className={'address-heading'}>
