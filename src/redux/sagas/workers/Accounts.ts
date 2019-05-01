@@ -1,5 +1,4 @@
 import { put } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
 
 import { Keystore as EVMLKeystore } from 'evm-lite-lib';
 
@@ -19,7 +18,6 @@ export function* accountsFetchAllWorker(
 			action.payload.keystoreDirectory
 		);
 
-		yield delay(3000);
 		yield put(success(yield keystore.list()));
 	} catch (e) {
 		yield put(failure('_SAGA_ERROR_' + e));

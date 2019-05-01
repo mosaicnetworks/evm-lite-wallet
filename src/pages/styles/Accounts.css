@@ -1,42 +1,10 @@
 .action-buttons {
+	border-top: 1px solid #eee !important;
+	background: #fefefe !important;
+	width: 100% !important;
 	position: fixed;
-	width: 100%;
-	background-color: #fafafa !important;
-	border-top: 1px solid #ddd !important;
-	padding: 8px;
-	bottom: 0px;
+	bottom: 0 !important;
+	padding: 8px 20px;
 	text-align: right !important;
 	z-index: 100000 !important;
-}
-
-.accounts-sidebar {
-	height: calc(100vh - 70px - 50px) !important;
-	width: 100% !important;
-	overflow-y: auto;
-	background: #fff;
-}
-
-.accounts-sidebar .account {
-	padding: 10px !important;
-	overflow: hidden;
-	align-content: center !important;
-	text-indent: 10px;
-	display: block !important;
-	margin-right: -14px !important;
-	border: 1px solid #fafafa !important;
-}
-
-.account div {
-	font-size: 14px !important;
-	color: #555 !important;
-	display: block !important;
-}
-
-.account:hover {
-	background: #fefefe !important;
-	cursor: pointer;
-}
-
-.account span {
-	font-weight: bold !important;
 }

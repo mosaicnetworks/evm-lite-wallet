@@ -24,6 +24,17 @@ export function* configurationReadWorker(
 		const evmlConfig: Config = new Config(action.payload.path);
 		const data: ConfigSchema = yield evmlConfig.load();
 
+		if (data) {
+			yield join(
+				yield fork(
+					accountsFetchAllWorker,
+					accounts.actionStates.fetchAll.handlers.init({
+						keystoreDirectory: data.storage.keystore
+					})
+				)
+			);
+		}
+
 		yield put(success(data));
 
 		return data;

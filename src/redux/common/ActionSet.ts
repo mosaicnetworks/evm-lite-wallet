@@ -44,7 +44,7 @@ export default abstract class ActionSet<ActionStateSchema> {
 
 	private readonly states: string[] = ['INIT', 'SUCCESS', 'FAILURE', 'RESET'];
 
-	public constructor(protected readonly identifier: string) {}
+	protected constructor(protected readonly identifier: string) {}
 
 	protected set actions(actions: string[]) {
 		for (const action of actions) {
@@ -84,7 +84,7 @@ export default abstract class ActionSet<ActionStateSchema> {
 		}
 	}
 
-	public SimpleReducer<I, S, F>(
+	private SimpleReducer<I, S, F>(
 		prefix: string,
 		initial?: IBasicReducer<I, S, F>
 	) {

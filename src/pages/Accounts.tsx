@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Grid } from 'semantic-ui-react';
+import { Card } from 'semantic-ui-react';
 
 import { BaseAccount } from 'evm-lite-lib';
 
@@ -15,7 +15,7 @@ import {
 
 import redux from '../redux.config';
 
-import Account from './Account';
+import AccountCard from '../components/AccountCard';
 import LoadingButton from '../components/LoadingButton';
 
 import './styles/Accounts.css';
@@ -40,10 +40,6 @@ interface OwnProps {
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
 class Accounts extends React.Component<LocalProps, any> {
-	public componentDidMount() {
-		this.handleFetchAllAccounts();
-	}
-
 	public handleFetchAllAccounts = () => {
 		if (this.props.configLoadTask.response) {
 			this.props.handleFetchAllAccounts({
@@ -62,34 +58,22 @@ class Accounts extends React.Component<LocalProps, any> {
 
 		return (
 			<React.Fragment>
-				<Grid columns={2}>
-					<Grid.Row>
-						<Grid.Column width={4} className="accounts-sidebar">
-							{accountsFetchAllTask.response &&
-								accountsFetchAllTask.response.map(
-									(account: BaseAccount) => {
-										return (
-											<div
-												className="account"
-												key={account.address}
-											>
-												<span>Unnamed</span>
-												<div>
-													{account.address
-														.toUpperCase()
-														.substring(0, 30)}
-													...
-												</div>
-											</div>
-										);
-									}
-								)}
-						</Grid.Column>
-						<Grid.Column width={12}>
-							{accountsFetchAllTask.response && <Account />}
-						</Grid.Column>
-					</Grid.Row>
-				</Grid>
+				<Card.Group>
+					{accountsFetchAllTask.response &&
+						accountsFetchAllTask.response.map(
+							(account: BaseAccount) => {
+								return (
+									<AccountCard
+										key={account.address}
+										account={account}
+									/>
+								);
+							}
+						)}
+				</Card.Group>
+				<br />
+				<br />
+				<br />
 				<div className="action-buttons">
 					<LoadingButton
 						isLoading={this.props.accountsFetchAllTask.isLoading}

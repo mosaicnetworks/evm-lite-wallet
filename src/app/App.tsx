@@ -7,7 +7,7 @@ import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Store, ConfigLoadReducer, ConfigLoadPayLoad } from '../redux';
 
 import Accounts from '../pages/Accounts';
-import Account from '../pages/Account';
+import Account from '../components/Account';
 import Wrapper from '../components/Wrapper';
 
 import './styles/App.css';
