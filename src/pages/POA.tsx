@@ -16,6 +16,10 @@ interface StoreProps {
 type LocalProps = StoreProps;
 
 class POA extends React.Component<LocalProps, any> {
+	public renderElections = () => {
+		// pass
+	};
+
 	public render() {
 		return (
 			<div className="content">
