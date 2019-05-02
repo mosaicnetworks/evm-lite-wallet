@@ -1,10 +1,16 @@
 import { combineReducers } from 'redux';
 
-import { IBasicReducer } from '../common/reducers/BaseReducer';
+import { IAsyncReducer } from '../common/reducers/AsyncReducer';
 
-import DataDirectory from '../actions/DataDirectory';
+import DataDirectory, {
+	DataDirectorySetPayLoad
+} from '../actions/DataDirectory';
 
-export type DataDirectorySetReducer = IBasicReducer<string, string, string>;
+export type DataDirectorySetReducer = IAsyncReducer<
+	DataDirectorySetPayLoad,
+	string,
+	string
+>;
 
 export interface IDataDirectoryReducer {
 	setDirectory: DataDirectorySetReducer;

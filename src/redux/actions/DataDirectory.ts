@@ -1,12 +1,14 @@
-import ActionSet, { ActionState } from '../common/ActionSet';
+import AsyncActionSet, { AsyncActionState } from '../common/AsyncActionSet';
 
 export type DataDirectorySetPayLoad = string;
 
-interface ActionStateSchema {
-	setDirectory: ActionState<string, string, string>;
+interface AsyncActionStateSchema {
+	setDirectory: AsyncActionState<DataDirectorySetPayLoad, string, string>;
 }
 
-export default class DataDirectory extends ActionSet<ActionStateSchema> {
+export default class DataDirectory extends AsyncActionSet<
+	AsyncActionStateSchema
+> {
 	constructor() {
 		super(DataDirectory.name);
 

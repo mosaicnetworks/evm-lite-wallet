@@ -1,10 +1,15 @@
+import * as path from 'path';
 import * as React from 'react';
 
 import { connect } from 'react-redux';
 import { HashRouter, Route } from 'react-router-dom';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 
-import { Store, ConfigLoadReducer, ConfigLoadPayLoad } from '../redux';
+import {
+	Store,
+	DataDirectorySetReducer,
+	DataDirectorySetPayLoad
+} from '../redux';
 
 import Accounts from '../pages/Accounts';
 import POA from '../pages/POA';
@@ -21,11 +26,11 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	configLoadTask: ConfigLoadReducer;
+	setDataDirectoryTask: DataDirectorySetReducer;
 }
 
 interface DispatchProps {
-	handleConfigLoad: (payload: ConfigLoadPayLoad) => void;
+	handleSetDataDirectory: (payload: DataDirectorySetPayLoad) => void;
 }
 
 interface OwnProps {
@@ -36,10 +41,12 @@ type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
 class App extends React.Component<LocalProps, any> {
 	public componentDidMount() {
-		console.log('mounted');
-		this.props.handleConfigLoad({
-			path: '/Users/danu/.evmlc/config.toml'
-		});
+		// @ts-ignore
+		const defaultPath = path.join(window.require('os').homedir(), '.evmlc');
+
+		this.props.handleSetDataDirectory(
+			this.props.setDataDirectoryTask.response || defaultPath
+		);
 	}
 
 	public render() {
@@ -63,12 +70,14 @@ class App extends React.Component<LocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	configLoadTask: store.config.load
+	setDataDirectoryTask: store.dataDirectory.setDirectory
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleConfigLoad: payload =>
-		dispatch(redux.actions.config.load.handlers.init(payload))
+	handleSetDataDirectory: payload =>
+		dispatch(
+			redux.actions.dataDirectory.setDirectory.handlers.init(payload)
+		)
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

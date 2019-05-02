@@ -1,6 +1,6 @@
 import { ConfigSchema } from 'evm-lite-lib';
 
-import ActionSet, { ActionState } from '../common/ActionSet';
+import AsyncActionSet, { AsyncActionState } from '../common/AsyncActionSet';
 
 export interface ConfigLoadPayLoad {
 	path: string;
@@ -10,12 +10,12 @@ export interface ConfigSavePayLoad extends ConfigLoadPayLoad {
 	configSchema: ConfigSchema;
 }
 
-interface ActionStateSchema {
-	load: ActionState<ConfigLoadPayLoad, ConfigSchema, string>;
-	save: ActionState<ConfigSavePayLoad, string, string>;
+interface AsyncActionStateSchema {
+	load: AsyncActionState<ConfigLoadPayLoad, ConfigSchema, string>;
+	save: AsyncActionState<ConfigSavePayLoad, string, string>;
 }
 
-class Configuration extends ActionSet<ActionStateSchema> {
+class Configuration extends AsyncActionSet<AsyncActionStateSchema> {
 	constructor() {
 		super(Configuration.name);
 

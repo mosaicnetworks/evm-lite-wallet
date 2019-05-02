@@ -2,7 +2,7 @@ import { put } from 'redux-saga/effects';
 
 import { Keystore as EVMLKeystore } from 'evm-lite-lib';
 
-import { BaseAction } from '../../common/ActionSet';
+import { BaseAction } from '../../common/AsyncActionSet';
 
 import Accounts, { AccountsFetchAllPayLoad } from '../../actions/Accounts';
 

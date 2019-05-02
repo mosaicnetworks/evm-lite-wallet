@@ -1,16 +1,16 @@
-import ActionSet from '../ActionSet';
+import ActionSet from '../AsyncActionSet';
 
-export interface IBasicReducer<I, S, F> {
+export interface IAsyncReducer<I, S, F> {
 	payload: I | null;
 	isLoading: boolean;
 	response: S | null;
 	error: F | null;
 }
 
-const BasicReducerFactory = <A extends ActionSet<any>, I, S, F>(
+const AsyncReducer = <A extends ActionSet<any>, I, S, F>(
 	instance: A,
 	prefix: string,
-	initial?: IBasicReducer<I, S, F>
+	initial?: IAsyncReducer<I, S, F>
 ) => {
 	const start = initial || {
 		payload: null,
@@ -19,7 +19,7 @@ const BasicReducerFactory = <A extends ActionSet<any>, I, S, F>(
 		error: null
 	};
 
-	return (state = start, action: any): IBasicReducer<I, S, F> => {
+	return (state = start, action: any): IAsyncReducer<I, S, F> => {
 		switch (action.type) {
 			case instance.actionStates[prefix].init:
 				return {
@@ -52,4 +52,4 @@ const BasicReducerFactory = <A extends ActionSet<any>, I, S, F>(
 	};
 };
 
-export default BasicReducerFactory;
+export default AsyncReducer;

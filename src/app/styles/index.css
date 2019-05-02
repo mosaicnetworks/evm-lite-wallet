@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 
+* {
+	border-color: #fafafa !important;
+}
 body {
 	margin: 0;
 	padding: 0;
@@ -19,4 +22,8 @@ body {
 .content {
 	padding-left: 20px !important;
 	padding-right: 20px !important;
+}
+
+.ui.blue {
+	background: rgba(0, 175, 239, 1) !important;
 }

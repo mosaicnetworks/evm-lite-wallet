@@ -1,15 +1,15 @@
 import { combineReducers } from 'redux';
 
-import { IBasicReducer } from '../common/reducers/BaseReducer';
+import { IAsyncReducer } from '../common/reducers/AsyncReducer';
 
 import POA, { POANominatePayLoad, POAVotePayLoad } from '../actions/POA';
 
-export type POANominateReducer = IBasicReducer<
+export type POANominateReducer = IAsyncReducer<
 	POANominatePayLoad,
 	string,
 	string
 >;
-export type POAVoteReducer = IBasicReducer<POAVotePayLoad, string, string>;
+export type POAVoteReducer = IAsyncReducer<POAVotePayLoad, string, string>;
 
 export interface IPOAReducer {
 	nominate: POANominateReducer;

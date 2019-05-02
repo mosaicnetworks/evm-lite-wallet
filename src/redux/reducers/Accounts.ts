@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 import { BaseAccount } from 'evm-lite-lib';
 
-import { IBasicReducer } from '../common/reducers/BaseReducer';
+import { IAsyncReducer } from '../common/reducers/AsyncReducer';
 
 import Accounts, { AccountsFetchAllPayLoad } from '../actions/Accounts';
 
-export type AccountsFetchAllReducer = IBasicReducer<
+export type AccountsFetchAllReducer = IAsyncReducer<
 	AccountsFetchAllPayLoad,
 	BaseAccount[],
 	string

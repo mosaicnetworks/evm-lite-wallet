@@ -1,4 +1,4 @@
-import ActionSet, { ActionState } from '../common/ActionSet';
+import AsyncActionSet, { AsyncActionState } from '../common/AsyncActionSet';
 
 export interface POANominatePayLoad {
 	nominee: string;
@@ -10,12 +10,12 @@ export interface POAVotePayLoad {
 	verdict: boolean;
 }
 
-interface ActionStateSchema {
-	nominate: ActionState<POANominatePayLoad, string, string>;
-	vote: ActionState<POAVotePayLoad, string, string>;
+interface AsyncActionStateSchema {
+	nominate: AsyncActionState<POANominatePayLoad, string, string>;
+	vote: AsyncActionState<POAVotePayLoad, string, string>;
 }
 
-export default class POA extends ActionSet<ActionStateSchema> {
+export default class POA extends AsyncActionSet<AsyncActionStateSchema> {
 	constructor() {
 		super(POA.name);
 

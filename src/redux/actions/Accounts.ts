@@ -1,6 +1,6 @@
 import { BaseAccount } from 'evm-lite-lib';
 
-import ActionSet, { ActionState } from '../common/ActionSet';
+import AsyncActionSet, { AsyncActionState } from '../common/AsyncActionSet';
 
 export interface AccountsFetchAllPayLoad {
 	keystoreDirectory: string;
@@ -38,16 +38,16 @@ export interface AccountsTransferPayLoad {
 
 // Framework
 
-interface ActionStateSchema {
-	fetchAll: ActionState<AccountsFetchAllPayLoad, any[], string>;
-	fetchOne: ActionState<AccountsFetchOnePayLoad, any[], string>;
-	decrypt: ActionState<AccountsDecryptPayload, string, string>;
-	transfer: ActionState<AccountsTransferPayLoad, string, string>;
-	update: ActionState<AccountsUpdatePayLoad, BaseAccount, string>;
-	create: ActionState<AccountsCreatePayLoad, BaseAccount, string>;
+interface AsyncActionStateSchema {
+	fetchAll: AsyncActionState<AccountsFetchAllPayLoad, any[], string>;
+	fetchOne: AsyncActionState<AccountsFetchOnePayLoad, any[], string>;
+	decrypt: AsyncActionState<AccountsDecryptPayload, string, string>;
+	transfer: AsyncActionState<AccountsTransferPayLoad, string, string>;
+	update: AsyncActionState<AccountsUpdatePayLoad, BaseAccount, string>;
+	create: AsyncActionState<AccountsCreatePayLoad, BaseAccount, string>;
 }
 
-export default class Accounts extends ActionSet<ActionStateSchema> {
+export default class Accounts extends AsyncActionSet<AsyncActionStateSchema> {
 	constructor() {
 		super(Accounts.name);
 

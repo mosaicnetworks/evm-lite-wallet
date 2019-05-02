@@ -1,10 +1,9 @@
 import { fork, join, put } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
 
 import { Config, ConfigSchema } from 'evm-lite-lib';
 
 import { accountsFetchAllWorker } from './Accounts';
-import { BaseAction } from '../../common/ActionSet';
+import { BaseAction } from '../../common/AsyncActionSet';
 
 import ConfigurationActions, {
 	ConfigLoadPayLoad,
@@ -24,6 +23,8 @@ export function* configurationReadWorker(
 		const evmlConfig: Config = new Config(action.payload.path);
 		const data: ConfigSchema = yield evmlConfig.load();
 
+		yield put(success(data));
+
 		if (data) {
 			yield join(
 				yield fork(
@@ -34,8 +35,6 @@ export function* configurationReadWorker(
 				)
 			);
 		}
-
-		yield put(success(data));
 
 		return data;
 	} catch (e) {
@@ -49,8 +48,6 @@ export function* configurationSaveWorker(
 	action: BaseAction<ConfigSavePayLoad>
 ) {
 	const { success, failure, reset } = config.actionStates.save.handlers;
-
-	yield delay(1000);
 
 	try {
 		const evmlConfig: Config = new Config(action.payload.path);

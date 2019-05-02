@@ -1,9 +1,10 @@
 import * as React from 'react';
 
 import { connect } from 'react-redux';
-import { Button, Table, Header } from 'semantic-ui-react';
+import { Button, Card, Header, Icon } from 'semantic-ui-react';
 
 import { Store } from '../redux';
+import { NomineeElection, Validator } from '../poa/State';
 
 import StatusBar from '../components/StatusBar';
 
@@ -13,9 +14,42 @@ interface StoreProps {
 	empty?: undefined;
 }
 
+interface State {
+	validators: Validator[];
+	elections: NomineeElection[];
+}
+
 type LocalProps = StoreProps;
 
-class POA extends React.Component<LocalProps, any> {
+class POA extends React.Component<LocalProps, State> {
+	public state = {
+		validators: [
+			{
+				moniker: 'Giacomo',
+				address: '0x32Be343B94f860124dC4fEe278FDCBD38C102D88'
+			},
+			{
+				moniker: 'Kevin',
+				address: '0xC40352A3840f05233DF3cEd4740897973e321404'
+			},
+			{
+				moniker: 'Jon',
+				address: '0x1EE60b5e39Cd9652Fe0eDb11ceC62CaF5FaBD6C9'
+			}
+		],
+		elections: [
+			{
+				moniker: 'Danu',
+				address: '0x873375ac5181D80404A330c97f08704273b3b865',
+				nominator: {
+					moniker: 'Giacomo',
+					address: '0x32Be343B94f860124dC4fEe278FDCBD38C102D88'
+				},
+				votes: []
+			}
+		]
+	};
+
 	public renderElections = () => {
 		// pass
 	};
@@ -32,44 +66,83 @@ class POA extends React.Component<LocalProps, any> {
 				<br />
 				<br />
 				<div>
-					<Header as="h4" content="Awaiting Election Results" />
-					<Table celled={true}>
-						<Table.Header>
-							<Table.Row>
-								<Table.HeaderCell>Moniker</Table.HeaderCell>
-								<Table.HeaderCell>Address</Table.HeaderCell>
-								<Table.HeaderCell>Actions</Table.HeaderCell>
-							</Table.Row>
-						</Table.Header>
-
-						<Table.Body>
-							<Table.Row disabled={true}>
-								<Table.Cell>Jamie</Table.Cell>
-								<Table.Cell>Approved</Table.Cell>
-								<Table.Cell>Requires call</Table.Cell>
-							</Table.Row>
-							<Table.Row>
-								<Table.Cell>John</Table.Cell>
-								<Table.Cell>Selected</Table.Cell>
-								<Table.Cell>None</Table.Cell>
-							</Table.Row>
-							<Table.Row>
-								<Table.Cell>Jamie</Table.Cell>
-								<Table.Cell>Approved</Table.Cell>
-								<Table.Cell>Requires call</Table.Cell>
-							</Table.Row>
-							<Table.Row>
-								<Table.Cell disabled={true}>Jill</Table.Cell>
-								<Table.Cell>Approved</Table.Cell>
-								<Table.Cell>None</Table.Cell>
-							</Table.Row>
-						</Table.Body>
-					</Table>
+					<Header as="h4" content="Awaiting Your Decision" />
+					<Card.Group>
+						{this.state.elections.map(election => {
+							return (
+								<Card key={election.address}>
+									<Card.Content>
+										<Card.Header>
+											{election.moniker}
+										</Card.Header>
+										<Card.Meta>
+											{election.address.substring(0, 30)}
+											...
+										</Card.Meta>
+										<Card.Description>
+											{election.moniker} was nominated by{' '}
+											<strong>
+												{election.nominator.moniker}
+											</strong>
+										</Card.Description>
+									</Card.Content>
+									<Card.Content extra={true}>
+										<div className="ui two buttons">
+											<Button basic={true} color="green">
+												Approve
+											</Button>
+											<Button basic={true} color="red">
+												Decline
+											</Button>
+										</div>
+									</Card.Content>
+								</Card>
+							);
+						})}
+					</Card.Group>
 				</div>
 				<br />
 				<br />
+				<div>
+					<Header as="h4" content="On-Going Elections" />
+					<Card.Group>
+						<Card>
+							<Card.Content header="About Amy" />
+							<Card.Content
+								description={
+									'Amy is a violinist with 2 years experience in the wedding industry.'
+								}
+							/>
+							<Card.Content extra={true}>
+								<Icon name="circle" color={'green'} />4
+							</Card.Content>
+						</Card>
+					</Card.Group>
+				</div>
+				<br />
+				<br />
+				<div>
+					<Header as="h4" content="Existing Validators" />
+					<Card.Group>
+						{this.state.validators.map(validator => {
+							return (
+								<Card key={validator.address}>
+									<Card.Content>
+										<Card.Header>
+											{validator.moniker}
+										</Card.Header>
+										<Card.Meta>
+											{validator.address.substring(0, 30)}
+											...
+										</Card.Meta>
+									</Card.Content>
+								</Card>
+							);
+						})}
+					</Card.Group>
+				</div>
 				<StatusBar>
-					<Button color="green" basic={false}>
+					<Button color="blue" basic={false}>
 						Nominate
 					</Button>
 				</StatusBar>

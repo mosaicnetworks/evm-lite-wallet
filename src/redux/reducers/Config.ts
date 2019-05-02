@@ -1,19 +1,19 @@
 import { combineReducers } from 'redux';
 import { ConfigSchema } from 'evm-lite-lib';
 
-import { IBasicReducer } from '../common/reducers/BaseReducer';
+import { IAsyncReducer } from '../common/reducers/AsyncReducer';
 
 import Configuration, {
 	ConfigLoadPayLoad,
 	ConfigSavePayLoad
 } from '../actions/Config';
 
-export type ConfigLoadReducer = IBasicReducer<
+export type ConfigLoadReducer = IAsyncReducer<
 	ConfigLoadPayLoad,
 	ConfigSchema,
 	string
 >;
-export type ConfigSaveReducer = IBasicReducer<
+export type ConfigSaveReducer = IAsyncReducer<
 	ConfigSavePayLoad,
 	string,
 	string
