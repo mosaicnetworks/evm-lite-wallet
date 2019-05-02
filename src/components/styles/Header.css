@@ -6,7 +6,7 @@
 	z-index: 2000;
 	box-shadow: 0 4px 20px -6px #f1f1f1 !important;
 	width: 100% !important;
-	margin-bottom: 20px !important;
+	margin-bottom: 30px !important;
 }
 
 .logo {
@@ -37,6 +37,16 @@
 	display: inline-block;
 	padding: 0 20px;
 	color: #333;
+}
+
+.links li a:hover {
+	background: #fcfcfc !important;
+	color: black !important;
+}
+
+.is-active {
+	background: #fcfcfc !important;
+	color: black !important;
 }
 
 .links li a:hover {

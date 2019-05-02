@@ -7,6 +7,8 @@ import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Store, ConfigLoadReducer, ConfigLoadPayLoad } from '../redux';
 
 import Accounts from '../pages/Accounts';
+import POA from '../pages/POA';
+
 import Account from '../components/Account';
 import Wrapper from '../components/Wrapper';
 
@@ -51,6 +53,7 @@ class App extends React.Component<LocalProps, any> {
 								path="/account/:address"
 								component={Account}
 							/>
+							<Route path="/poa" component={POA} />
 						</div>
 					</Wrapper>
 				</React.Fragment>

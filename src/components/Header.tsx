@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Link } from 'react-router-dom';
+import { NavLink as Link } from 'react-router-dom';
 import { Container, Icon } from 'semantic-ui-react';
 
 import logo from '../assets/logo.png';
@@ -27,7 +27,14 @@ class Header extends React.Component<LocalProps, any> {
 					</div>
 					<div className="links">
 						<li>
-							<Link to="/">
+							<Link activeClassName="is-active" to="/poa">
+								<Icon
+									size={'large'}
+									color={'black'}
+									name="connectdevelop"
+								/>
+							</Link>
+							<Link activeClassName="" to="/">
 								<Icon
 									size={'large'}
 									color={'black'}

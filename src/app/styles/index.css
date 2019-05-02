@@ -1,9 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 
-* {
-	border: none !important;
-}
-
 body {
 	margin: 0;
 	padding: 0;
@@ -12,10 +8,15 @@ body {
 }
 
 .card {
-	border: 1px solid #fafafa !important;
+	border: 1px solid #fefefe !important;
 	box-shadow: 0 4px 20px -6px #eee !important;
 }
 
 .cards {
 	margin: 0 !important;
+}
+
+.content {
+	padding-left: 20px !important;
+	padding-right: 20px !important;
 }

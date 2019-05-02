@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Button, Popup } from 'semantic-ui-react';
+import { Button } from 'semantic-ui-react';
 
 import './styles/LoadingButton.css';
 
@@ -20,23 +20,17 @@ type LocalProps = OwnProps & AlertProps;
 
 class LoadingButton extends React.Component<LocalProps, any> {
 	public render() {
-		const { isLoading, onClickHandler, right, content } = this.props;
+		const { isLoading, onClickHandler, right } = this.props;
 
 		return (
 			<React.Fragment>
-				<Popup
-					trigger={
-						<Button
-							className={right ? 'right' : ''}
-							onClick={onClickHandler}
-							icon={'circle notch'}
-							loading={isLoading}
-							disabled={isLoading}
-							color={'blue'}
-						/>
-					}
-					content={content}
-					basic={true}
+				<Button
+					className={right ? 'right' : ''}
+					onClick={onClickHandler}
+					icon={'circle notch'}
+					loading={isLoading}
+					disabled={isLoading}
+					color={'blue'}
 				/>
 			</React.Fragment>
 		);
