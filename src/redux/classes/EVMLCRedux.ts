@@ -1,3 +1,5 @@
+import { IAsyncReducer } from '../common/reducers/AsyncReducer';
+
 import getStores from '../store/Store';
 
 import Accounts from '../actions/Accounts';
@@ -44,5 +46,17 @@ export default class EVMLCRedux {
 			store: this.defaultStores.store,
 			persistor: this.defaultStores.persistor
 		};
+	}
+
+	public promiseWrapper<I, S, F>(reducer: IAsyncReducer<I, S, F>) {
+		return new Promise<S>((resolve, reject) => {
+			if (!reducer.isLoading) {
+				if (reducer.response) {
+					resolve(reducer.response);
+				} else if (reducer.error) {
+					reject(reducer.error);
+				}
+			}
+		});
 	}
 }

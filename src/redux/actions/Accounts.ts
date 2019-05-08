@@ -36,8 +36,6 @@ export interface AccountsTransferPayLoad {
 	password: string;
 }
 
-// Framework
-
 interface AsyncActionStateSchema {
 	fetchAll: AsyncActionState<AccountsFetchAllPayLoad, any[], string>;
 	fetchOne: AsyncActionState<AccountsFetchOnePayLoad, any[], string>;

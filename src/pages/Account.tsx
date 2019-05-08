@@ -8,14 +8,15 @@ import {
 	Statistic,
 	Divider,
 	Table,
-	Icon
+	Label
 } from 'semantic-ui-react';
 
-import { BaseAccount } from 'evm-lite-lib';
+import { BaseAccount, Static } from 'evm-lite-lib';
 
 import { Store } from '../redux';
 
-// import LoadingButton from '../components/LoadingButton';
+import LoadingButton from '../components/LoadingButton';
+import StatusBar from '../components/StatusBar';
 
 import './styles/Account.css';
 
@@ -33,11 +34,12 @@ interface DispatchProps {
 
 interface OwnProps {
 	account?: BaseAccount;
+	match: any;
 }
 
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
-class Accounts extends React.Component<LocalProps, any> {
+class Account extends React.Component<LocalProps, any> {
 	public fetchAccount = () => {
 		// pass
 	};
@@ -45,30 +47,14 @@ class Accounts extends React.Component<LocalProps, any> {
 	public render() {
 		return (
 			<React.Fragment>
-				<div className="action-buttons">
-					<Button basic={true} color={'green'} content={'Transfer'} />
-					<Button
-						basic={true}
-						color={'yellow'}
-						content={'Update Password'}
-					/>
-					<Button basic={true} icon={'file'} color={'grey'} />
-					{/* <LoadingButton */}
-					{/* isLoading={false} */}
-					{/* onClickHandler={this.fetchAccount} */}
-					{/* right={true} */}
-					{/* /> */}
-				</div>
 				<div className="page-padding">
 					<Header as="h2" className={'address-heading'}>
-						0x
-						{/* {this.props.match.params.address.toUpperCase()} */}
+						{Static.cleanAddress(this.props.match.params.address)}
 						<Header.Subheader>
 							Manage your account and transfer funds from here.
 						</Header.Subheader>
 					</Header>
 					<br />
-					<Divider clearing={true} />
 					<br />
 					<div>
 						<Statistic.Group widths="two" size={'small'}>
@@ -83,49 +69,59 @@ class Accounts extends React.Component<LocalProps, any> {
 						</Statistic.Group>
 					</div>
 					<br />
-					<Divider clearing={true} />
+					<Divider clearing={true} hidden={true} />
 					<br />
 					<div>
 						<Table celled={true} basic="very">
 							<Table.Header>
 								<Table.Row>
-									<Table.HeaderCell>Name</Table.HeaderCell>
+									<Table.HeaderCell>
+										To / Amount
+									</Table.HeaderCell>
 									<Table.HeaderCell>Status</Table.HeaderCell>
-									<Table.HeaderCell>Notes</Table.HeaderCell>
+									<Table.HeaderCell>Receipt</Table.HeaderCell>
 								</Table.Row>
 							</Table.Header>
 
 							<Table.Body>
 								<Table.Row>
-									<Table.Cell>No Name Specified</Table.Cell>
-									<Table.Cell>Unknown</Table.Cell>
-									<Table.Cell>None</Table.Cell>
-								</Table.Row>
-								<Table.Row warning={true}>
-									<Table.Cell>Jimmy</Table.Cell>
 									<Table.Cell>
-										<Icon name="attention" />
-										Requires Action
+										<Label
+											className="amount_label"
+											color="green"
+										>
+											200
+										</Label>
+										{Static.cleanAddress(
+											this.props.match.params.address
+										)}
 									</Table.Cell>
-									<Table.Cell>None</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell>Jamie</Table.Cell>
-									<Table.Cell>Unknown</Table.Cell>
-									<Table.Cell warning={true}>
-										<Icon name="attention" />
-										Hostile
+									<Table.Cell>
+										<Label color="green">Success</Label>
 									</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell>Jill</Table.Cell>
-									<Table.Cell>Unknown</Table.Cell>
 									<Table.Cell>None</Table.Cell>
 								</Table.Row>
 							</Table.Body>
 						</Table>
 					</div>
 				</div>
+				<StatusBar>
+					<Button
+						basic={false}
+						color={'green'}
+						content={'Transfer'}
+					/>
+					<Button
+						basic={false}
+						color={'yellow'}
+						content={'Update Password'}
+					/>
+					<Button basic={false} icon={'file'} color={'orange'} />
+					<LoadingButton
+						onClickHandler={this.fetchAccount}
+						isLoading={false}
+					/>
+				</StatusBar>
 			</React.Fragment>
 		);
 	}
@@ -138,4 +134,4 @@ const mapsDispatchToProps = (dispatch: any): DispatchProps => ({});
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
-)(withAlert<AlertProps>(Accounts));
+)(withAlert<AlertProps>(Account));

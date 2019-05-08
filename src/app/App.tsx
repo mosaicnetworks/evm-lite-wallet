@@ -11,10 +11,12 @@ import {
 	DataDirectorySetPayLoad
 } from '../redux';
 
+import ReduxSagaAlert from '../poa/alerts';
+
 import Accounts from '../pages/Accounts';
 import POA from '../pages/POA';
 
-import Account from '../components/Account';
+import Account from '../pages/Account';
 import Wrapper from '../components/Wrapper';
 
 import './styles/App.css';
@@ -40,6 +42,15 @@ interface OwnProps {
 type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
 class App extends React.Component<LocalProps, any> {
+	public componentWillUpdate(
+		nextProps: Readonly<LocalProps>,
+		nextState: Readonly<any>,
+		nextContext: any
+	): void {
+		ReduxSagaAlert.wrap(nextProps.setDataDirectoryTask, (type, message) => {
+			this.props.alert[type](message);
+		});
+	}
 	public componentDidMount() {
 		// @ts-ignore
 		const defaultPath = path.join(window.require('os').homedir(), '.evmlc');

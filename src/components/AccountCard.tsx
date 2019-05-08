@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Label } from 'semantic-ui-react';
 
-import { BaseAccount } from 'evm-lite-lib';
+import { BaseAccount, Static } from 'evm-lite-lib';
 
 import './styles/AccountCard.css';
 
@@ -24,11 +24,11 @@ class Account extends React.Component<LocalProps, any> {
 
 	public render() {
 		return (
-			<Card fluid={true}>
+			<Card fluid={false}>
 				<Card.Content className={'sticky-account-heading'}>
 					<Card.Header className={'address'}>
 						<Link to={'/account/' + this.props.account.address}>
-							{this.props.account.address}
+							{Static.cleanAddress(this.props.account.address)}
 						</Link>
 					</Card.Header>
 				</Card.Content>
@@ -36,7 +36,7 @@ class Account extends React.Component<LocalProps, any> {
 					extra={true}
 					className={'sticky-account-heading-buttons'}
 				>
-					<div className="ui small one buttons">
+					<div className="ui small two buttons">
 						<Label color={'green'} basic={true}>
 							Balance
 							<Label.Detail>

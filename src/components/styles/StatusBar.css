@@ -1,10 +1,10 @@
 .status-bar {
 	border-top: 1px solid #eee !important;
-	background: #fefefe !important;
+	background: #fcfcfc !important;
 	width: 100% !important;
 	position: fixed;
 	bottom: 0 !important;
-	padding: 8px 30px;
+	padding: 10px 20px;
 	text-align: right !important;
 	z-index: 100000 !important;
 }

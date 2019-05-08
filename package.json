@@ -7,6 +7,7 @@
 		"react": "^16.6.1",
 		"react-alert": "^4.0.4",
 		"react-alert-template-basic": "^1.0.0",
+		"react-alert-template-oldschool-dark": "^1.0.1",
 		"react-dom": "^16.6.1",
 		"react-transition-group": "^2.5.2",
 		"redux-persist": "^5.10.0",

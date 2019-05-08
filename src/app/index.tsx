@@ -15,7 +15,8 @@ import './styles/index.css';
 
 const options = {
 	timeout: 5000,
-	zIndex: 3000000
+	zIndex: 10000000,
+	background: '#FFF !important'
 };
 
 ReactDOM.render(

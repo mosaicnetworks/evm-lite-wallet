@@ -1,12 +1,10 @@
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Roboto');
 
-* {
-	border-color: #fafafa !important;
-}
 body {
+	font-family: 'Open Sans', sans-serif !important;
 	margin: 0;
 	padding: 0;
-	background: #fcfcfc !important;
+	background: #fefefe !important;
 	padding-bottom: 100px !important;
 }
 
@@ -27,3 +25,4 @@ body {
 .ui.blue {
 	background: rgba(0, 175, 239, 1) !important;
 }
+

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { NavLink as Link } from 'react-router-dom';
 import { Container, Icon } from 'semantic-ui-react';
 
-import logo from '../assets/logo.png';
+import logo from '../assets/monet_logo.png';
 
 import './styles/Header.css';
 
@@ -34,7 +34,11 @@ class Header extends React.Component<LocalProps, any> {
 									name="connectdevelop"
 								/>
 							</Link>
-							<Link activeClassName="" to="/">
+							<Link
+								exact={true}
+								activeClassName="is-active"
+								to="/"
+							>
 								<Icon
 									size={'large'}
 									color={'black'}

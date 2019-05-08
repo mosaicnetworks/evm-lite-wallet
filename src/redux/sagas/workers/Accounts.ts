@@ -1,8 +1,10 @@
-import { put } from 'redux-saga/effects';
+import { put, select } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
 
-import { Keystore as EVMLKeystore } from 'evm-lite-lib';
+import { Keystore as EVMLKeystore, EVMLC } from 'evm-lite-lib';
 
 import { BaseAction } from '../../common/AsyncActionSet';
+import { Store } from '../../store/Store';
 
 import Accounts, { AccountsFetchAllPayLoad } from '../../actions/Accounts';
 
@@ -14,11 +16,24 @@ export function* accountsFetchAllWorker(
 	const { success, failure } = accounts.actionStates.fetchAll.handlers;
 
 	try {
+		let evmlc;
+
+		const state: Store = yield select();
+		const config = state.config.load.response;
 		const keystore: EVMLKeystore = new EVMLKeystore(
 			action.payload.keystoreDirectory
 		);
 
-		yield put(success(yield keystore.list()));
+		if (config) {
+			evmlc = new EVMLC(config.connection.host, config.connection.port, {
+				from: config.defaults.from,
+				gas: config.defaults.gas,
+				gasPrice: config.defaults.gasPrice
+			});
+		}
+
+		yield delay(2000);
+		yield put(success(yield keystore.list(evmlc)));
 	} catch (e) {
 		yield put(failure('_SAGA_ERROR_' + e));
 	}

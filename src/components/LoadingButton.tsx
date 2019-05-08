@@ -11,21 +11,19 @@ interface AlertProps {
 
 interface OwnProps {
 	isLoading: boolean;
-	right: boolean;
 	onClickHandler: any;
-	content: string;
 }
 
 type LocalProps = OwnProps & AlertProps;
 
 class LoadingButton extends React.Component<LocalProps, any> {
 	public render() {
-		const { isLoading, onClickHandler, right } = this.props;
+		const { isLoading, onClickHandler } = this.props;
 
 		return (
 			<React.Fragment>
 				<Button
-					className={right ? 'right' : ''}
+					className={''}
 					onClick={onClickHandler}
 					icon={'circle notch'}
 					loading={isLoading}
