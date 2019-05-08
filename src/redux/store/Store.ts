@@ -10,6 +10,9 @@ import ConfigSagas from '../sagas/watchers/Config';
 import DataDirectorySagas from '../sagas/watchers/DataDirectory';
 
 import AccountsRootReducer, { IAccountsReducer } from '../reducers/Accounts';
+import NotificationsReducer, {
+	INotificationsReducer
+} from '../reducers/Notifications';
 import POARootReducer, { IPOAReducer } from '../reducers/POA';
 import ConfigRootReducer, { IConfigReducer } from '../reducers/Config';
 import DataDirectoryRootReducer, {
@@ -17,6 +20,7 @@ import DataDirectoryRootReducer, {
 } from '../reducers/DataDirectory';
 
 export interface Store {
+	notifications: INotificationsReducer;
 	accounts: IAccountsReducer;
 	config: IConfigReducer;
 	dataDirectory: IDataDirectoryReducer;
@@ -30,6 +34,7 @@ const persistConfig: PersistConfig = {
 };
 
 const rootReducer = combineReducers({
+	notifications: NotificationsReducer,
 	dataDirectory: DataDirectoryRootReducer,
 	accounts: AccountsRootReducer,
 	config: ConfigRootReducer,

@@ -11,6 +11,8 @@ import {
 	ConfigLoadReducer
 } from '../redux';
 
+import { NotificationPayLoad } from '../redux/actions/Notifications';
+
 import redux from '../redux.config';
 
 import LoadingButton from '../components/LoadingButton';
@@ -30,6 +32,7 @@ interface StoreProps {
 
 interface DispatchProps {
 	handleFetchAllAccounts: (payload: AccountsFetchAllPayLoad) => void;
+	appendNewNotification: (payload: NotificationPayLoad) => void;
 }
 
 interface OwnProps {
@@ -40,9 +43,11 @@ type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
 class Accounts extends React.Component<LocalProps, any> {
 	public handleShowAlert = () => {
-		this.props.alert.error(
-			'A connection to a node could not be established.'
-		);
+		this.props.appendNewNotification({
+			type: 'success',
+			topic: 'accounts',
+			message: 'Accounts loaded!'
+		});
 	};
 
 	public handleFetchAllAccounts = () => {
@@ -75,7 +80,7 @@ class Accounts extends React.Component<LocalProps, any> {
 				<StatusBar>
 					<LoadingButton
 						isLoading={this.props.accountsFetchAllTask.isLoading}
-						onClickHandler={this.handleFetchAllAccounts}
+						onClickHandler={this.handleShowAlert}
 					/>
 				</StatusBar>
 			</React.Fragment>
@@ -90,7 +95,11 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
 	handleFetchAllAccounts: payload =>
-		dispatch(redux.actions.accounts.fetchAll.handlers.init(payload))
+		dispatch(redux.actions.accounts.fetchAll.handlers.init(payload)),
+	appendNewNotification: payload =>
+		dispatch(
+			redux.actions.notifications.notification.handlers.append(payload)
+		)
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

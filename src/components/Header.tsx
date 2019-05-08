@@ -3,7 +3,7 @@ import * as React from 'react';
 import { NavLink as Link } from 'react-router-dom';
 import { Container, Icon } from 'semantic-ui-react';
 
-import logo from '../assets/monet_logo.png';
+import MONET_LOGO from '../assets/monet_logo.png';
 
 import './styles/Header.css';
 
@@ -22,7 +22,7 @@ class Header extends React.Component<LocalProps, any> {
 				<div className="header-main">
 					<div className="logo">
 						<Link to="/">
-							<img src={logo} width={40} />
+							<img src={MONET_LOGO} width={40} />
 						</Link>
 					</div>
 					<div className="links">

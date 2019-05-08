@@ -55,7 +55,7 @@ export default abstract class AsyncActionSet<AsyncActionStateSchema> {
 				success: '',
 				failure: '',
 				reset: '',
-				handlers: {} as AsyncActionStateSchema,
+				handlers: {},
 				reducer: null
 			};
 

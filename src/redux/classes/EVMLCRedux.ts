@@ -5,6 +5,7 @@ import getStores from '../store/Store';
 import Accounts from '../actions/Accounts';
 import Config from '../actions/Config';
 import DataDirectory from '../actions/DataDirectory';
+import Notifications from '../actions/Notifications';
 
 export interface EVMLiteReduxConfig {
 	host: 'localhost' | '127.0.0.1' | string;
@@ -22,6 +23,7 @@ export default class EVMLCRedux {
 	private readonly accounts: Accounts;
 	private readonly config: Config;
 	private readonly dataDirectory: DataDirectory;
+	private readonly notifications: Notifications;
 
 	private readonly defaultStores: Stores;
 
@@ -31,10 +33,12 @@ export default class EVMLCRedux {
 		this.accounts = new Accounts();
 		this.config = new Config();
 		this.dataDirectory = new DataDirectory();
+		this.notifications = new Notifications();
 	}
 
 	public get actions() {
 		return {
+			notifications: this.notifications.allStates,
 			accounts: this.accounts.actionStates,
 			config: this.config.actionStates,
 			dataDirectory: this.dataDirectory.actionStates
