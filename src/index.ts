@@ -4,6 +4,31 @@ import * as electron from 'electron';
 const app = electron.app;
 let main: electron.BrowserWindow | null;
 
+// const createMenu = () => {
+// 	const { Menu } = electron;
+// 	const template = [
+// 		{
+// 			label: 'Edit',
+// 			submenu: [
+// 				{ role: 'cut' },
+// 				{ role: 'copy' },
+// 				{ role: 'paste' },
+// 				{ role: 'selectall' }
+// 			]
+// 		},
+// 		{
+// 			label: 'View',
+// 			submenu: [
+// 				{ role: 'reload' },
+// 				{ role: 'forcereload' },
+// 				{ role: 'toggledevtools' }
+// 			]
+// 		}
+// 	];
+// 	const menu = Menu.buildFromTemplate(template);
+// 	Menu.setApplicationMenu(menu);
+// };
+
 function createWindow() {
 	const icon = electron.nativeImage.createFromPath(
 		path.join(__dirname, 'src/assets/logo.png')
@@ -14,6 +39,9 @@ function createWindow() {
 		height: 820,
 		icon
 	});
+
+	// createMenu();
+
 	// main.loadURL(`file://${__dirname}/index.html`);
 	main.loadURL(`http://localhost:8081`);
 

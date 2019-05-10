@@ -23,12 +23,28 @@ export function* accountsFetchAllWorker(
 			action.payload.keystoreDirectory
 		);
 
+		// Check if default connection details exist
 		if (config) {
-			evmlc = new EVMLC(config.connection.host, config.connection.port, {
-				from: config.defaults.from,
-				gas: config.defaults.gas,
-				gasPrice: config.defaults.gasPrice
-			});
+			const connection = new EVMLC(
+				config.connection.host,
+				config.connection.port,
+				{
+					from: config.defaults.from,
+					gas: config.defaults.gas,
+					gasPrice: config.defaults.gasPrice
+				}
+			);
+
+			try {
+				// Check if there is a valid connection
+				const valid: boolean = yield connection.testConnection();
+
+				if (valid) {
+					evmlc = connection;
+				}
+			} catch (e) {
+				evmlc = undefined;
+			}
 		}
 
 		yield put(success(yield keystore.list(evmlc)));
