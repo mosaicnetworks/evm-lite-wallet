@@ -1,5 +1,4 @@
 import { put, select } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
 
 import { Keystore as EVMLKeystore, EVMLC } from 'evm-lite-lib';
 
@@ -16,7 +15,7 @@ export function* accountsFetchAllWorker(
 	const { success, failure } = accounts.actionStates.fetchAll.handlers;
 
 	try {
-		let evmlc;
+		let evmlc: EVMLC | undefined;
 
 		const state: Store = yield select();
 		const config = state.config.load.response;
@@ -32,7 +31,6 @@ export function* accountsFetchAllWorker(
 			});
 		}
 
-		yield delay(2000);
 		yield put(success(yield keystore.list(evmlc)));
 	} catch (e) {
 		yield put(failure('_SAGA_ERROR_' + e));

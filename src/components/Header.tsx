@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { NavLink as Link } from 'react-router-dom';
-import { Container, Icon } from 'semantic-ui-react';
+import { Container, Icon, Image } from 'semantic-ui-react';
 
 import MONET_LOGO from '../assets/monet_logo.png';
 
@@ -20,9 +20,9 @@ class Header extends React.Component<LocalProps, any> {
 		return (
 			<Container fluid={true}>
 				<div className="header-main">
-					<div className="logo">
+					<div className="logo12">
 						<Link to="/">
-							<img src={MONET_LOGO} width={40} />
+							<Image src={MONET_LOGO} width={40} />
 						</Link>
 					</div>
 					<div className="links">

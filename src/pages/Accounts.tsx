@@ -80,7 +80,7 @@ class Accounts extends React.Component<LocalProps, any> {
 				<StatusBar>
 					<LoadingButton
 						isLoading={this.props.accountsFetchAllTask.isLoading}
-						onClickHandler={this.handleShowAlert}
+						onClickHandler={this.handleFetchAllAccounts}
 					/>
 				</StatusBar>
 			</React.Fragment>
