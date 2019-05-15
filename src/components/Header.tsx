@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import { NavLink as Link } from 'react-router-dom';
-import { Container, Icon, Image } from 'semantic-ui-react';
+import { Container, Icon, Image, Input } from 'semantic-ui-react';
 
-import MONET_LOGO from '../assets/monet_logo.png';
+import * as MONET_LOGO from '../assets/monet_logo.png';
 
 import './styles/Header.css';
 
@@ -26,6 +26,9 @@ class Header extends React.Component<LocalProps, any> {
 						</Link>
 					</div>
 					<div className="links">
+						<li className="search">
+							<Input placeholder="Search" />
+						</li>
 						<li>
 							<Link activeClassName="is-active" to="/poa">
 								<Icon
@@ -34,6 +37,8 @@ class Header extends React.Component<LocalProps, any> {
 									name="connectdevelop"
 								/>
 							</Link>
+						</li>
+						<li>
 							<Link
 								exact={true}
 								activeClassName="is-active"
@@ -43,6 +48,19 @@ class Header extends React.Component<LocalProps, any> {
 									size={'large'}
 									color={'black'}
 									name="bars"
+								/>
+							</Link>
+						</li>
+						<li>
+							<Link
+								activeClassName="is-active"
+								exact={true}
+								to="/notifications"
+							>
+								<Icon
+									size={'large'}
+									color={'blue'}
+									name="bell"
 								/>
 							</Link>
 						</li>

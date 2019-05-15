@@ -9,6 +9,7 @@
 		"react-alert-template-basic": "^1.0.0",
 		"react-alert-template-oldschool-dark": "^1.0.1",
 		"react-dom": "^16.6.1",
+		"react-spring": "^8.0.20",
 		"react-transition-group": "^2.5.2",
 		"redux-persist": "^5.10.0",
 		"redux-saga": "^0.16.2"

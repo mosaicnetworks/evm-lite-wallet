@@ -4,13 +4,15 @@ body {
 	font-family: 'Open Sans', sans-serif !important;
 	margin: 0;
 	padding: 0;
-	background: #fefefe !important;
+	background: #fcfcfc !important;
 	padding-bottom: 100px !important;
 }
 
 .card {
-	border: 1px solid #fefefe !important;
-	box-shadow: 0 4px 20px -6px #eee !important;
+	border-radius: 0 !important;
+	/* border: 1px solid #eee !important; */
+	/* box-shadow: 0 4px 20px -6px #eee !important; */
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important;
 }
 
 .cards {
@@ -26,3 +28,6 @@ body {
 	background: rgba(0, 175, 239, 1) !important;
 }
 
+button.blue {
+	border-bottom: #1d81d1 3px solid !important;
+}

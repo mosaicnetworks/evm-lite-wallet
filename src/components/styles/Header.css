@@ -6,9 +6,8 @@
 	line-height: 70px !important;
 	color: #fff;
 	z-index: 2000;
-	box-shadow: 0 4px 20px -6px #f1f1f1 !important;
+	box-shadow: 0 4px 6px -6px #f1f1f1 !important;
 	width: 100% !important;
-	margin-bottom: 30px !important;
 }
 
 .logo12 {
@@ -17,7 +16,7 @@
 	font-size: 25px;
 	margin-left: 10px;
 	float: left;
-	margin-top: 10px;
+	margin-top: 15px;
 	text-transform: uppercase;
 }
 
@@ -58,4 +57,12 @@
 
 .links li a.active {
 	background: #3157f1;
+}
+
+.links .search {
+	margin-right: 20px !important;
+}
+
+.links .search input {
+	width: 300px !important;
 }
