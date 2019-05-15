@@ -37,8 +37,8 @@ export interface AccountsTransferPayLoad {
 }
 
 interface AsyncActionStateSchema {
-	fetchAll: AsyncActionState<AccountsFetchAllPayLoad, any[], string>;
-	fetchOne: AsyncActionState<AccountsFetchOnePayLoad, any[], string>;
+	fetchAll: AsyncActionState<AccountsFetchAllPayLoad, BaseAccount[], string>;
+	fetchOne: AsyncActionState<AccountsFetchOnePayLoad, BaseAccount, string>;
 	decrypt: AsyncActionState<AccountsDecryptPayload, string, string>;
 	transfer: AsyncActionState<AccountsTransferPayLoad, string, string>;
 	update: AsyncActionState<AccountsUpdatePayLoad, BaseAccount, string>;
@@ -49,6 +49,6 @@ export default class Accounts extends AsyncActionSet<AsyncActionStateSchema> {
 	constructor() {
 		super(Accounts.name);
 
-		this.actions = ['FetchAll'];
+		this.actions = ['FetchAll', 'FetchOne'];
 	}
 }

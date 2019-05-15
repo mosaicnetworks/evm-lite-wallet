@@ -68,7 +68,9 @@ class App extends React.Component<LocalProps, any> {
 						<div>
 							<Route exact={true} path="/" component={Accounts} />
 							<Route
-								path="/account/:address"
+								name="account"
+								exact={true}
+								path="/account/:address/:balance/:nonce"
 								component={Account}
 							/>
 							<Route path="/poa" component={POA} />

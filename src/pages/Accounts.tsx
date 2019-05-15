@@ -55,9 +55,7 @@ class Accounts extends React.Component<LocalProps, State> {
 		totalBalance: 123523432
 	};
 
-	public componentDidMount() {
-		console.log(this.props.accountsFetchAllTask.response);
-	}
+	public componentDidMount() {}
 
 	public handleShowAlert = () => {
 		this.props.alert.info('Testing alert.');

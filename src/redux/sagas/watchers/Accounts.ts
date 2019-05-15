@@ -1,6 +1,9 @@
 import { all, takeLatest } from 'redux-saga/effects';
 
-import { accountsFetchAllWorker } from '../workers/Accounts';
+import {
+	accountsFetchAllWorker,
+	accountsFetchOneWorker
+} from '../workers/Accounts';
 
 import AccountsActions from '../../actions/Accounts';
 
@@ -13,6 +16,13 @@ function* accountsFetchAllWatcher() {
 	);
 }
 
+function* accountsFetchOneWatcher() {
+	yield takeLatest(
+		accounts.actionStates.fetchOne.init,
+		accountsFetchOneWorker
+	);
+}
+
 export default function*() {
-	yield all([accountsFetchAllWatcher()]);
+	yield all([accountsFetchAllWatcher(), accountsFetchOneWatcher()]);
 }

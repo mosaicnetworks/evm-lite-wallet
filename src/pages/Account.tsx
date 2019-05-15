@@ -1,22 +1,23 @@
 import * as React from 'react';
 
 import { connect } from 'react-redux';
+import { Spring, config } from 'react-spring/renderprops';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import {
-	Header,
-	Button,
-	Statistic,
-	Divider,
-	Table,
-	Label
-} from 'semantic-ui-react';
+import { Header } from 'semantic-ui-react';
 
 import { BaseAccount, Static } from 'evm-lite-lib';
 
 import { Store } from '../redux';
+import { AccountsFetchOnePayLoad } from '../redux/actions/Accounts';
+import {
+	AccountsFetchOneReducer,
+	AccountsFetchAllReducer
+} from '../redux/reducers/Accounts';
+import { ConfigLoadReducer } from '../redux/reducers/Config';
 
 import LoadingButton from '../components/LoadingButton';
 import StatusBar from '../components/StatusBar';
+import redux from '../redux.config';
 
 import './styles/Account.css';
 
@@ -25,101 +26,130 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	empty?: null;
+	accountFetchTask: AccountsFetchOneReducer;
+	accountFetchAllTask: AccountsFetchAllReducer;
+	configLoadTask: ConfigLoadReducer;
 }
 
 interface DispatchProps {
-	empty?: null;
+	handleFetchAccount: (payload: AccountsFetchOnePayLoad) => BaseAccount;
 }
 
 interface OwnProps {
 	account?: BaseAccount;
 	match: any;
+	location: any;
+}
+
+interface State {
+	account: BaseAccount;
 }
 
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
-class Account extends React.Component<LocalProps, any> {
-	public fetchAccount = () => {
-		// pass
+function numberWithCommas(x) {
+	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+class Account extends React.Component<LocalProps, State> {
+	public state = {
+		account: {
+			address: this.props.match.params.address,
+			balance: parseInt(
+				this.props.match.params.balance.split(',').join(''),
+				10
+			),
+			nonce: parseInt(this.props.match.params.nonce, 10)
+		}
+	};
+
+	public componentWillReceiveProps(nextProps: LocalProps) {
+		if (
+			nextProps.accountFetchTask.response &&
+			!this.props.accountFetchTask.response
+		) {
+			let newBalance: number = 0;
+			const {
+				address,
+				balance,
+				nonce
+			} = nextProps.accountFetchTask.response;
+
+			if (typeof balance === 'string') {
+				newBalance = parseInt(balance.split(',').join(''), 10);
+			} else {
+				newBalance = balance;
+			}
+
+			this.setState({
+				account: {
+					address,
+					balance: newBalance,
+					nonce
+				}
+			});
+		}
+	}
+
+	public fetchAccount = async () => {
+		if (this.props.configLoadTask.response) {
+			await this.props.handleFetchAccount({
+				keystoreDirectory: this.props.configLoadTask.response.storage
+					.keystore,
+				address: this.props.match.params.address
+			});
+		} else {
+			this.props.alert.info(
+				'Looks like there was a problem reading the config file.'
+			);
+		}
 	};
 
 	public render() {
+		const { accountFetchTask } = this.props;
+		const { account } = this.state;
+
 		return (
 			<React.Fragment>
-				<div className="page-padding">
-					<Header as="h2" className={'address-heading'}>
-						{Static.cleanAddress(this.props.match.params.address)}
+				<div className="jumbo">
+					<Header as="h2" floated="left">
+						{Static.cleanAddress(account.address)}
 						<Header.Subheader>
-							Manage your account and transfer funds from here.
+							Last Updated: 12/12/12 12:32am
 						</Header.Subheader>
 					</Header>
-					<br />
-					<br />
-					<div>
-						<Statistic.Group widths="two" size={'small'}>
-							<Statistic>
-								<Statistic.Value>0</Statistic.Value>
-								<Statistic.Label>Balance</Statistic.Label>
-							</Statistic>
-							<Statistic>
-								<Statistic.Value>0</Statistic.Value>
-								<Statistic.Label>Nonce</Statistic.Label>
-							</Statistic>
-						</Statistic.Group>
-					</div>
-					<br />
-					<Divider clearing={true} hidden={true} />
-					<br />
-					<div>
-						<Table celled={true} basic="very">
-							<Table.Header>
-								<Table.Row>
-									<Table.HeaderCell>
-										To / Amount
-									</Table.HeaderCell>
-									<Table.HeaderCell>Status</Table.HeaderCell>
-									<Table.HeaderCell>Receipt</Table.HeaderCell>
-								</Table.Row>
-							</Table.Header>
-
-							<Table.Body>
-								<Table.Row>
-									<Table.Cell>
-										<Label
-											className="amount_label"
-											color="green"
-										>
-											200
-										</Label>
-										{Static.cleanAddress(
-											this.props.match.params.address
+					<Header as="h2" floated="right">
+						Balance
+						{(accountFetchTask.response && (
+							<Spring
+								from={{
+									balance: account.balance - 250
+								}}
+								to={{
+									balance: account.balance
+								}}
+								config={config.wobbly}
+							>
+								{props => (
+									<Header.Subheader>
+										{numberWithCommas(
+											Math.round(props.balance)
 										)}
-									</Table.Cell>
-									<Table.Cell>
-										<Label color="green">Success</Label>
-									</Table.Cell>
-									<Table.Cell>None</Table.Cell>
-								</Table.Row>
-							</Table.Body>
-						</Table>
-					</div>
+									</Header.Subheader>
+								)}
+							</Spring>
+						)) || (
+							<Header.Subheader>
+								{numberWithCommas(account.balance.toString())}
+							</Header.Subheader>
+						)}
+					</Header>
 				</div>
+				<div className="page-padding" />
 				<StatusBar>
-					<Button
-						basic={false}
-						color={'green'}
-						content={'Transfer'}
-					/>
-					<Button
-						basic={false}
-						color={'yellow'}
-						content={'Update Password'}
-					/>
-					<Button basic={false} icon={'file'} color={'orange'} />
 					<LoadingButton
 						onClickHandler={this.fetchAccount}
-						isLoading={false}
+						isLoading={accountFetchTask.isLoading}
 					/>
 				</StatusBar>
 			</React.Fragment>
@@ -127,9 +157,16 @@ class Account extends React.Component<LocalProps, any> {
 	}
 }
 
-const mapStoreToProps = (store: Store): StoreProps => ({});
+const mapStoreToProps = (store: Store): StoreProps => ({
+	accountFetchTask: store.accounts.fetchOne,
+	configLoadTask: store.config.load,
+	accountFetchAllTask: store.accounts.fetchAll
+});
 
-const mapsDispatchToProps = (dispatch: any): DispatchProps => ({});
+const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
+	handleFetchAccount: payload =>
+		dispatch(redux.actions.accounts.fetchOne.handlers.init(payload))
+});
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,
