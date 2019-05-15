@@ -80,13 +80,26 @@ class Accounts extends React.Component<LocalProps, State> {
 		return (
 			<React.Fragment>
 				<div className="jumbo">
-					<Header as="h2" floated="left">
-						Account Settings
-						<Header.Subheader>
-							{configLoadTask.response &&
-								configLoadTask.response.storage.keystore}
-						</Header.Subheader>
-					</Header>
+					<Spring
+						from={{
+							opacity: 0
+						}}
+						to={{
+							opacity: 1
+						}}
+						config={config.wobbly}
+					>
+						{props => (
+							<Header style={props} as="h2" floated="left">
+								Account Settings
+								<Header.Subheader>
+									{configLoadTask.response &&
+										configLoadTask.response.storage
+											.keystore}
+								</Header.Subheader>
+							</Header>
+						)}
+					</Spring>
 					<Header as="h2" floated="right">
 						Accounts
 						{accountsFetchAllTask.response && (

@@ -112,12 +112,26 @@ class Account extends React.Component<LocalProps, State> {
 		return (
 			<React.Fragment>
 				<div className="jumbo">
-					<Header as="h2" floated="left">
-						{Static.cleanAddress(account.address)}
-						<Header.Subheader>
-							Last Updated: 12/12/12 12:32am
-						</Header.Subheader>
-					</Header>
+					<Spring
+						from={{
+							marginLeft: -50,
+							opacity: 0
+						}}
+						to={{
+							marginLeft: 0,
+							opacity: 1
+						}}
+						config={config.wobbly}
+					>
+						{props => (
+							<Header style={props} as="h2" floated="left">
+								{Static.cleanAddress(account.address)}
+								<Header.Subheader>
+									Last Updated: 12/12/12 12:32am
+								</Header.Subheader>
+							</Header>
+						)}
+					</Spring>
 					<Header as="h2" floated="right">
 						Balance
 						{(accountFetchTask.response && (
