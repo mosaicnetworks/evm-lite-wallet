@@ -47,7 +47,7 @@ class Header extends React.Component<LocalProps, any> {
 								<Icon
 									size={'large'}
 									color={'black'}
-									name="bars"
+									name="google wallet"
 								/>
 							</Link>
 						</li>

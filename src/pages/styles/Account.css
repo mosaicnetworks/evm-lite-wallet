@@ -1,8 +1,31 @@
 .page-padding {
-	padding-left: 20px !important;
-	padding-right: 20px !important;
+	padding: 0 20px !important;
+	margin-bottom: 10px;
 }
 
 .amount_label {
 	margin-right: 10px !important;
+}
+
+.ui.horizontal.segments {
+	border: 0 !important;
+	box-shadow: none !important;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	font-size: 25px !important;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important;
+}
+
+.ui.horizontal.segments .segment {
+	border: 0 !important;
+	padding: 17px;
+}
+
+.transactions .label {
+	margin-right: 10px !important;
+}
+
+.center {
+	text-align: center !important;
+	font-weight: bold !important;
 }

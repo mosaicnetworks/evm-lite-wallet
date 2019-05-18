@@ -20,6 +20,8 @@ import LoadingButton from '../components/LoadingButton';
 import AccountCard from '../components/AccountCard';
 import StatusBar from '../components/StatusBar';
 
+import Misc from '../classes/Misc';
+
 import './styles/Accounts.css';
 
 interface AlertProps {
@@ -46,16 +48,10 @@ interface State {
 
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
-function numberWithCommas(x) {
-	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
 class Accounts extends React.Component<LocalProps, State> {
 	public state = {
 		totalBalance: 123523432
 	};
-
-	public componentDidMount() {}
 
 	public handleShowAlert = () => {
 		this.props.alert.info('Testing alert.');
@@ -138,7 +134,7 @@ class Accounts extends React.Component<LocalProps, State> {
 							>
 								{props => (
 									<Header.Subheader>
-										{numberWithCommas(
+										{Misc.integerWithCommas(
 											Math.round(props.balance)
 										)}
 									</Header.Subheader>
@@ -151,9 +147,9 @@ class Accounts extends React.Component<LocalProps, State> {
 					<Grid.Column width="16">
 						{accountsFetchAllTask.response && (
 							<Spring
-								delay={0}
+								delay={100}
 								from={{
-									marginLeft: -250,
+									marginLeft: -50,
 									opacity: 0
 								}}
 								to={{
