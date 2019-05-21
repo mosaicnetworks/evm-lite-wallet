@@ -12,7 +12,8 @@
 		"react-spring": "^8.0.20",
 		"react-transition-group": "^2.5.2",
 		"redux-persist": "^5.10.0",
-		"redux-saga": "^0.16.2"
+		"redux-saga": "^0.16.2",
+		"styled-components": "^4.2.0"
 	},
 	"scripts": {
 		"build": "webpack --config config/webpack.config.js && cp ./package.json ./dist/",

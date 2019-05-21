@@ -15,12 +15,10 @@ import ReduxSagaAlert from '../poa/alerts';
 
 import Accounts from '../pages/Accounts';
 import POA from '../pages/POA';
-
 import Account from '../pages/Account';
+import Configuration from '../pages/Configuration';
+
 import Wrapper from '../components/Wrapper';
-
-import './styles/App.css';
-
 import redux from '../redux.config';
 
 interface AlertProps {
@@ -65,16 +63,18 @@ class App extends React.Component<LocalProps, any> {
 			<HashRouter>
 				<React.Fragment>
 					<Wrapper>
-						<div>
-							<Route exact={true} path="/" component={Accounts} />
-							<Route
-								name="account"
-								exact={true}
-								path="/account/:address/:balance/:nonce"
-								component={Account}
-							/>
-							<Route path="/poa" component={POA} />
-						</div>
+						<Route exact={true} path="/" component={Accounts} />
+						<Route
+							name="account"
+							exact={true}
+							path="/account/:address/:balance/:nonce"
+							component={Account}
+						/>
+						<Route path="/poa" component={POA} />
+						<Route
+							path="/configuration"
+							component={Configuration}
+						/>
 					</Wrapper>
 				</React.Fragment>
 			</HashRouter>

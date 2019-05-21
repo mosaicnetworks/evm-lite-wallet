@@ -1,11 +1,17 @@
 import * as React from 'react';
 
+import styled from 'styled-components';
+
 import { Link } from 'react-router-dom';
 import { Card, Label } from 'semantic-ui-react';
 
 import { BaseAccount, Static } from 'evm-lite-lib';
 
-import './styles/AccountCard.css';
+const Address = styled.span`
+	word-wrap: break-word !important;
+	text-transform: uppercase !important;
+	font-weight: 300 !important;
+`;
 
 interface OwnProps {
 	account: BaseAccount;
@@ -34,7 +40,11 @@ class Account extends React.Component<LocalProps, any> {
 				<Card.Content className={'sticky-account-heading'}>
 					<Card.Header className={'address'}>
 						<Link to={newTo}>
-							{Static.cleanAddress(this.props.account.address)}
+							<Address>
+								{Static.cleanAddress(
+									this.props.account.address
+								)}
+							</Address>
 						</Link>
 					</Card.Header>
 				</Card.Content>

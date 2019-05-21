@@ -94,11 +94,17 @@ export function* accountsFetchOneWorker(
 			}
 		}
 
-		const account: BaseAccount = yield keystore.fetchBalanceAndNonce(
-			action.payload.address,
-			evmlc
-		);
+		console.log(keystore);
+		console.log(evmlc);
+		let account: BaseAccount = {
+			address: action.payload.address,
+			balance: 0,
+			nonce: 0
+		};
 
+		if (evmlc) {
+			account = yield evmlc.accounts.getAccount(action.payload.address);
+		}
 		yield put(success(account));
 
 		return yield account;

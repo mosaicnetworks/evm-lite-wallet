@@ -1,9 +1,11 @@
 import * as React from 'react';
 
+import styled from 'styled-components';
+
 import { connect } from 'react-redux';
 import { Spring, config } from 'react-spring/renderprops';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Header, Label, Segment } from 'semantic-ui-react';
+import { Header } from 'semantic-ui-react';
 
 import { BaseAccount, Static } from 'evm-lite-lib';
 
@@ -15,13 +17,21 @@ import {
 } from '../redux/reducers/Accounts';
 import { ConfigLoadReducer } from '../redux/reducers/Config';
 
+import { Jumbo, PaddedContent } from '../components/Styling';
+
 import LoadingButton from '../components/LoadingButton';
 import StatusBar from '../components/StatusBar';
+import Transaction, { SentTransaction } from '../components/Transaction';
+
 import redux from '../redux.config';
 
 import Misc from '../classes/Misc';
 
-import './styles/Account.css';
+const Transactions = styled.div`
+	&.label {
+		margin-right: 10px !important;
+	}
+`;
 
 interface AlertProps {
 	alert: InjectedAlertProp;
@@ -45,14 +55,6 @@ interface OwnProps {
 
 interface TimeStampedAccount extends BaseAccount {
 	lastUpdated: string;
-}
-
-interface SentTransaction {
-	id: number;
-	from: string;
-	to: string;
-	value: number;
-	status: boolean;
 }
 
 interface State {
@@ -80,28 +82,28 @@ class Account extends React.Component<LocalProps, State> {
 				status: true
 			},
 			{
-				id: 1,
+				id: 3,
 				from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
 				to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
 				value: 200,
 				status: true
 			},
 			{
-				id: 2,
+				id: 4,
 				from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
 				to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
 				value: 200,
 				status: true
 			},
 			{
-				id: 1,
+				id: 5,
 				from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
 				to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
 				value: 200,
 				status: true
 			},
 			{
-				id: 2,
+				id: 6,
 				from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
 				to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
 				value: 200,
@@ -154,28 +156,28 @@ class Account extends React.Component<LocalProps, State> {
 						status: true
 					},
 					{
-						id: 1,
+						id: 3,
 						from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
 						to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
 						value: 200,
 						status: true
 					},
 					{
-						id: 2,
+						id: 4,
 						from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
 						to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
 						value: 200,
 						status: true
 					},
 					{
-						id: 1,
+						id: 5,
 						from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
 						to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
 						value: 200,
 						status: true
 					},
 					{
-						id: 2,
+						id: 6,
 						from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
 						to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
 						value: 200,
@@ -215,10 +217,10 @@ class Account extends React.Component<LocalProps, State> {
 
 		return (
 			<React.Fragment>
-				<div className="jumbo">
+				<Jumbo>
 					<Spring
 						from={{
-							marginLeft: -50,
+							marginLeft: -Misc.MARGIN_CONSTANT,
 							opacity: 0
 						}}
 						to={{
@@ -297,19 +299,18 @@ class Account extends React.Component<LocalProps, State> {
 							</Header.Subheader>
 						)}
 					</Header>
-				</div>
+				</Jumbo>
 				<br />
-				<div className="page-padding">
+				<PaddedContent>
 					<Header as="h3">Transactions</Header>
-				</div>
-
-				<div className="transactions">
+				</PaddedContent>
+				<Transactions>
 					{transactions.length &&
 						transactions.map((transaction, i) => (
 							<Spring
 								key={transaction.id}
 								from={{
-									marginRight: -150,
+									marginRight: -Misc.MARGIN_CONSTANT,
 									opacity: 0
 								}}
 								to={{
@@ -319,41 +320,15 @@ class Account extends React.Component<LocalProps, State> {
 								config={config.wobbly}
 							>
 								{props => (
-									<Segment.Group
-										key={transaction.id}
+									<Transaction
 										style={props}
-										horizontal={true}
-									>
-										<Segment>
-											<Label>From</Label>
-											{Static.cleanAddress(
-												transaction.from
-											)}
-										</Segment>
-										<Segment>
-											<Label>To</Label>
-											{Static.cleanAddress(
-												transaction.to
-											)}
-										</Segment>
-										<Segment>
-											<Label>Value</Label>{' '}
-											{transaction.value}
-										</Segment>
-										<Segment
-											tertiary={true}
-											inverted={true}
-											color="green"
-										>
-											<div className="center">
-												Success
-											</div>
-										</Segment>
-									</Segment.Group>
+										key={transaction.id}
+										transaction={transaction}
+									/>
 								)}
 							</Spring>
 						))}
-				</div>
+				</Transactions>
 				<StatusBar>
 					<LoadingButton
 						onClickHandler={this.fetchAccount}

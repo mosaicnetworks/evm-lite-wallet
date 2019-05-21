@@ -8,8 +8,6 @@ import { NomineeElection, Validator } from '../poa/State';
 
 import StatusBar from '../components/StatusBar';
 
-import './styles/POA.css';
-
 interface StoreProps {
 	empty?: undefined;
 }

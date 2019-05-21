@@ -1,12 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans|Roboto');
+@import url('https://fonts.googleapis.com/css?family=PT+Sans&display=swap');
 
 body {
-	font-family: 'Open Sans', sans-serif !important;
+	font-family: 'Open Sans', sans-serif;
 	margin: 0;
 	padding: 0;
 	background: #fcfcfc !important;
 	padding-bottom: 100px !important;
-	min-width: 1067px !important;
+	/* min-width: 1067px !important; */
 }
 
 .card {
@@ -31,4 +32,43 @@ body {
 
 button.blue {
 	border-bottom: #1d81d1 3px solid !important;
+}
+
+.is-active {
+	background: #fcfcfc !important;
+	color: #4183c4 !important;
+}
+
+.ui.horizontal.segments {
+	border: 0 !important;
+	box-shadow: none !important;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	font-size: 25px !important;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important;
+}
+
+.ui.horizontal.segments .segment {
+	border: 0 !important;
+	padding: 17px;
+}
+
+.selection {
+	border: 1px solid #eee !important;
+	padding: 16px !important;
+	margin-bottom: 4px !important;
+}
+
+.dropdown {
+	padding: 16px !important;
+}
+
+input[type='text'],
+input[type='number'] {
+	border: 1px solid #eee !important;
+	padding: 15px !important;
+	margin: 4px !important;
+	margin-left: 0 !important;
+	margin-top: 0 !important;
+	margin-right: 0 !important;
 }

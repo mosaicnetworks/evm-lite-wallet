@@ -1,6 +1,17 @@
 import * as React from 'react';
 
-import './styles/StatusBar.css';
+import styled from 'styled-components';
+
+const Content = styled.div`
+	border-top: 1px solid #eee !important;
+	background: #fcfcfc !important;
+	width: 100% !important;
+	position: fixed;
+	bottom: 0 !important;
+	padding: 10px 20px;
+	text-align: right !important;
+	z-index: 100000 !important;
+`;
 
 interface OwnProps {
 	empty?: null;
@@ -14,10 +25,7 @@ class StatusBar extends React.Component<LocalProps, any> {
 	public render() {
 		return (
 			<React.Fragment>
-				<br />
-				<br />
-				<br />
-				<div className="status-bar">{this.props.children}</div>
+				<Content>{this.props.children}</Content>
 			</React.Fragment>
 		);
 	}

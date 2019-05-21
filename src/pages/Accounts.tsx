@@ -16,13 +16,12 @@ import { NotificationPayLoad } from '../redux/actions/Notifications';
 
 import redux from '../redux.config';
 
+import { Jumbo } from '../components/Styling';
 import LoadingButton from '../components/LoadingButton';
 import AccountCard from '../components/AccountCard';
 import StatusBar from '../components/StatusBar';
 
 import Misc from '../classes/Misc';
-
-import './styles/Accounts.css';
 
 interface AlertProps {
 	alert: InjectedAlertProp;
@@ -75,12 +74,14 @@ class Accounts extends React.Component<LocalProps, State> {
 
 		return (
 			<React.Fragment>
-				<div className="jumbo">
+				<Jumbo>
 					<Spring
 						from={{
+							marginLeft: -Misc.MARGIN_CONSTANT,
 							opacity: 0
 						}}
 						to={{
+							marginLeft: 0,
 							opacity: 1
 						}}
 						config={config.wobbly}
@@ -142,18 +143,18 @@ class Accounts extends React.Component<LocalProps, State> {
 							</Spring>
 						)}
 					</Header>
-				</div>
+				</Jumbo>
+				<br />
 				<Grid>
 					<Grid.Column width="16">
 						{accountsFetchAllTask.response && (
 							<Spring
-								delay={100}
 								from={{
-									marginLeft: -50,
+									marginRight: -Misc.MARGIN_CONSTANT,
 									opacity: 0
 								}}
 								to={{
-									marginLeft: 0,
+									marginRight: 0,
 									opacity: 1
 								}}
 								config={config.wobbly}

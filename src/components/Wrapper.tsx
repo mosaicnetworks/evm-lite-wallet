@@ -4,18 +4,11 @@ import { Container } from 'semantic-ui-react';
 
 import Header from './Header';
 
-import './styles/Wrapper.css';
-
 class Wrapper extends React.Component<any, any> {
 	public render() {
 		return (
 			<React.Fragment>
 				<Header />
-				<br />
-				<br />
-				<br />
-				<br />
-				<br />
 				<Container fluid={true}>{this.props.children}</Container>
 			</React.Fragment>
 		);
