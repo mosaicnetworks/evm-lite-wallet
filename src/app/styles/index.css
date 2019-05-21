@@ -34,6 +34,10 @@ button.blue {
 	border-bottom: #1d81d1 3px solid !important;
 }
 
+button.green {
+	border-bottom: #228b22 3px solid !important;
+}
+
 .is-active {
 	background: #fcfcfc !important;
 	color: #4183c4 !important;
@@ -64,11 +68,13 @@ button.blue {
 }
 
 input[type='text'],
-input[type='number'] {
+input[type='number'],
+input[type='password'] {
 	border: 1px solid #eee !important;
 	padding: 15px !important;
 	margin: 4px !important;
 	margin-left: 0 !important;
 	margin-top: 0 !important;
 	margin-right: 0 !important;
+	min-width: 300px !important;
 }

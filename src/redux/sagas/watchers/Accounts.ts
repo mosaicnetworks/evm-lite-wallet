@@ -2,7 +2,8 @@ import { all, takeLatest } from 'redux-saga/effects';
 
 import {
 	accountsFetchAllWorker,
-	accountsFetchOneWorker
+	accountsFetchOneWorker,
+	accountsCreateWorker
 } from '../workers/Accounts';
 
 import AccountsActions from '../../actions/Accounts';
@@ -23,6 +24,14 @@ function* accountsFetchOneWatcher() {
 	);
 }
 
+function* accountsCreateWatcher() {
+	yield takeLatest(accounts.actionStates.create.init, accountsCreateWorker);
+}
+
 export default function*() {
-	yield all([accountsFetchAllWatcher(), accountsFetchOneWatcher()]);
+	yield all([
+		accountsFetchAllWatcher(),
+		accountsFetchOneWatcher(),
+		accountsCreateWatcher()
+	]);
 }

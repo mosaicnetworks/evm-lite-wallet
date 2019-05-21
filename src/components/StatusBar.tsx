@@ -25,6 +25,11 @@ class StatusBar extends React.Component<LocalProps, any> {
 	public render() {
 		return (
 			<React.Fragment>
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
 				<Content>{this.props.children}</Content>
 			</React.Fragment>
 		);

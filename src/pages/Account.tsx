@@ -305,7 +305,7 @@ class Account extends React.Component<LocalProps, State> {
 					<Header as="h3">Transactions</Header>
 				</PaddedContent>
 				<Transactions>
-					{transactions.length &&
+					{transactions.length !== 0 &&
 						transactions.map((transaction, i) => (
 							<Spring
 								key={transaction.id}

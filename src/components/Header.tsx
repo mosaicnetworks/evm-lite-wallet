@@ -14,12 +14,14 @@ interface OwnProps {
 type LocalProps = OwnProps;
 
 const WalletHeader = styled.div`
+	position: fixed;
+	top: 0;
 	background: rgba(255, 255, 255, 0.98);
 	height: 70px;
 	line-height: 70px !important;
 	color: #fff;
 	z-index: 2000;
-	box-shadow: 0 4px 6px -6px #f1f1f1 !important;
+	box-shadow: 0 4px 10px -6px #f1f1f1 !important;
 	width: 100% !important;
 `;
 
@@ -52,11 +54,11 @@ const HeaderLinks = styled.div`
 		color: #555 !important;
 	}
 
-	&:hover li a: {
+	& li a:hover {
 		background: #fcfcfc !important;
 		color: black !important;
 		-webkit-transition: all 600ms cubic-bezier(0.23, 1, 0.32, 1) !important;
-		transition: all 600ms cubic-bezier(0.23, 1, 0.32, 1) !importatnt;
+		transition: all 600ms cubic-bezier(0.23, 1, 0.32, 1) !important;
 	}
 `;
 
@@ -70,11 +72,11 @@ const HeaderLink = styled.li`
 		color: #555 !important;
 	}
 
-	&:hover a {
+	& a:hover {
 		background: #fcfcfc !important;
 		color: black !important;
 		-webkit-transition: all 600ms cubic-bezier(0.23, 1, 0.32, 1) !important;
-		transition: all 600ms cubic-bezier(0.23, 1, 0.32, 1) !importatnt;
+		transition: all 600ms cubic-bezier(0.23, 1, 0.32, 1) !important;
 	}
 
 	&.search {
@@ -152,6 +154,10 @@ class Header extends React.Component<LocalProps, any> {
 						</HeaderLink>
 					</HeaderLinks>
 				</WalletHeader>
+				<br />
+				<br />
+				<br />
+				<br />
 			</Container>
 		);
 	}

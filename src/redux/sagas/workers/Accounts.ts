@@ -1,13 +1,19 @@
-import { put, select } from 'redux-saga/effects';
+import { fork, join, put, select } from 'redux-saga/effects';
 
-import { Keystore as EVMLKeystore, EVMLC, BaseAccount } from 'evm-lite-lib';
+import {
+	Keystore as EVMLKeystore,
+	EVMLC,
+	BaseAccount,
+	Keystore
+} from 'evm-lite-lib';
 
 import { BaseAction } from '../../common/AsyncActionSet';
 import { Store } from '../../store/Store';
 
 import Accounts, {
 	AccountsFetchAllPayLoad,
-	AccountsFetchOnePayLoad
+	AccountsFetchOnePayLoad,
+	AccountsCreatePayLoad
 } from '../../actions/Accounts';
 
 const accounts = new Accounts();
@@ -111,4 +117,49 @@ export function* accountsFetchOneWorker(
 	} catch (e) {
 		yield put(failure('_SAGA_ERROR_' + e));
 	}
+}
+
+export function* accountsCreateWorker(
+	action: BaseAction<AccountsCreatePayLoad>
+) {
+	const { success, failure, reset } = accounts.actionStates.create.handlers;
+	const fetchAll = accounts.actionStates.fetchAll.handlers;
+
+	try {
+		const state: Store = yield select();
+		const config = state.config.load.response;
+
+		if (config) {
+			const keystoreDirectory = config.storage.keystore;
+			const keystore = new Keystore(keystoreDirectory);
+
+			const address: string = yield keystore.create(
+				action.payload.password
+			);
+
+			yield put(
+				success({
+					address,
+					balance: 0,
+					nonce: 0
+				})
+			);
+
+			yield put(fetchAll.reset());
+			yield join(
+				yield fork(
+					accountsFetchAllWorker,
+					accounts.actionStates.fetchAll.handlers.init({
+						keystoreDirectory
+					})
+				)
+			);
+		} else {
+			yield put(failure('No configuration loaded.'));
+		}
+	} catch (e) {
+		yield put(failure('_SAGA_ERROR_' + e));
+	}
+
+	yield put(reset());
 }

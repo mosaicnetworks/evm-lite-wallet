@@ -13,13 +13,14 @@ import {
 } from '../redux';
 
 import { NotificationPayLoad } from '../redux/actions/Notifications';
+import { Jumbo } from '../components/Styling';
 
 import redux from '../redux.config';
 
-import { Jumbo } from '../components/Styling';
 import LoadingButton from '../components/LoadingButton';
 import AccountCard from '../components/AccountCard';
 import StatusBar from '../components/StatusBar';
+import AccountCreate from '../components/AccountCreate';
 
 import Misc from '../classes/Misc';
 
@@ -63,7 +64,7 @@ class Accounts extends React.Component<LocalProps, State> {
 					.keystore
 			});
 		} else {
-			this.props.alert.info(
+			this.props.alert.error(
 				'Looks like there was a problem reading the config file.'
 			);
 		}
@@ -177,6 +178,7 @@ class Accounts extends React.Component<LocalProps, State> {
 						)}
 					</Grid.Column>
 				</Grid>
+				<AccountCreate />
 				<StatusBar>
 					<LoadingButton
 						isLoading={this.props.accountsFetchAllTask.isLoading}

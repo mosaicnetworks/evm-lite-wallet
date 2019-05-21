@@ -5,7 +5,8 @@ import { IAsyncReducer } from '../common/reducers/AsyncReducer';
 
 import Accounts, {
 	AccountsFetchAllPayLoad,
-	AccountsFetchOnePayLoad
+	AccountsFetchOnePayLoad,
+	AccountsCreatePayLoad
 } from '../actions/Accounts';
 
 export type AccountsFetchAllReducer = IAsyncReducer<
@@ -13,8 +14,15 @@ export type AccountsFetchAllReducer = IAsyncReducer<
 	BaseAccount[],
 	string
 >;
+
 export type AccountsFetchOneReducer = IAsyncReducer<
 	AccountsFetchOnePayLoad,
+	BaseAccount,
+	string
+>;
+
+export type AccountsCreateReducer = IAsyncReducer<
+	AccountsCreatePayLoad,
 	BaseAccount,
 	string
 >;
@@ -22,13 +30,15 @@ export type AccountsFetchOneReducer = IAsyncReducer<
 export interface IAccountsReducer {
 	fetchAll: AccountsFetchAllReducer;
 	fetchOne: AccountsFetchOneReducer;
+	create: AccountsCreateReducer;
 }
 
 const accounts = new Accounts();
 
 const AccountsReducer = combineReducers({
 	fetchAll: accounts.actionStates.fetchAll.reducer,
-	fetchOne: accounts.actionStates.fetchOne.reducer
+	fetchOne: accounts.actionStates.fetchOne.reducer,
+	create: accounts.actionStates.create.reducer
 });
 
 export default AccountsReducer;

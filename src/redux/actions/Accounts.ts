@@ -12,7 +12,6 @@ export interface AccountsFetchOnePayLoad extends AccountsFetchAllPayLoad {
 
 export interface AccountsCreatePayLoad {
 	password: string;
-	keystore: string;
 }
 export interface AccountsUpdatePayLoad {
 	address: string;
@@ -49,6 +48,6 @@ export default class Accounts extends AsyncActionSet<AsyncActionStateSchema> {
 	constructor() {
 		super(Accounts.name);
 
-		this.actions = ['FetchAll', 'FetchOne'];
+		this.actions = ['FetchAll', 'FetchOne', 'Create'];
 	}
 }

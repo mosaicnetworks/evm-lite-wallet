@@ -7,8 +7,9 @@ import { Spring, config } from 'react-spring/renderprops';
 import { Header, Message, Form, Grid, Select } from 'semantic-ui-react';
 
 import { Store, DataDirectorySetReducer, ConfigLoadReducer } from '../redux';
-import { PaddedContent, Jumbo } from '../components/Styling';
+import { PaddedContent } from '../components/Styling';
 
+import Heading from '../components/Heading';
 import Misc from '../classes/Misc';
 
 import './styles/Configuration.css';
@@ -158,33 +159,18 @@ class Configuration extends React.Component<LocalProps, State> {
 
 		return (
 			<React.Fragment>
-				<Jumbo>
-					<Spring
-						from={{
-							marginLeft: -Misc.MARGIN_CONSTANT,
-							opacity: 0
-						}}
-						to={{
-							marginLeft: 0,
-							opacity: 1
-						}}
-						config={config.wobbly}
-					>
-						{props => (
-							<Header style={props} as="h2" floated="left">
-								Configuration
-								<Header.Subheader>
-									{dataDirectorySetTask.response &&
-										dataDirectorySetTask.payload}
-								</Header.Subheader>
-							</Header>
-						)}
-					</Spring>
-				</Jumbo>
+				<Heading
+					heading={'Configuration'}
+					subHeading={
+						(dataDirectorySetTask.response &&
+							dataDirectorySetTask.payload) ||
+						''
+					}
+				/>
 				<BlackNotificationBanner>
-					The configuration values will be read in by all actions
+					These configuration values will be read in by all actions
 					across the wallet and other evm-lite applications as default
-					values. Make sure these are up to date to avoid any errors.
+					values.
 				</BlackNotificationBanner>
 				<br />
 				<br />
