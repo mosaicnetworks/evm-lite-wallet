@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { BaseAccount } from 'evm-lite-lib';
+import { BaseAccount, V3JSONKeyStore } from 'evm-lite-lib';
 
 import { IAsyncReducer } from '../common/reducers/AsyncReducer';
 
@@ -23,7 +23,7 @@ export type AccountsFetchOneReducer = IAsyncReducer<
 
 export type AccountsCreateReducer = IAsyncReducer<
 	AccountsCreatePayLoad,
-	BaseAccount,
+	V3JSONKeyStore,
 	string
 >;
 

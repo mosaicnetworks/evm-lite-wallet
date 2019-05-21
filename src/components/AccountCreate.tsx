@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { config, Transition } from 'react-spring/renderprops';
 import { Input, Button } from 'semantic-ui-react';
+import { V3JSONKeyStore, Static } from 'evm-lite-lib';
 
 import { AccountsCreateReducer } from '../redux/reducers/Accounts';
 import { AccountsCreatePayLoad } from '../redux/actions/Accounts';
@@ -39,7 +40,6 @@ const CreateAccountSliderClose = styled.div`
 	bottom: 140px;
 	right: 0;
 	width: auto;
-	background: orange !important;
 	color: white !important;
 	border-top-left-radius: 7px;
 	border-bottom-left-radius: 7px;
@@ -99,6 +99,23 @@ class AccountCreate extends React.Component<Props, State> {
 			verifyPassword: ''
 		}
 	};
+
+	public componentWillReceiveProps = (nextProps: Props) => {
+		if (
+			!this.props.accountCreateTask.response &&
+			nextProps.accountCreateTask.response
+		) {
+			const account: V3JSONKeyStore =
+				nextProps.accountCreateTask.response;
+
+			this.props.alert.success(
+				`Account created:  ${Static.cleanAddress(
+					account.address.substring(0, 8)
+				)}...`
+			);
+		}
+	};
+
 	public handleCreateAccount = () => {
 		const { fields } = this.state;
 
@@ -134,7 +151,7 @@ class AccountCreate extends React.Component<Props, State> {
 				<Transition
 					items={visible}
 					from={{ right: '0px' }}
-					enter={{ right: '341px' }}
+					enter={{ right: '340px' }}
 					leave={{ right: '0px' }}
 					config={config.gentle}
 				>
@@ -148,6 +165,7 @@ class AccountCreate extends React.Component<Props, State> {
 								<Button
 									icon="check"
 									color="green"
+									disabled={accountCreateTask.isLoading}
 									loading={accountCreateTask.isLoading}
 								/>
 							</CreateAccountSlider>
@@ -157,7 +175,7 @@ class AccountCreate extends React.Component<Props, State> {
 				<Transition
 					items={visible}
 					from={{ opacity: 0, right: '0px' }}
-					enter={{ opacity: 1, right: '341px' }}
+					enter={{ opacity: 1, right: '340px' }}
 					leave={{ opacity: 0, right: '0px' }}
 					config={config.gentle}
 				>
@@ -172,7 +190,7 @@ class AccountCreate extends React.Component<Props, State> {
 									})
 								}
 							>
-								<Button icon="times" color="red" />
+								<Button icon="times" color="blue" />
 							</CreateAccountSliderClose>
 						))
 					}
@@ -193,7 +211,7 @@ class AccountCreate extends React.Component<Props, State> {
 					from={{ right: '-341px' }}
 					enter={{ right: '0px' }}
 					leave={{ right: '-341px' }}
-					config={config.gentle}
+					config={config.stiff}
 				>
 					{show =>
 						show &&

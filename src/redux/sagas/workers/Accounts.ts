@@ -133,17 +133,11 @@ export function* accountsCreateWorker(
 			const keystoreDirectory = config.storage.keystore;
 			const keystore = new Keystore(keystoreDirectory);
 
-			const address: string = yield keystore.create(
+			const jsonstring: string = yield keystore.create(
 				action.payload.password
 			);
 
-			yield put(
-				success({
-					address,
-					balance: 0,
-					nonce: 0
-				})
-			);
+			yield put(success(JSON.parse(jsonstring)));
 
 			yield put(fetchAll.reset());
 			yield join(
