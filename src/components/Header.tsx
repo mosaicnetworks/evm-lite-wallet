@@ -21,7 +21,7 @@ const WalletHeader = styled.div`
 	line-height: 70px !important;
 	color: #fff;
 	z-index: 2000;
-	box-shadow: 0 4px 10px -6px #f1f1f1 !important;
+	box-shadow: 0 4px 6px -10px #f1f1f1 !important;
 	width: 100% !important;
 `;
 

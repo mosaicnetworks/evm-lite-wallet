@@ -15,7 +15,7 @@ export const Jumbo = styled.div`
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important;
 	padding-left: 20px;
 	height: 115px;
-	margin-top: -4px !important;
+	margin-top: -5px !important;
 `;
 
 interface AlertProps {

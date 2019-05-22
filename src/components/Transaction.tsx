@@ -8,7 +8,7 @@ import { Static } from 'evm-lite-lib';
 
 import { Store } from '../redux';
 
-import * as TENOM from '../assets/logo_trans.png';
+import * as TENOM from '../assets/logo.png';
 
 const BoldCentered = styled.div`
 	text-align: center !important;
@@ -84,7 +84,7 @@ class Transaction extends React.Component<LocalProps, State> {
 								style={{ cursor: 'pointer' }}
 								name="info circle"
 								color="blue"
-								size="big"
+								size="large"
 							/>
 						</BoldCentered>
 					</Segment>

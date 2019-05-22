@@ -8,6 +8,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import AccountSagas from '../sagas/watchers/Accounts';
 import ConfigSagas from '../sagas/watchers/Config';
 import DataDirectorySagas from '../sagas/watchers/DataDirectory';
+import POASagas from '../sagas/watchers/POA';
 
 import AccountsRootReducer, { IAccountsReducer } from '../reducers/Accounts';
 import NotificationsReducer, {
@@ -52,6 +53,7 @@ export default () => {
 	saga.run(AccountSagas);
 	saga.run(ConfigSagas);
 	saga.run(DataDirectorySagas);
+	saga.run(POASagas);
 
 	return { store, persistor };
 };

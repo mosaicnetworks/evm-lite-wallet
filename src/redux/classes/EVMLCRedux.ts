@@ -5,6 +5,7 @@ import getStores from '../store/Store';
 import Accounts from '../actions/Accounts';
 import Config from '../actions/Config';
 import DataDirectory from '../actions/DataDirectory';
+import POA from '../actions/POA';
 import Notifications from '../actions/Notifications';
 
 export interface EVMLiteReduxConfig {
@@ -24,7 +25,7 @@ export default class EVMLCRedux {
 	private readonly config: Config;
 	private readonly dataDirectory: DataDirectory;
 	private readonly notifications: Notifications;
-
+	private readonly poa: POA;
 	private readonly defaultStores: Stores;
 
 	constructor() {
@@ -34,6 +35,7 @@ export default class EVMLCRedux {
 		this.config = new Config();
 		this.dataDirectory = new DataDirectory();
 		this.notifications = new Notifications();
+		this.poa = new POA();
 	}
 
 	public get actions() {
@@ -41,7 +43,8 @@ export default class EVMLCRedux {
 			notifications: this.notifications.allStates,
 			accounts: this.accounts.actionStates,
 			config: this.config.actionStates,
-			dataDirectory: this.dataDirectory.actionStates
+			dataDirectory: this.dataDirectory.actionStates,
+			poa: this.poa.actionStates
 		};
 	}
 

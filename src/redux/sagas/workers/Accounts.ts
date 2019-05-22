@@ -1,11 +1,6 @@
 import { fork, join, put, select } from 'redux-saga/effects';
 
-import {
-	Keystore as EVMLKeystore,
-	EVMLC,
-	BaseAccount,
-	Keystore
-} from 'evm-lite-lib';
+import { Keystore as EVMLKeystore, EVMLC, BaseAccount } from 'evm-lite-lib';
 
 import { BaseAction } from '../../common/AsyncActionSet';
 import { Store } from '../../store/Store';
@@ -131,7 +126,7 @@ export function* accountsCreateWorker(
 
 		if (config) {
 			const keystoreDirectory = config.storage.keystore;
-			const keystore = new Keystore(keystoreDirectory);
+			const keystore = new EVMLKeystore(keystoreDirectory);
 
 			const jsonstring: string = yield keystore.create(
 				action.payload.password

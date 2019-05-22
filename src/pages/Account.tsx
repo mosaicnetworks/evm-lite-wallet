@@ -66,50 +66,7 @@ type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
 class Account extends React.Component<LocalProps, State> {
 	public state = {
-		transactions: [
-			{
-				id: 1,
-				from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-				to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-				value: 200,
-				status: true
-			},
-			{
-				id: 2,
-				from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-				to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-				value: 200,
-				status: true
-			},
-			{
-				id: 3,
-				from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-				to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-				value: 200,
-				status: true
-			},
-			{
-				id: 4,
-				from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-				to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-				value: 200,
-				status: true
-			},
-			{
-				id: 5,
-				from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-				to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-				value: 200,
-				status: true
-			},
-			{
-				id: 6,
-				from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-				to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-				value: 200,
-				status: true
-			}
-		],
+		transactions: [],
 		account: {
 			address: this.props.match.params.address,
 			balance: parseInt(
@@ -140,50 +97,7 @@ class Account extends React.Component<LocalProps, State> {
 			}
 
 			this.setState({
-				transactions: [
-					{
-						id: 1,
-						from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-						to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-						value: 200,
-						status: true
-					},
-					{
-						id: 2,
-						from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-						to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-						value: 200,
-						status: true
-					},
-					{
-						id: 3,
-						from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-						to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-						value: 200,
-						status: true
-					},
-					{
-						id: 4,
-						from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-						to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-						value: 200,
-						status: true
-					},
-					{
-						id: 5,
-						from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-						to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-						value: 200,
-						status: true
-					},
-					{
-						id: 6,
-						from: '0XA4A5F65FB3752B2B6632F2729F17DD61B2AAD650',
-						to: '0x0ca23356310e6e1f9d79e4f2a4cd6009a51f6ea0',
-						value: 200,
-						status: true
-					}
-				],
+				transactions: [],
 				account: {
 					address,
 					balance: newBalance,
@@ -301,33 +215,38 @@ class Account extends React.Component<LocalProps, State> {
 					</Header>
 				</Jumbo>
 				<br />
-				<PaddedContent>
-					<Header as="h3">Transactions</Header>
-				</PaddedContent>
+				{transactions.length !== 0 && (
+					<PaddedContent>
+						<Header as="h3">Transactions</Header>
+					</PaddedContent>
+				)}
 				<Transactions>
 					{transactions.length !== 0 &&
-						transactions.map((transaction, i) => (
-							<Spring
-								key={transaction.id}
-								from={{
-									marginRight: -Misc.MARGIN_CONSTANT,
-									opacity: 0
-								}}
-								to={{
-									marginRight: 0,
-									opacity: 1
-								}}
-								config={config.wobbly}
-							>
-								{props => (
-									<Transaction
-										style={props}
-										key={transaction.id}
-										transaction={transaction}
-									/>
-								)}
-							</Spring>
-						))}
+						transactions.map((tx, i) => {
+							const transaction = tx as SentTransaction;
+							return (
+								<Spring
+									key={transaction.id}
+									from={{
+										marginRight: -Misc.MARGIN_CONSTANT,
+										opacity: 0
+									}}
+									to={{
+										marginRight: 0,
+										opacity: 1
+									}}
+									config={config.wobbly}
+								>
+									{props => (
+										<Transaction
+											style={props}
+											key={transaction.id}
+											transaction={transaction}
+										/>
+									)}
+								</Spring>
+							);
+						})}
 				</Transactions>
 				<StatusBar>
 					<LoadingButton

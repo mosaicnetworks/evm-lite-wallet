@@ -5,16 +5,16 @@ body {
 	font-family: 'Open Sans', sans-serif;
 	margin: 0;
 	padding: 0;
-	background: #fcfcfc !important;
-	padding-bottom: 100px !important;
+	background: #f9f9f9 !important;
 	/* min-width: 1067px !important; */
 }
 
 .card {
-	border-radius: 0 !important;
+	border-radius: 5px !important;
 	/* border: 1px solid #eee !important; */
 	/* box-shadow: 0 4px 20px -6px #eee !important; */
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important;
+	word-break: break-all;
 }
 
 .cards {
@@ -27,15 +27,27 @@ body {
 }
 
 .ui.blue {
-	background: rgba(0, 175, 239, 1) !important;
+	background: rgba(31, 66, 146, 0.9) !important;
+}
+
+.ui.green {
+	background: rgb(24, 169, 83) !important;
+}
+
+.ui.red {
+	background: rgb(204, 29, 40) !important;
 }
 
 button.blue {
-	border-bottom: #1d81d1 3px solid !important;
+	border-bottom: #0f2e94 3px solid !important;
 }
 
 button.green {
 	border-bottom: #228b22 3px solid !important;
+}
+
+button.red {
+	border-bottom: #880202 3px solid !important;
 }
 
 .is-active {
@@ -49,12 +61,14 @@ button.green {
 	margin-top: 0 !important;
 	margin-bottom: 0 !important;
 	font-size: 25px !important;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important;
+	/* box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important; */
+	/* margin-bottom: 1px !important; */
+	box-shadow: 0 4px 20px -6px #eee !important;
 }
 
 .ui.horizontal.segments .segment {
 	border: 0 !important;
-	padding: 17px;
+	padding: 20px;
 }
 
 .selection {

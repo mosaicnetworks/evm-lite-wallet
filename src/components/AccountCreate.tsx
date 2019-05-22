@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { config, Transition } from 'react-spring/renderprops';
+import { config, Transition, Spring } from 'react-spring/renderprops';
 import { Input, Button } from 'semantic-ui-react';
 import { V3JSONKeyStore, Static } from 'evm-lite-lib';
 
@@ -13,6 +13,7 @@ import { AccountsCreatePayLoad } from '../redux/actions/Accounts';
 import { Store } from '../redux';
 
 import redux from '../redux.config';
+import Misc from '../classes/Misc';
 
 const CreateAccountSlider = styled.div`
 	position: fixed;
@@ -63,10 +64,17 @@ const CreateAccountContent = styled.div`
 	width: auto;
 	padding: 20px;
 	background: #fff !important;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+	box-shadow: 0 4px 20px -6px #999 !important;
 
 	&:hover {
 		cursor: pointer;
+	}
+
+	& span {
+		margin-bottom: 10px !important;
+		display: block !important;
+		font-size: 17px;
+		font-weight: bold !important;
 	}
 `;
 interface State {
@@ -150,10 +158,10 @@ class AccountCreate extends React.Component<Props, State> {
 			<React.Fragment>
 				<Transition
 					items={visible}
-					from={{ right: '0px' }}
+					from={{ right: '-40px' }}
 					enter={{ right: '340px' }}
-					leave={{ right: '0px' }}
-					config={config.gentle}
+					leave={{ right: '-40px' }}
+					config={config.stiff}
 				>
 					{show =>
 						show &&
@@ -177,7 +185,7 @@ class AccountCreate extends React.Component<Props, State> {
 					from={{ opacity: 0, right: '0px' }}
 					enter={{ opacity: 1, right: '340px' }}
 					leave={{ opacity: 0, right: '0px' }}
-					config={config.gentle}
+					config={config.stiff}
 				>
 					{show =>
 						show &&
@@ -196,15 +204,30 @@ class AccountCreate extends React.Component<Props, State> {
 					}
 				</Transition>
 				{!visible && (
-					<CreateAccountSlider
-						onClick={() =>
-							this.setState({
-								visible: true
-							})
-						}
+					<Spring
+						from={{
+							marginRight: -Misc.MARGIN_CONSTANT,
+							opacity: 0
+						}}
+						to={{
+							marginRight: -2,
+							opacity: 1
+						}}
+						config={config.wobbly}
 					>
-						<Button icon="plus" color="green" />
-					</CreateAccountSlider>
+						{props => (
+							<CreateAccountSlider
+								style={props}
+								onClick={() =>
+									this.setState({
+										visible: true
+									})
+								}
+							>
+								<Button icon="plus" color="green" />
+							</CreateAccountSlider>
+						)}
+					</Spring>
 				)}
 				<Transition
 					items={visible}
@@ -217,6 +240,7 @@ class AccountCreate extends React.Component<Props, State> {
 						show &&
 						(props => (
 							<CreateAccountContent style={props}>
+								<h4>Create An Account</h4>
 								<Input
 									placeholder="Set Password"
 									type="password"
