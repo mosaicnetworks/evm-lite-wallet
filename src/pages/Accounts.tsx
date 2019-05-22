@@ -21,6 +21,7 @@ import LoadingButton from '../components/LoadingButton';
 import AccountCard from '../components/AccountCard';
 import StatusBar from '../components/StatusBar';
 import AccountCreate from '../components/AccountCreate';
+import AnimationRight from '../components/AnimationRight';
 
 import Misc from '../classes/Misc';
 
@@ -149,32 +150,20 @@ class Accounts extends React.Component<LocalProps, State> {
 				<Grid>
 					<Grid.Column width="16">
 						{accountsFetchAllTask.response && (
-							<Spring
-								from={{
-									marginRight: -Misc.MARGIN_CONSTANT,
-									opacity: 0
-								}}
-								to={{
-									marginRight: 0,
-									opacity: 1
-								}}
-								config={config.wobbly}
-							>
-								{props => (
-									<div style={props}>
-										<Card.Group centered={true}>
-											{accountsFetchAllTask.response!.map(
-												(account, i) => (
-													<AccountCard
-														key={account.address}
-														account={account}
-													/>
-												)
-											)}
-										</Card.Group>
-									</div>
-								)}
-							</Spring>
+							<AnimationRight>
+								<div>
+									<Card.Group centered={true}>
+										{accountsFetchAllTask.response!.map(
+											(account, i) => (
+												<AccountCard
+													key={account.address}
+													account={account}
+												/>
+											)
+										)}
+									</Card.Group>
+								</div>
+							</AnimationRight>
 						)}
 					</Grid.Column>
 				</Grid>

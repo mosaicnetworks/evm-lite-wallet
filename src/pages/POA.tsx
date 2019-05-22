@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Spring, config } from 'react-spring/renderprops';
 import { connect } from 'react-redux';
-import { Button, Grid, Card, Segment } from 'semantic-ui-react';
+import { Button, Grid, Card, Segment, Icon } from 'semantic-ui-react';
 import { Static } from 'evm-lite-lib';
 
 import { POAWhiteListReducer } from '../redux/reducers/POA';
@@ -161,6 +161,18 @@ class POA extends React.Component<LocalProps, State> {
 											inverted={true}
 										>
 											<BoldCentered>Decline</BoldCentered>
+										</Segment>
+										<Segment
+											style={{
+												cursor: 'pointer'
+											}}
+										>
+											<BoldCentered>
+												<Icon
+													color="blue"
+													name="chevron right"
+												/>
+											</BoldCentered>
 										</Segment>
 									</Segment.Group>
 								</NomineeList>
