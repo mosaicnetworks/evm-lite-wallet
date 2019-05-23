@@ -53,13 +53,13 @@ class Account extends React.Component<LocalProps, any> {
 					className={'sticky-account-heading-buttons'}
 				>
 					<div className="ui small two buttons">
-						<Label color={'green'} basic={true}>
+						<Label color={'green'} basic={false}>
 							Balance
 							<Label.Detail>
 								{this.props.account.balance}
 							</Label.Detail>
 						</Label>
-						<Label basic={true}>
+						<Label basic={false}>
 							Nonce
 							<Label.Detail>
 								{this.props.account.nonce}

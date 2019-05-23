@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 import { NavLink as Link } from 'react-router-dom';
-import { Container, Icon, Image, Input } from 'semantic-ui-react';
+import { Container, Icon, Image } from 'semantic-ui-react';
 
 import * as MONET_LOGO from '../assets/monet_logo.png';
 
@@ -16,7 +16,7 @@ type LocalProps = OwnProps;
 const WalletHeader = styled.div`
 	position: fixed;
 	top: 0;
-	background: rgba(255, 255, 255, 0.98);
+	background: rgba(255, 255, 255, 0.95);
 	height: 70px;
 	line-height: 70px !important;
 	color: #fff;
@@ -101,9 +101,6 @@ class Header extends React.Component<LocalProps, any> {
 						</Link>
 					</Logo>
 					<HeaderLinks>
-						<HeaderLink className="search">
-							<Input placeholder="Search" />
-						</HeaderLink>
 						<HeaderLink>
 							<Link activeClassName="is-active" to="/poa">
 								<Icon

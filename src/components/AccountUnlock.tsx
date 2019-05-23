@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { config, Transition } from 'react-spring/renderprops';
 import { Input, Button } from 'semantic-ui-react';
-import { V3JSONKeyStore, Static } from 'evm-lite-lib';
 
 import { AccountsCreateReducer } from '../redux/reducers/Accounts';
 import { AccountsCreatePayLoad } from '../redux/actions/Accounts';
@@ -16,7 +15,7 @@ import AnimationRight from './AnimationRight';
 
 import redux from '../redux.config';
 
-const CreateAccountSlider = styled.div`
+const Open = styled.div`
 	position: fixed;
 	bottom: 100px;
 	right: 0;
@@ -37,7 +36,7 @@ const CreateAccountSlider = styled.div`
 	}
 `;
 
-const CreateAccountSliderClose = styled.div`
+const Close = styled.div`
 	position: fixed;
 	bottom: 140px;
 	right: 0;
@@ -58,7 +57,7 @@ const CreateAccountSliderClose = styled.div`
 	}
 `;
 
-const CreateAccountContent = styled.div`
+const Content = styled.div`
 	position: fixed;
 	bottom: 100px;
 	right: -341px;
@@ -100,55 +99,13 @@ interface DispatchProps {
 
 type Props = StoreProps & AlertProps & DispatchProps;
 
-class AccountCreate extends React.Component<Props, State> {
+class AccountUnlock extends React.Component<Props, State> {
 	public state = {
 		visible: false,
 		fields: {
 			password: '',
 			verifyPassword: ''
 		}
-	};
-
-	public componentWillReceiveProps = (nextProps: Props) => {
-		if (
-			!this.props.accountCreateTask.response &&
-			nextProps.accountCreateTask.response
-		) {
-			const account: V3JSONKeyStore =
-				nextProps.accountCreateTask.response;
-
-			this.props.alert.success(
-				`Account created:  ${Static.cleanAddress(
-					account.address.substring(0, 8)
-				)}...`
-			);
-		}
-	};
-
-	public handleCreateAccount = () => {
-		const { fields } = this.state;
-
-		if (!fields.password || !fields.verifyPassword) {
-			this.props.alert.error('Both fields must be filled in.');
-			return;
-		}
-
-		if (fields.password !== fields.verifyPassword) {
-			this.props.alert.error('Passwords do not match.');
-			return;
-		}
-
-		this.setState({
-			visible: false,
-			fields: {
-				password: '',
-				verifyPassword: ''
-			}
-		});
-
-		this.props.handleCreateAccount({
-			password: fields.password
-		});
 	};
 
 	public render() {
@@ -159,25 +116,22 @@ class AccountCreate extends React.Component<Props, State> {
 			<React.Fragment>
 				<Transition
 					items={visible}
-					from={{ right: '0px', display: 'none' }}
-					enter={{ right: '340px', display: 'block' }}
-					leave={{ right: '0px', display: 'none' }}
+					from={{ right: '-40px' }}
+					enter={{ right: '340px' }}
+					leave={{ right: '-40px' }}
 					config={config.stiff}
 				>
 					{show =>
 						show &&
 						(props => (
-							<CreateAccountSlider
-								style={props}
-								onClick={this.handleCreateAccount}
-							>
+							<Open style={props}>
 								<Button
 									icon="check"
 									color="green"
 									disabled={accountCreateTask.isLoading}
 									loading={accountCreateTask.isLoading}
 								/>
-							</CreateAccountSlider>
+							</Open>
 						))
 					}
 				</Transition>
@@ -191,7 +145,7 @@ class AccountCreate extends React.Component<Props, State> {
 					{show =>
 						show &&
 						(props => (
-							<CreateAccountSliderClose
+							<Close
 								style={props}
 								onClick={() =>
 									this.setState({
@@ -200,37 +154,37 @@ class AccountCreate extends React.Component<Props, State> {
 								}
 							>
 								<Button icon="times" color="red" />
-							</CreateAccountSliderClose>
+							</Close>
 						))
 					}
 				</Transition>
 				{!visible && (
 					<AnimationRight>
-						<CreateAccountSlider
+						<Open
 							onClick={() =>
 								this.setState({
 									visible: true
 								})
 							}
 						>
-							<Button icon="plus" color="green" />
-						</CreateAccountSlider>
+							<Button icon="lock" color="orange" />
+						</Open>
 					</AnimationRight>
 				)}
 				<Transition
 					items={visible}
-					from={{ right: '-340px' }}
+					from={{ right: '-341px' }}
 					enter={{ right: '0px' }}
-					leave={{ right: '-340px' }}
+					leave={{ right: '-341px' }}
 					config={config.stiff}
 				>
 					{show =>
 						show &&
 						(props => (
-							<CreateAccountContent style={props}>
-								<h4>Create An Account</h4>
+							<Content style={props}>
+								<h4>Unlock account</h4>
 								<Input
-									placeholder="Set Password"
+									placeholder="Password"
 									type="password"
 									onChange={(e, { value }) =>
 										this.setState({
@@ -241,20 +195,7 @@ class AccountCreate extends React.Component<Props, State> {
 										})
 									}
 								/>
-								<br />
-								<Input
-									placeholder="Verify Password"
-									type="password"
-									onChange={(e, { value }) =>
-										this.setState({
-											fields: {
-												...this.state.fields,
-												verifyPassword: value
-											}
-										})
-									}
-								/>
-							</CreateAccountContent>
+							</Content>
 						))
 					}
 				</Transition>
@@ -275,4 +216,4 @@ const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
 export default connect<StoreProps, DispatchProps, {}, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
-)(withAlert<AlertProps>(AccountCreate));
+)(withAlert<AlertProps>(AccountUnlock));

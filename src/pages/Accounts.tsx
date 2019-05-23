@@ -19,8 +19,8 @@ import redux from '../redux.config';
 
 import LoadingButton from '../components/LoadingButton';
 import AccountCard from '../components/AccountCard';
-import StatusBar from '../components/StatusBar';
 import AccountCreate from '../components/AccountCreate';
+import FloatingButton from '../components/FloatingButton';
 import AnimationRight from '../components/AnimationRight';
 
 import Misc from '../classes/Misc';
@@ -168,12 +168,12 @@ class Accounts extends React.Component<LocalProps, State> {
 					</Grid.Column>
 				</Grid>
 				<AccountCreate />
-				<StatusBar>
+				<FloatingButton bottomOffset={57}>
 					<LoadingButton
 						isLoading={this.props.accountsFetchAllTask.isLoading}
 						onClickHandler={this.handleFetchAllAccounts}
 					/>
-				</StatusBar>
+				</FloatingButton>
 			</React.Fragment>
 		);
 	}

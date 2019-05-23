@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Spring, config } from 'react-spring/renderprops';
 import { connect } from 'react-redux';
-import { Button, Grid, Card, Segment, Icon } from 'semantic-ui-react';
+import { Button, Grid } from 'semantic-ui-react';
 import { Static } from 'evm-lite-lib';
 
 import { POAWhiteListReducer } from '../redux/reducers/POA';
@@ -12,76 +12,71 @@ import { Store } from '../redux';
 
 import StatusBar from '../components/StatusBar';
 import Heading from '../components/Heading';
+import Nominee from '../components/Nominee';
 
 import redux from '../redux.config';
 
 import Misc from '../classes/Misc';
 
 const capitalize = (word: string) =>
-	word.charAt(0).toUpperCase() + word.slice(1);
+	word
+		.toString()
+		.charAt(0)
+		.toUpperCase() + word.slice(1);
 
-const Divider = styled.hr`
-	border: 0 !important;
-	background: #eee !important;
-	border-bottom: 1px solid #eee !important;
+const PurpleBanner = styled.div`
+	background: rgba(126, 66, 149, 1) !important;
+	color: #fff !important;
+	padding: 20px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
+	position: relative;
+	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
+		0 0 40px rgba(0, 0, 0, 0.1) inset;
+	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
+		0 0 40px rgba(0, 0, 0, 0.1) inset;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+
+	&:before,
+	&:after {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+		top: 0;
+		bottom: 0;
+		left: 10px;
+		right: 10px;
+		-moz-border-radius: 100px / 10px;
+		border-radius: 100px / 10px;
+	}
 `;
 
-const WhiteListHeader = styled.h3`
-	padding-top: 20px;
-	padding-left: 20px;
-	height: 50px;
-	background: #fff !important;
-`;
-
-const AlignLeft = styled.div`
-	float: left !important;
-`;
-
-const AlignRight = styled.div`
-	float: right !important;
-	margin-right: 10px;
-	margin-top: -10px;
-`;
+const WhiteListHeader = styled.h3``;
 
 const WhiteList = styled.div`
-	margin: auto !important;
-	position: sticky !important;
-	top: 70px !important;
-	background: #fff !important;
 	border-bottom-left-radius: 5px !important;
 	box-shadow: 0 4px 20px -6px #eee !important;
 `;
 
-const NomineeList = styled.div`
-	padding: 15px;
+const WhiteListEntry = styled.div`
+	padding: 15px 20px;
+	background: #fff;
 `;
 
-const Nominee = styled.div`
-	background: #fff !important;
-	margin-bottom: 20px !important;
-`;
-
-Nominee.Moniker = styled.h3`
-	margin-bottom: 0 !important;
-	padding: 20px;
-	padding-bottom: 0 !important;
-`;
-Nominee.Address = styled.div`
-	color: #666 !important;
-	padding: 20px;
-	padding-top: 0 !important;
-	border-bottom: 1px solid #eee;
-`;
-Nominee.Content = styled.div`
-	margin-top: 10px;
-	background: #fefefe;
-	padding: 20px !important;
-	padding-top: 10px !important;
-`;
-
-const BoldCentered = styled.div`
-	text-align: center !important;
+WhiteListEntry.Moniker = styled.div`
 	font-weight: bold !important;
+	font-size: 17px;
+	margin-bottom: 3px;
+`;
+WhiteListEntry.Address = styled.div`
+	word-wrap: break-word;
+	color: #555;
+`;
+
+const NomineeList = styled.div``;
+
+const Content = styled.div`
+	padding: 20px;
 `;
 
 interface StoreProps {
@@ -114,109 +109,71 @@ class POA extends React.Component<LocalProps, State> {
 					heading={'Proof of Authority'}
 					subHeading="Manage existing and nominate new validators"
 				/>
-				<Grid columns="equal">
-					<Grid.Column width={12}>
-						<br />
-						<Spring
-							from={{
-								marginRight: -Misc.MARGIN_CONSTANT,
-								opacity: 0
-							}}
-							to={{
-								marginRight: 0,
-								opacity: 1
-							}}
-							config={config.wobbly}
-						>
-							{props => (
-								<NomineeList style={props}>
-									<h3>Nominee List</h3>
-									<Segment.Group horizontal={true}>
-										<Segment>
-											<BoldCentered>Danu</BoldCentered>
-										</Segment>
-										<Segment>
-											0x89accd6b63d6ee73550eca0cba16c2027c13fda6
-										</Segment>
-										<Segment
-											style={{
-												cursor: 'pointer'
-											}}
-											onClick={() =>
-												console.log('Approve')
-											}
-											color="green"
-											inverted={true}
-										>
-											<BoldCentered>Approve</BoldCentered>
-										</Segment>
-										<Segment
-											style={{
-												cursor: 'pointer'
-											}}
-											onClick={() =>
-												console.log('Decline')
-											}
-											color="red"
-											inverted={true}
-										>
-											<BoldCentered>Decline</BoldCentered>
-										</Segment>
-										<Segment
-											style={{
-												cursor: 'pointer'
-											}}
-										>
-											<BoldCentered>
-												<Icon
-													color="blue"
-													name="chevron right"
-												/>
-											</BoldCentered>
-										</Segment>
-									</Segment.Group>
-								</NomineeList>
-							)}
-						</Spring>
-					</Grid.Column>
-					<Grid.Column>
-						<WhiteList>
-							<WhiteListHeader>
-								<AlignLeft>Whitelist</AlignLeft>
-								<AlignRight>
-									<Button
-										loading={whiteListTask.isLoading}
-										disabled={whiteListTask.isLoading}
-										onClick={this.handleFetchWhiteList}
-										color="blue"
-										icon="circle notch"
-									/>
-								</AlignRight>
-							</WhiteListHeader>
-							<Divider />
-							{whiteListTask.response &&
-								whiteListTask.response.map((entry, i) => {
-									return (
-										<Card fluid={true} key={i}>
-											<Card.Content>
-												<Card.Header>
+				<PurpleBanner>
+					Proof-of-authority (PoA) is an algorithm used this
+					blockchain that delivers comparatively fast transactions
+					through a consensus mechanism based on identity as a stake.
+				</PurpleBanner>
+				<Content>
+					<Grid columns="equal">
+						<Grid.Column width={12}>
+							<Spring
+								from={{
+									marginRight: -Misc.MARGIN_CONSTANT,
+									opacity: 0
+								}}
+								to={{
+									marginRight: 0,
+									opacity: 1
+								}}
+								config={config.wobbly}
+							>
+								{props => (
+									<NomineeList style={props}>
+										<h3>Nominee List</h3>
+										<Nominee
+											moniker="Danu"
+											address="0x75ce23a141e4b863aaf2ebe06e1700165786b493"
+										/>
+									</NomineeList>
+								)}
+							</Spring>
+						</Grid.Column>
+						<Grid.Column>
+							<WhiteListHeader>Whitelist</WhiteListHeader>
+							<WhiteList>
+								{whiteListTask.response &&
+									whiteListTask.response.map((entry, i) => {
+										return (
+											<WhiteListEntry
+												horizontal={true}
+												key={i}
+											>
+												<WhiteListEntry.Moniker>
 													{capitalize(
 														entry.moniker.toString()
 													)}
-												</Card.Header>
-												<Card.Meta>
+												</WhiteListEntry.Moniker>
+												<WhiteListEntry.Address>
 													{Static.cleanAddress(
 														entry.address
 													)}
-												</Card.Meta>
-											</Card.Content>
-										</Card>
-									);
-								})}
-						</WhiteList>
-					</Grid.Column>
-				</Grid>
+												</WhiteListEntry.Address>
+											</WhiteListEntry>
+										);
+									})}
+							</WhiteList>
+						</Grid.Column>
+					</Grid>
+				</Content>
 				<StatusBar>
+					<Button
+						loading={whiteListTask.isLoading}
+						disabled={whiteListTask.isLoading}
+						onClick={this.handleFetchWhiteList}
+						color="blue"
+						icon="circle notch"
+					/>
 					<Button color="green" icon="plus" />
 				</StatusBar>
 			</React.Fragment>

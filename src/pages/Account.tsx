@@ -20,7 +20,8 @@ import { ConfigLoadReducer } from '../redux/reducers/Config';
 import { Jumbo, PaddedContent } from '../components/Styling';
 
 import LoadingButton from '../components/LoadingButton';
-import StatusBar from '../components/StatusBar';
+import AccountUnlock from '../components/AccountUnlock';
+import FloatingButton from '../components/FloatingButton';
 import Transaction, { SentTransaction } from '../components/Transaction';
 
 import redux from '../redux.config';
@@ -64,9 +65,36 @@ interface State {
 
 type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
 
+const transactions: SentTransaction[] = [
+	{
+		id: 1,
+		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+		value: 500000,
+		status: true,
+		incoming: true
+	},
+	{
+		id: 2,
+		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+		value: 10000,
+		status: true,
+		incoming: false
+	},
+	{
+		id: 3,
+		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+		value: 100000,
+		status: false,
+		incoming: true
+	}
+];
+
 class Account extends React.Component<LocalProps, State> {
 	public state = {
-		transactions: [],
+		transactions,
 		account: {
 			address: this.props.match.params.address,
 			balance: parseInt(
@@ -97,7 +125,7 @@ class Account extends React.Component<LocalProps, State> {
 			}
 
 			this.setState({
-				transactions: [],
+				transactions,
 				account: {
 					address,
 					balance: newBalance,
@@ -145,15 +173,10 @@ class Account extends React.Component<LocalProps, State> {
 					>
 						{props => (
 							<Header style={props} as="h2" floated="left">
-								{/* <Link to="/">
-									<Icon name="arrow left" />
-								</Link> */}
-								{/* <Header.Content> */}
 								{Static.cleanAddress(account.address)}
 								<Header.Subheader>
 									Last Updated: {account.lastUpdated || 'N/A'}
 								</Header.Subheader>
-								{/* </Header.Content> */}
 							</Header>
 						)}
 					</Spring>
@@ -248,12 +271,13 @@ class Account extends React.Component<LocalProps, State> {
 							);
 						})}
 				</Transactions>
-				<StatusBar>
+				<AccountUnlock />
+				<FloatingButton bottomOffset={57}>
 					<LoadingButton
 						onClickHandler={this.fetchAccount}
 						isLoading={accountFetchTask.isLoading}
 					/>
-				</StatusBar>
+				</FloatingButton>
 			</React.Fragment>
 		);
 	}

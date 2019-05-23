@@ -35,8 +35,8 @@ function createWindow() {
 	);
 
 	main = new electron.BrowserWindow({
-		width: 1200,
-		height: 820,
+		width: 1270,
+		height: 757,
 		icon
 	});
 

@@ -12,7 +12,8 @@ export const Jumbo = styled.div`
 	background: #fff !important;
 	width: 100% !important;
 	padding: 30px;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important;
+	/* box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important; */
+	border-bottom: 1px solid #eee !important;
 	padding-left: 20px;
 	height: 115px;
 	margin-top: -5px !important;
