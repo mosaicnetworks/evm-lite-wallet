@@ -4,15 +4,24 @@ import styled from 'styled-components';
 
 import { connect } from 'react-redux';
 import { Spring, config } from 'react-spring/renderprops';
+import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Header, Message, Form, Grid, Select } from 'semantic-ui-react';
 
-import { Store, DataDirectorySetReducer, ConfigLoadReducer } from '../redux';
+import {
+	Store,
+	DataDirectorySetReducer,
+	ConfigLoadReducer,
+	DataDirectorySetPayLoad
+} from '../redux';
 import { PaddedContent } from '../components/Styling';
 
 import Heading from '../components/Heading';
 import Misc from '../classes/Misc';
+import Banner from '../components/Banner';
+import redux from '../redux.config';
 
 import './styles/Configuration.css';
+import { Static } from 'evm-lite-lib';
 
 const Section = styled.div`
 	background: #fff !important;
@@ -20,30 +29,17 @@ const Section = styled.div`
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important;
 `;
 
-const BlackNotificationBanner = styled.div`
-	background: #222 !important;
-	color: #fff !important;
-	padding: 20px;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
-	position: relative;
-	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-
-	&:before,
-	&:after {
-		content: '';
-		position: absolute;
-		z-index: -1;
-		box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-		top: 0;
-		bottom: 0;
-		left: 10px;
-		right: 10px;
-	}
-`;
+interface AlertProps {
+	alert: InjectedAlertProp;
+}
 
 interface StoreProps {
 	dataDirectorySetTask: DataDirectorySetReducer;
 	configLoadTask: ConfigLoadReducer;
+}
+
+interface DispatchProps {
+	handleSetDataDirectory: (payload: DataDirectorySetPayLoad) => void;
 }
 
 interface State {
@@ -56,7 +52,7 @@ interface State {
 	};
 }
 
-type LocalProps = StoreProps;
+type LocalProps = StoreProps & AlertProps & DispatchProps;
 
 class Configuration extends React.Component<LocalProps, State> {
 	public state = {
@@ -71,7 +67,6 @@ class Configuration extends React.Component<LocalProps, State> {
 
 	public componentDidMount() {
 		if (this.props.dataDirectorySetTask.response) {
-			console.log('DANU: ', this.props.dataDirectorySetTask.response);
 			this.setState(
 				{
 					fields: {
@@ -79,23 +74,19 @@ class Configuration extends React.Component<LocalProps, State> {
 						dataDirectory: this.props.dataDirectorySetTask.response
 					}
 				},
-				() => console.log(this.state)
-			);
-		}
-
-		if (!!this.props.configLoadTask.response) {
-			const config = this.props.configLoadTask.response;
-			console.log(this.state.fields);
-			this.setState(
-				{
-					fields: {
-						...this.state.fields,
-						keystore: config.storage.keystore,
-						gas: config.defaults.gas.toString(),
-						gasPrice: config.defaults.gasPrice.toString()
+				() => {
+					if (this.props.configLoadTask.response) {
+						const config = this.props.configLoadTask.response;
+						this.setState({
+							fields: {
+								...this.state.fields,
+								keystore: config.storage.keystore,
+								gas: config.defaults.gas.toString(),
+								gasPrice: config.defaults.gasPrice.toString()
+							}
+						});
 					}
-				},
-				() => console.log('STATE', this.state)
+				}
 			);
 		}
 	}
@@ -114,10 +105,8 @@ class Configuration extends React.Component<LocalProps, State> {
 			});
 		}
 
-		if (
-			!this.props.configLoadTask.response &&
-			nextProps.configLoadTask.response
-		) {
+		if (nextProps.configLoadTask.response) {
+			console.log('CONFIG', nextProps.configLoadTask.response);
 			const config = nextProps.configLoadTask.response;
 
 			this.setState({
@@ -132,7 +121,22 @@ class Configuration extends React.Component<LocalProps, State> {
 	}
 
 	public readonly handleSetDataDirectory = () => {
-		console.log(this.state);
+		const { fields } = this.state;
+
+		if (!fields.dataDirectory) {
+			this.props.alert.error('Data directory field cannot be empty.');
+			return;
+		}
+
+		if (
+			Static.exists(fields.dataDirectory) &&
+			!Static.isDirectory(fields.dataDirectory)
+		) {
+			this.props.alert.error('The path given is not a directory.');
+			return;
+		}
+
+		this.props.handleSetDataDirectory(fields.dataDirectory);
 	};
 
 	public render() {
@@ -149,11 +153,11 @@ class Configuration extends React.Component<LocalProps, State> {
 						''
 					}
 				/>
-				<BlackNotificationBanner>
+				<Banner color="black">
 					These configuration values will be read in by all actions
 					across the wallet and other evm-lite applications as default
 					values.
-				</BlackNotificationBanner>
+				</Banner>
 				<br />
 				<br />
 				<PaddedContent>
@@ -191,6 +195,14 @@ class Configuration extends React.Component<LocalProps, State> {
 												(dataDirectorySetTask.response &&
 													dataDirectorySetTask.payload) ||
 												'N/A'
+											}
+											onChange={(_, { value }) =>
+												this.setState({
+													fields: {
+														...fields,
+														dataDirectory: value
+													}
+												})
 											}
 											defaultValue={fields.dataDirectory}
 										/>
@@ -298,9 +310,14 @@ const mapStoreToProps = (store: Store): StoreProps => ({
 	configLoadTask: store.config.load
 });
 
-const mapsDispatchToProps = (dispatch: any) => ({});
+const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
+	handleSetDataDirectory: payload =>
+		dispatch(
+			redux.actions.dataDirectory.setDirectory.handlers.init(payload)
+		)
+});
 
 export default connect<StoreProps, {}, {}, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
-)(Configuration);
+)(withAlert<AlertProps>(Configuration));

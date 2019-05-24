@@ -9,7 +9,7 @@ body {
 }
 
 .card {
-	border-radius: 5px !important;
+	border-radius: 2px !important;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important;
 	word-break: break-all;
 	font-family: 'Titillium Web', sans-serif !important;
@@ -21,9 +21,15 @@ a {
 	font-family: 'Titillium Web', sans-serif !important;
 }
 
+.ui.label {
+	border-radius: 2px !important;
+}
+
 .ui.label a {
 	background: transparent !important;
 	color: #000 !important;
+	margin: 0 !important;
+	padding: 0 10px !important;
 }
 
 .ui.label a:hover {

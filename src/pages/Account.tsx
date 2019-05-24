@@ -23,6 +23,7 @@ import { Jumbo, PaddedContent } from '../components/Styling';
 import LoadingButton from '../components/LoadingButton';
 import AccountUnlock from '../components/AccountUnlock';
 import FloatingButton from '../components/FloatingButton';
+import Banner from '../components/Banner';
 import Transaction, { SentTransaction } from '../components/Transaction';
 
 import redux from '../redux.config';
@@ -33,19 +34,6 @@ const Transactions = styled.div`
 	&.label {
 		margin-right: 10px !important;
 	}
-`;
-
-const OrangeBanner = styled.div`
-	background: #f2711c !important;
-	color: #fff !important;
-	padding: 20px;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
-	position: relative;
-	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
-		0 0 40px rgba(0, 0, 0, 0.1) inset;
-	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
-		0 0 40px rgba(0, 0, 0, 0.1) inset;
-	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
 `;
 
 interface AlertProps {
@@ -279,12 +267,13 @@ class Account extends React.Component<LocalProps, State> {
 					{show =>
 						show &&
 						(props => (
-							<OrangeBanner style={props}>
+							// @ts-ignore
+							<Banner color="orange" style={props}>
 								This account is currently unlocked and will
 								allow you to transfer funds and interact with
 								smart contracts without having to provide a
 								password.
-							</OrangeBanner>
+							</Banner>
 						))
 					}
 				</Transition>

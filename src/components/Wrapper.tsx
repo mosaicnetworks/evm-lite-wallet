@@ -6,7 +6,6 @@ import Header from './Header';
 
 class Wrapper extends React.Component<any, any> {
 	public render() {
-		console.log(React.Children.toArray(this.props.children)[0]);
 		return (
 			<React.Fragment>
 				<Header />

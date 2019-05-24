@@ -11,7 +11,7 @@ import {
 	DataDirectorySetPayLoad
 } from '../redux';
 
-import ReduxSagaAlert from '../poa/alerts';
+import ReduxSagaAlert, { notificationHandler } from '../poa/alerts';
 
 import Accounts from '../pages/Accounts';
 import POA from '../pages/POA';
@@ -40,15 +40,20 @@ interface OwnProps {
 type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
 class App extends React.Component<LocalProps, any> {
-	public componentWillUpdate(
-		nextProps: Readonly<LocalProps>,
-		nextState: Readonly<any>,
-		nextContext: any
-	): void {
-		ReduxSagaAlert.wrap(nextProps.setDataDirectoryTask, (type, message) => {
-			this.props.alert[type](message);
-		});
+	public componentWillReceiveProps(nextProps: Readonly<LocalProps>): void {
+		if (
+			nextProps.setDataDirectoryTask.response !==
+			this.props.setDataDirectoryTask.response
+		) {
+			ReduxSagaAlert.wrap(
+				nextProps.setDataDirectoryTask,
+				'Data directory successfully set.',
+				'Failed setting directory.',
+				notificationHandler(this)
+			);
+		}
 	}
+
 	public componentDidMount() {
 		// @ts-ignore
 		const defaultPath = path.join(window.require('os').homedir(), '.evmlc');

@@ -12,6 +12,7 @@ import { Store } from '../redux';
 
 import Heading from '../components/Heading';
 import FloatingButton from '../components/FloatingButton';
+import Banner from '../components/Banner';
 import Nominee from '../components/Nominee';
 
 import redux from '../redux.config';
@@ -23,33 +24,6 @@ const capitalize = (word: string) =>
 		.toString()
 		.charAt(0)
 		.toUpperCase() + word.slice(1);
-
-const PurpleBanner = styled.div`
-	background: rgba(126, 66, 149, 1) !important;
-	color: #fff !important;
-	padding: 20px;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
-	position: relative;
-	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
-		0 0 40px rgba(0, 0, 0, 0.1) inset;
-	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
-		0 0 40px rgba(0, 0, 0, 0.1) inset;
-	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-
-	&:before,
-	&:after {
-		content: '';
-		position: absolute;
-		z-index: -1;
-		box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-		top: 0;
-		bottom: 0;
-		left: 10px;
-		right: 10px;
-		-moz-border-radius: 100px / 10px;
-		border-radius: 100px / 10px;
-	}
-`;
 
 const WhiteListHeader = styled.h3``;
 
@@ -109,11 +83,11 @@ class POA extends React.Component<LocalProps, State> {
 					heading={'Proof of Authority'}
 					subHeading="Manage existing and nominate new validators"
 				/>
-				<PurpleBanner>
+				<Banner color="purple">
 					Proof-of-authority (PoA) is an algorithm used this
 					blockchain that delivers comparatively fast transactions
 					through a consensus mechanism based on identity as a stake.
-				</PurpleBanner>
+				</Banner>
 				<Content>
 					<Grid columns="equal">
 						<Grid.Column width={12}>

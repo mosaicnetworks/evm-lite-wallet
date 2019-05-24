@@ -74,7 +74,7 @@ class Account extends React.Component<LocalProps, any> {
 								))
 							}
 						</Transition>
-						<Label color={'green'} basic={false}>
+						<Label color="green" basic={false}>
 							Balance
 							<Label.Detail>
 								{this.props.account.balance}
