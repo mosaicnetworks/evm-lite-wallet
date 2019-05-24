@@ -2,6 +2,39 @@
 
 A user interface to interact with EVM-Lite.
 
+## Development
+
+Curretly working with a development version of `evm-lite-lib`. Clone `evm-lite-lib` and checkout the `node12` branch (soon to be removed).
+
+Navigate the the `evm-lite-lib` then rune the following commands:
+
+```bash
+cd ./src/evm-lite-core/ && npm install && npm link 
+cd ../../ && npm install && npm link evm-lite-core && npm link
+```
+
+This will add a symlink of the `evm-lite-lib`.
+
+Now to finish up setting up the development evironment run these commands in `evm-lite-wallet`:
+
+```bash
+npm install && npm link evm-lite-lib && npm run build
+```
+
+Now you should have a the foundations set up to run the `electron` and the `dev-server`.
+
+### Development Server (Hot Reloading)
+
+```bash
+npm run start:dev
+```
+
+### Electron Window
+
+```bash
+npm run start:electron
+```
+
 ## Installation
 
 To build and run `EVM-Lite Wallet`, simply execute the command:
