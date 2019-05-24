@@ -5,13 +5,14 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Spring, config } from 'react-spring/renderprops';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Header, Message, Form, Grid, Select } from 'semantic-ui-react';
+import { Header, Message, Form, Grid } from 'semantic-ui-react';
 
 import {
 	Store,
 	DataDirectorySetReducer,
 	ConfigLoadReducer,
-	DataDirectorySetPayLoad
+	DataDirectorySetPayLoad,
+	AccountsFetchAllReducer
 } from '../redux';
 import { PaddedContent } from '../components/Styling';
 
@@ -34,6 +35,7 @@ interface AlertProps {
 }
 
 interface StoreProps {
+	accountFetchAllTask: AccountsFetchAllReducer;
 	dataDirectorySetTask: DataDirectorySetReducer;
 	configLoadTask: ConfigLoadReducer;
 }
@@ -43,6 +45,7 @@ interface DispatchProps {
 }
 
 interface State {
+	selectedFromIndex: number;
 	fields: {
 		dataDirectory: string;
 		keystore: string;
@@ -56,6 +59,7 @@ type LocalProps = StoreProps & AlertProps & DispatchProps;
 
 class Configuration extends React.Component<LocalProps, State> {
 	public state = {
+		selectedFromIndex: 0,
 		fields: {
 			dataDirectory: '',
 			keystore: '',
@@ -77,6 +81,7 @@ class Configuration extends React.Component<LocalProps, State> {
 				() => {
 					if (this.props.configLoadTask.response) {
 						const config = this.props.configLoadTask.response;
+
 						this.setState({
 							fields: {
 								...this.state.fields,
@@ -106,7 +111,6 @@ class Configuration extends React.Component<LocalProps, State> {
 		}
 
 		if (nextProps.configLoadTask.response) {
-			console.log('CONFIG', nextProps.configLoadTask.response);
 			const config = nextProps.configLoadTask.response;
 
 			this.setState({
@@ -140,8 +144,21 @@ class Configuration extends React.Component<LocalProps, State> {
 	};
 
 	public render() {
-		const { dataDirectorySetTask, configLoadTask } = this.props;
+		const {
+			dataDirectorySetTask,
+			configLoadTask,
+			accountFetchAllTask
+		} = this.props;
 		const { fields } = this.state;
+
+		const response = accountFetchAllTask.response || [];
+		const accounts = response.map((account, i) => {
+			return {
+				key: account.address.toLowerCase(),
+				text: account.address.toLowerCase(),
+				value: i
+			};
+		});
 
 		return (
 			<React.Fragment>
@@ -243,11 +260,12 @@ class Configuration extends React.Component<LocalProps, State> {
 								<Grid.Column className="data">
 									<div>
 										<Form.Group>
-											<Select
+											<Form.Select
+												// selection={true}
 												fluid={true}
 												placeholder={fields.from}
-												options={[]}
-												defaultValue={fields.from}
+												options={accounts}
+												defaultValue={1}
 											/>
 										</Form.Group>
 										<Form.Group>
@@ -307,7 +325,8 @@ class Configuration extends React.Component<LocalProps, State> {
 
 const mapStoreToProps = (store: Store): StoreProps => ({
 	dataDirectorySetTask: store.dataDirectory.setDirectory,
-	configLoadTask: store.config.load
+	configLoadTask: store.config.load,
+	accountFetchAllTask: store.accounts.fetchAll
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
