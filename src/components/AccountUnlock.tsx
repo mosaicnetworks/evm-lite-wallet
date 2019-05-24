@@ -7,11 +7,11 @@ import { InjectedAlertProp, withAlert } from 'react-alert';
 import { config, Transition } from 'react-spring/renderprops';
 import { Input, Button } from 'semantic-ui-react';
 
-import { AccountsCreateReducer } from '../redux/reducers/Accounts';
-import { AccountsCreatePayLoad } from '../redux/actions/Accounts';
+import { AccountsUnlockReducer } from '../redux/reducers/Accounts';
+import { AccountsUnlockPayLoad } from '../redux/actions/Accounts';
 import { Store } from '../redux';
 
-import AnimationRight from './AnimationRight';
+import Animation from './animations/Animation';
 
 import redux from '../redux.config';
 
@@ -78,10 +78,9 @@ const Content = styled.div`
 	}
 `;
 interface State {
-	visible: boolean;
+	show: boolean;
 	fields: {
 		password: string;
-		verifyPassword: string;
 	};
 }
 
@@ -90,32 +89,55 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	accountCreateTask: AccountsCreateReducer;
+	accountUnlockTask: AccountsUnlockReducer;
 }
 
 interface DispatchProps {
-	handleCreateAccount: (payload: AccountsCreatePayLoad) => void;
+	handleUnlockAccount: (payload: AccountsUnlockPayLoad) => void;
 }
 
-type Props = StoreProps & AlertProps & DispatchProps;
+interface OwnProps {
+	address: string;
+}
+
+type Props = StoreProps & AlertProps & DispatchProps & OwnProps;
 
 class AccountUnlock extends React.Component<Props, State> {
 	public state = {
-		visible: false,
+		show: false,
 		fields: {
-			password: '',
-			verifyPassword: ''
+			password: ''
 		}
 	};
 
+	public handleUnlockAccount = () => {
+		const { fields } = this.state;
+
+		if (!fields.password) {
+			this.props.alert.error('Password cannot be empty.');
+		}
+
+		this.setState({
+			show: false,
+			fields: {
+				password: ''
+			}
+		});
+
+		this.props.handleUnlockAccount({
+			address: this.props.address,
+			password: fields.password
+		});
+	};
+
 	public render() {
-		const { accountCreateTask } = this.props;
-		const { visible } = this.state;
+		const { accountUnlockTask } = this.props;
+		const { show } = this.state;
 
 		return (
 			<React.Fragment>
 				<Transition
-					items={visible}
+					items={show}
 					from={{ right: '-40px' }}
 					enter={{ right: '340px' }}
 					leave={{ right: '-40px' }}
@@ -128,15 +150,16 @@ class AccountUnlock extends React.Component<Props, State> {
 								<Button
 									icon="check"
 									color="green"
-									disabled={accountCreateTask.isLoading}
-									loading={accountCreateTask.isLoading}
+									onClick={this.handleUnlockAccount}
+									disabled={accountUnlockTask.isLoading}
+									loading={accountUnlockTask.isLoading}
 								/>
 							</Open>
 						))
 					}
 				</Transition>
 				<Transition
-					items={visible}
+					items={show}
 					from={{ opacity: 0, right: '0px' }}
 					enter={{ opacity: 1, right: '340px' }}
 					leave={{ opacity: 0, right: '0px' }}
@@ -149,7 +172,7 @@ class AccountUnlock extends React.Component<Props, State> {
 								style={props}
 								onClick={() =>
 									this.setState({
-										visible: !visible
+										show: !show
 									})
 								}
 							>
@@ -158,21 +181,21 @@ class AccountUnlock extends React.Component<Props, State> {
 						))
 					}
 				</Transition>
-				{!visible && (
-					<AnimationRight>
+				{!show && (
+					<Animation direction="right">
 						<Open
 							onClick={() =>
 								this.setState({
-									visible: true
+									show: true
 								})
 							}
 						>
 							<Button icon="lock" color="orange" />
 						</Open>
-					</AnimationRight>
+					</Animation>
 				)}
 				<Transition
-					items={visible}
+					items={show}
 					from={{ right: '-341px' }}
 					enter={{ right: '0px' }}
 					leave={{ right: '-341px' }}
@@ -205,15 +228,15 @@ class AccountUnlock extends React.Component<Props, State> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	accountCreateTask: store.accounts.create
+	accountUnlockTask: store.accounts.unlock
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleCreateAccount: payload =>
-		dispatch(redux.actions.accounts.create.handlers.init(payload))
+	handleUnlockAccount: payload =>
+		dispatch(redux.actions.accounts.unlock.handlers.init(payload))
 });
 
-export default connect<StoreProps, DispatchProps, {}, Store>(
+export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
 )(withAlert<AlertProps>(AccountUnlock));

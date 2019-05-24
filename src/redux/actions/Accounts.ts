@@ -1,4 +1,4 @@
-import { BaseAccount } from 'evm-lite-lib';
+import { BaseAccount, Account } from 'evm-lite-lib';
 
 import AsyncActionSet, { AsyncActionState } from '../common/AsyncActionSet';
 
@@ -35,7 +35,13 @@ export interface AccountsTransferPayLoad {
 	password: string;
 }
 
+export interface AccountsUnlockPayLoad {
+	address: string;
+	password: string;
+}
+
 interface AsyncActionStateSchema {
+	unlock: AsyncActionState<AccountsUnlockPayLoad, Account, string>;
 	fetchAll: AsyncActionState<AccountsFetchAllPayLoad, BaseAccount[], string>;
 	fetchOne: AsyncActionState<AccountsFetchOnePayLoad, BaseAccount, string>;
 	decrypt: AsyncActionState<AccountsDecryptPayload, string, string>;
@@ -48,6 +54,6 @@ export default class Accounts extends AsyncActionSet<AsyncActionStateSchema> {
 	constructor() {
 		super(Accounts.name);
 
-		this.actions = ['FetchAll', 'FetchOne', 'Create'];
+		this.actions = ['FetchAll', 'FetchOne', 'Create', 'Unlock'];
 	}
 }

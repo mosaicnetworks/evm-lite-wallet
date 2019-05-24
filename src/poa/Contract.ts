@@ -21,4 +21,4 @@ export interface POASchema extends BaseContractSchema {
 // export const POA_ADDRESS: string = '0xabbaabbaabbaabbaabbaabbaabbaabbaabbaabba';
 
 // DEV ADDRESS
-export const POA_ADDRESS: string = '0xfaf14ab23c8259397004cf42db9c2b88045f59a2';
+export const POA_ADDRESS: string = '0xbac4c7373168ce9007e77ec8a388cad9f4b39801';

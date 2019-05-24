@@ -3,6 +3,12 @@ export default class Misc {
 		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	}
 
+	public static capitalize = (word: string) =>
+		word
+			.toString()
+			.charAt(0)
+			.toUpperCase() + word.slice(1);
+
 	public static MARGIN_CONSTANT = 100;
 
 	private constructor() {}

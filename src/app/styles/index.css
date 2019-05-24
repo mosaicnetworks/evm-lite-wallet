@@ -21,6 +21,16 @@ a {
 	font-family: 'Titillium Web', sans-serif !important;
 }
 
+.ui.label a {
+	background: transparent !important;
+	color: #000 !important;
+}
+
+.ui.label a:hover {
+	background: transparent !important;
+	color: #000 !important;
+}
+
 h2,
 h1,
 h3,
@@ -124,4 +134,7 @@ input[type='password'] {
 	margin-top: 0 !important;
 	margin-right: 0 !important;
 	min-width: 300px !important;
+}
+
+.ui.label {
 }

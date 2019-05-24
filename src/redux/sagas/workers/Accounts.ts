@@ -1,6 +1,11 @@
 import { fork, join, put, select } from 'redux-saga/effects';
 
-import { Keystore as EVMLKeystore, EVMLC, BaseAccount } from 'evm-lite-lib';
+import {
+	Keystore as EVMLKeystore,
+	EVMLC,
+	BaseAccount,
+	Account
+} from 'evm-lite-lib';
 
 import { BaseAction } from '../../common/AsyncActionSet';
 import { Store } from '../../store/Store';
@@ -8,7 +13,8 @@ import { Store } from '../../store/Store';
 import Accounts, {
 	AccountsFetchAllPayLoad,
 	AccountsFetchOnePayLoad,
-	AccountsCreatePayLoad
+	AccountsCreatePayLoad,
+	AccountsUnlockPayLoad
 } from '../../actions/Accounts';
 
 const accounts = new Accounts();
@@ -151,4 +157,39 @@ export function* accountsCreateWorker(
 	}
 
 	yield put(reset());
+}
+
+export function* accountsUnlockWorker(
+	action: BaseAction<AccountsUnlockPayLoad>
+) {
+	const { failure, success } = accounts.actionStates.unlock.handlers;
+
+	try {
+		const state: Store = yield select();
+		const config = state.config.load.response;
+
+		if (config) {
+			const keystoreDirectory = config.storage.keystore;
+			const keystore = new EVMLKeystore(keystoreDirectory);
+
+			const { host, port } = config.connection;
+			const evmlc = new EVMLC(host, port, {
+				from: action.payload.address,
+				gas: config.defaults.gas,
+				gasPrice: config.defaults.gasPrice
+			});
+
+			const account: Account = yield keystore.decrypt(
+				action.payload.address,
+				action.payload.password,
+				evmlc
+			);
+
+			yield put(success(account));
+		} else {
+			yield put(failure('No configuration loaded.'));
+		}
+	} catch (e) {
+		yield put(failure('_SAGA_ERROR_' + e));
+	}
 }

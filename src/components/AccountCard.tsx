@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
+import { Transition, config } from 'react-spring/renderprops';
 import { Link } from 'react-router-dom';
 import { Card, Label } from 'semantic-ui-react';
 
@@ -15,6 +16,7 @@ const Address = styled.span`
 
 interface OwnProps {
 	account: BaseAccount;
+	unlocked: boolean;
 }
 
 type LocalProps = OwnProps;
@@ -53,6 +55,25 @@ class Account extends React.Component<LocalProps, any> {
 					className={'sticky-account-heading-buttons'}
 				>
 					<div className="ui small two buttons">
+						<Transition
+							items={this.props.unlocked}
+							from={{ opacity: 0 }}
+							enter={{ opacity: 1 }}
+							leave={{ opacity: 0 }}
+							config={config.wobbly}
+						>
+							{show =>
+								show &&
+								(props => (
+									<Label
+										style={props}
+										icon="unlock"
+										color={'orange'}
+										basic={false}
+									/>
+								))
+							}
+						</Transition>
 						<Label color={'green'} basic={false}>
 							Balance
 							<Label.Detail>

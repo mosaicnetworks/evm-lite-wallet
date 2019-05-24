@@ -10,8 +10,8 @@ import { Static } from 'evm-lite-lib';
 import { POAWhiteListReducer } from '../redux/reducers/POA';
 import { Store } from '../redux';
 
-import StatusBar from '../components/StatusBar';
 import Heading from '../components/Heading';
+import FloatingButton from '../components/FloatingButton';
 import Nominee from '../components/Nominee';
 
 import redux from '../redux.config';
@@ -166,7 +166,7 @@ class POA extends React.Component<LocalProps, State> {
 						</Grid.Column>
 					</Grid>
 				</Content>
-				<StatusBar>
+				<FloatingButton bottomOffset={57}>
 					<Button
 						loading={whiteListTask.isLoading}
 						disabled={whiteListTask.isLoading}
@@ -174,8 +174,10 @@ class POA extends React.Component<LocalProps, State> {
 						color="blue"
 						icon="circle notch"
 					/>
+				</FloatingButton>
+				<FloatingButton bottomOffset={100}>
 					<Button color="green" icon="plus" />
-				</StatusBar>
+				</FloatingButton>
 			</React.Fragment>
 		);
 	}

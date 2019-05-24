@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 import { connect } from 'react-redux';
-import { Spring, config } from 'react-spring/renderprops';
+import { Spring, config, Transition } from 'react-spring/renderprops';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Header } from 'semantic-ui-react';
 
@@ -13,7 +13,8 @@ import { Store } from '../redux';
 import { AccountsFetchOnePayLoad } from '../redux/actions/Accounts';
 import {
 	AccountsFetchOneReducer,
-	AccountsFetchAllReducer
+	AccountsFetchAllReducer,
+	AccountsUnlockReducer
 } from '../redux/reducers/Accounts';
 import { ConfigLoadReducer } from '../redux/reducers/Config';
 
@@ -34,6 +35,19 @@ const Transactions = styled.div`
 	}
 `;
 
+const OrangeBanner = styled.div`
+	background: #f2711c !important;
+	color: #fff !important;
+	padding: 20px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
+	position: relative;
+	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
+		0 0 40px rgba(0, 0, 0, 0.1) inset;
+	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
+		0 0 40px rgba(0, 0, 0, 0.1) inset;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+`;
+
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
@@ -42,6 +56,7 @@ interface StoreProps {
 	accountFetchTask: AccountsFetchOneReducer;
 	accountFetchAllTask: AccountsFetchAllReducer;
 	configLoadTask: ConfigLoadReducer;
+	accountUnlockTask: AccountsUnlockReducer;
 }
 
 interface DispatchProps {
@@ -153,8 +168,22 @@ class Account extends React.Component<LocalProps, State> {
 		}
 	};
 
+	public renderAccountUnlockButton = () => {
+		const { account } = this.state;
+		const { accountUnlockTask } = this.props;
+
+		if (
+			accountUnlockTask.response &&
+			accountUnlockTask.response.address === account.address
+		) {
+			return null;
+		}
+
+		return <AccountUnlock address={account.address} />;
+	};
+
 	public render() {
-		const { accountFetchTask } = this.props;
+		const { accountFetchTask, accountUnlockTask } = this.props;
 		const { account, transactions } = this.state;
 
 		return (
@@ -237,6 +266,29 @@ class Account extends React.Component<LocalProps, State> {
 						)}
 					</Header>
 				</Jumbo>
+				<Transition
+					items={
+						accountUnlockTask.response &&
+						accountUnlockTask.response.address === account.address
+					}
+					from={{ opacity: 0 }}
+					enter={{ opacity: 1 }}
+					leave={{ opacity: 0 }}
+					config={config.stiff}
+				>
+					{show =>
+						show &&
+						(props => (
+							<OrangeBanner style={props}>
+								This account is currently unlocked and will
+								allow you to transfer funds and interact with
+								smart contracts without having to provide a
+								password.
+							</OrangeBanner>
+						))
+					}
+				</Transition>
+
 				<br />
 				{transactions.length !== 0 && (
 					<PaddedContent>
@@ -271,7 +323,7 @@ class Account extends React.Component<LocalProps, State> {
 							);
 						})}
 				</Transactions>
-				<AccountUnlock />
+				{this.renderAccountUnlockButton()}
 				<FloatingButton bottomOffset={57}>
 					<LoadingButton
 						onClickHandler={this.fetchAccount}
@@ -286,7 +338,8 @@ class Account extends React.Component<LocalProps, State> {
 const mapStoreToProps = (store: Store): StoreProps => ({
 	accountFetchTask: store.accounts.fetchOne,
 	configLoadTask: store.config.load,
-	accountFetchAllTask: store.accounts.fetchAll
+	accountFetchAllTask: store.accounts.fetchAll,
+	accountUnlockTask: store.accounts.unlock
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({

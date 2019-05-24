@@ -104,18 +104,16 @@ class Transaction extends React.Component<LocalProps, State> {
 							</BoldCentered>
 						</Status>
 					</Segment>
-					<Segment>
+					<Segment
+						onClick={() =>
+							this.setState({
+								visible: !visible
+							})
+						}
+						style={{ cursor: 'pointer' }}
+					>
 						<BoldCentered>
-							<Icon
-								onClick={() =>
-									this.setState({
-										visible: !visible
-									})
-								}
-								style={{ cursor: 'pointer' }}
-								name={icon}
-								color="blue"
-							/>
+							<Icon name={icon} color="blue" />
 						</BoldCentered>
 					</Segment>
 				</Segment.Group>

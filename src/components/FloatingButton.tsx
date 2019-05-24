@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import styled from 'styled-components';
-import AnimationRight from './AnimationRight';
+import Animation from './animations/Animation';
 
 interface Props {
 	bottomOffset: number;
@@ -32,9 +32,9 @@ class FloatingButton extends React.Component<Props, any> {
 		`;
 
 		return (
-			<AnimationRight>
+			<Animation direction="right">
 				<Button>{this.props.children}</Button>
-			</AnimationRight>
+			</Animation>
 		);
 	}
 }

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Segment, Icon, Label } from 'semantic-ui-react';
 
-import AnimationRight from './AnimationRight';
+import Animation from './animations/Animation';
 
 const Centered = styled.div`
 	text-align: center !important;
@@ -71,14 +71,14 @@ class Nominee extends React.Component<Props, State> {
 					</Segment>
 				</Segment.Group>
 				{show && (
-					<AnimationRight>
+					<Animation direction="right">
 						<Segment.Group horizontal={true}>
 							<Segment>
 								<h4>Already Voted:</h4>
 								<Label content="Danu" color="green" />
 							</Segment>
 						</Segment.Group>
-					</AnimationRight>
+					</Animation>
 				)}
 			</React.Fragment>
 		);

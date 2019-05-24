@@ -14,6 +14,7 @@ import {
 
 import { NotificationPayLoad } from '../redux/actions/Notifications';
 import { Jumbo } from '../components/Styling';
+import { AccountsUnlockReducer } from '../redux/reducers/Accounts';
 
 import redux from '../redux.config';
 
@@ -21,7 +22,7 @@ import LoadingButton from '../components/LoadingButton';
 import AccountCard from '../components/AccountCard';
 import AccountCreate from '../components/AccountCreate';
 import FloatingButton from '../components/FloatingButton';
-import AnimationRight from '../components/AnimationRight';
+import Animation from '../components/animations/Animation';
 
 import Misc from '../classes/Misc';
 
@@ -32,6 +33,7 @@ interface AlertProps {
 interface StoreProps {
 	accountsFetchAllTask: AccountsFetchAllReducer;
 	configLoadTask: ConfigLoadReducer;
+	accountUnlockTask: AccountsUnlockReducer;
 }
 
 interface DispatchProps {
@@ -72,7 +74,11 @@ class Accounts extends React.Component<LocalProps, State> {
 	};
 
 	public render() {
-		const { accountsFetchAllTask, configLoadTask } = this.props;
+		const {
+			accountsFetchAllTask,
+			configLoadTask,
+			accountUnlockTask
+		} = this.props;
 
 		return (
 			<React.Fragment>
@@ -150,12 +156,20 @@ class Accounts extends React.Component<LocalProps, State> {
 				<Grid>
 					<Grid.Column width="16">
 						{accountsFetchAllTask.response && (
-							<AnimationRight>
+							<Animation direction="right">
 								<div>
 									<Card.Group centered={true}>
 										{accountsFetchAllTask.response!.map(
 											(account, i) => (
 												<AccountCard
+													unlocked={
+														(accountUnlockTask.response &&
+															accountUnlockTask
+																.response
+																.address ===
+																account.address) ||
+														false
+													}
 													key={account.address}
 													account={account}
 												/>
@@ -163,7 +177,7 @@ class Accounts extends React.Component<LocalProps, State> {
 										)}
 									</Card.Group>
 								</div>
-							</AnimationRight>
+							</Animation>
 						)}
 					</Grid.Column>
 				</Grid>
@@ -181,7 +195,8 @@ class Accounts extends React.Component<LocalProps, State> {
 
 const mapStoreToProps = (store: Store): StoreProps => ({
 	accountsFetchAllTask: store.accounts.fetchAll,
-	configLoadTask: store.config.load
+	configLoadTask: store.config.load,
+	accountUnlockTask: store.accounts.unlock
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({

@@ -12,7 +12,7 @@ import { AccountsCreateReducer } from '../redux/reducers/Accounts';
 import { AccountsCreatePayLoad } from '../redux/actions/Accounts';
 import { Store } from '../redux';
 
-import AnimationRight from './AnimationRight';
+import Animation from './animations/Animation';
 
 import redux from '../redux.config';
 
@@ -205,7 +205,7 @@ class AccountCreate extends React.Component<Props, State> {
 					}
 				</Transition>
 				{!visible && (
-					<AnimationRight>
+					<Animation direction="right">
 						<CreateAccountSlider
 							onClick={() =>
 								this.setState({
@@ -215,7 +215,7 @@ class AccountCreate extends React.Component<Props, State> {
 						>
 							<Button icon="plus" color="green" />
 						</CreateAccountSlider>
-					</AnimationRight>
+					</Animation>
 				)}
 				<Transition
 					items={visible}
