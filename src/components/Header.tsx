@@ -8,7 +8,7 @@ import { NavLink as Link } from 'react-router-dom';
 import { Container, Icon, Image, Label } from 'semantic-ui-react';
 
 import { Store } from '../redux';
-import { AccountsUnlockReducer } from '../redux/reducers/Accounts';
+// import { AccountsUnlockReducer } from '../redux/reducers/Accounts';
 
 import redux from '../redux.config';
 
@@ -98,11 +98,11 @@ interface OwnProps {
 }
 
 interface StoreProps {
-	accountUnlockTask: AccountsUnlockReducer;
+	// accountUnlockTask: AccountsUnlockReducer;
 }
 
 interface DispatchProps {
-	handleAccountUnlockReset: () => void;
+	// handleAccountUnlockReset: () => void;
 }
 
 type LocalProps = OwnProps & StoreProps & DispatchProps;
@@ -111,25 +111,25 @@ class Header extends React.Component<LocalProps, any> {
 	public state = {};
 
 	public handleAccountUnlockReset = () => {
-		if (this.props.accountUnlockTask.response) {
-			this.props.handleAccountUnlockReset();
-		} else {
-			console.log('Already reset');
-		}
+		// if (this.props.accountUnlockTask.response) {
+		// 	this.props.handleAccountUnlockReset();
+		// } else {
+		// 	console.log('Already reset');
+		// }
 	};
 
 	public render() {
-		const { accountUnlockTask } = this.props;
+		// const { accountUnlockTask } = this.props;
 
 		let to: any;
 
-		if (accountUnlockTask.response) {
-			to = {
-				pathname: `/account/${accountUnlockTask.response.address}/${
-					accountUnlockTask.response.balance
-				}/${accountUnlockTask.response.nonce}`
-			};
-		}
+		// if (accountUnlockTask.response) {
+		// 	to = {
+		// 		pathname: `/account/${accountUnlockTask.response.address}/${
+		// 			accountUnlockTask.response.balance
+		// 		}/${accountUnlockTask.response.nonce}`
+		// 	};
+		// }
 		return (
 			<Container fluid={true}>
 				<WalletHeader>
@@ -145,7 +145,8 @@ class Header extends React.Component<LocalProps, any> {
 							}}
 						>
 							<Transition
-								items={accountUnlockTask.response}
+								// items={accountUnlockTask.response}
+								items={true}
 								from={{ opacity: 0, marginRight: -50 }}
 								enter={{ opacity: 1, marginRight: 10 }}
 								leave={{ opacity: 0 }}
@@ -156,7 +157,7 @@ class Header extends React.Component<LocalProps, any> {
 									(props => (
 										<Label style={props}>
 											<Link to={to || ''}>
-												{show.address}
+												'Accounts Unlocked'
 											</Link>
 											<Icon
 												style={{

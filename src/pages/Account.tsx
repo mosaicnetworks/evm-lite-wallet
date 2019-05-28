@@ -262,7 +262,7 @@ class Account extends React.Component<LocalProps, State> {
 					from={{ opacity: 0 }}
 					enter={{ opacity: 1 }}
 					leave={{ opacity: 0 }}
-					config={config.stiff}
+					config={config.default}
 				>
 					{show =>
 						show &&

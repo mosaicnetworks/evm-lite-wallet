@@ -1,0 +1,21 @@
+import { ThunkAction } from 'redux-thunk';
+
+import { combineReducers } from 'redux';
+
+import accounts from './accounts';
+import app from './application';
+import config from './configuration';
+
+// Exports
+
+export type ThunkResult<R> = ThunkAction<R, any, undefined, BaseAction<any>>;
+export interface BaseAction<Payload> {
+	type: string;
+	payload?: Payload;
+}
+
+export default combineReducers({
+	app,
+	config,
+	accounts
+});

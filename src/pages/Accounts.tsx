@@ -2,21 +2,11 @@ import * as React from 'react';
 
 import { Spring, config } from 'react-spring/renderprops';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Card, Header, Grid } from 'semantic-ui-react';
 
-import {
-	AccountsFetchAllPayLoad,
-	AccountsFetchAllReducer,
-	Store,
-	ConfigLoadReducer
-} from '../redux';
-
-import { NotificationPayLoad } from '../redux/actions/Notifications';
 import { Jumbo } from '../components/Styling';
-import { AccountsUnlockReducer } from '../redux/reducers/Accounts';
-
-import redux from '../redux.config';
 
 import LoadingButton from '../components/LoadingButton';
 import AccountCard from '../components/AccountCard';
@@ -26,19 +16,21 @@ import Animation from '../components/animations/Animation';
 
 import Misc from '../classes/Misc';
 
+import { AccountsState, list } from '../modules/accounts';
+import { ConfigurationState } from '../modules/configuration';
+import { Store } from 'src/store';
+
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
 
 interface StoreProps {
-	accountsFetchAllTask: AccountsFetchAllReducer;
-	configLoadTask: ConfigLoadReducer;
-	accountUnlockTask: AccountsUnlockReducer;
+	accounts: AccountsState;
+	configuration: ConfigurationState;
 }
 
 interface DispatchProps {
-	handleFetchAllAccounts: (payload: AccountsFetchAllPayLoad) => void;
-	appendNewNotification: (payload: NotificationPayLoad) => void;
+	list: () => void;
 }
 
 interface OwnProps {
@@ -56,28 +48,13 @@ class Accounts extends React.Component<LocalProps, State> {
 		totalBalance: 123523432
 	};
 
-	public handleShowAlert = () => {
-		this.props.alert.info('Testing alert.');
-	};
-
-	public handleFetchAllAccounts = () => {
-		if (this.props.configLoadTask.response) {
-			this.props.handleFetchAllAccounts({
-				keystoreDirectory: this.props.configLoadTask.response.storage
-					.keystore
-			});
-		} else {
-			this.props.alert.error(
-				'Looks like there was a problem reading the config file.'
-			);
-		}
-	};
+	public handleListAccounts = () => this.props.list();
 
 	public render() {
 		const {
-			accountsFetchAllTask,
-			configLoadTask,
-			accountUnlockTask
+			accounts,
+			configuration
+			// accountUnlockTask
 		} = this.props;
 
 		return (
@@ -98,25 +75,22 @@ class Accounts extends React.Component<LocalProps, State> {
 							<Header style={props} as="h2" floated="left">
 								Account Settings
 								<Header.Subheader>
-									{configLoadTask.response &&
-										configLoadTask.response.storage
-											.keystore}
+									{configuration.config.storage &&
+										configuration.config.storage.keystore}
 								</Header.Subheader>
 							</Header>
 						)}
 					</Spring>
 					<Header as="h2" floated="right">
 						Accounts
-						{accountsFetchAllTask.response && (
+						{!!accounts.accounts.length && (
 							<Spring
 								delay={0}
 								from={{
 									accounts: 0
 								}}
 								to={{
-									accounts:
-										accountsFetchAllTask.response.length ||
-										0
+									accounts: accounts.accounts.length || 0
 								}}
 								config={config.wobbly}
 							>
@@ -130,7 +104,7 @@ class Accounts extends React.Component<LocalProps, State> {
 					</Header>
 					<Header as="h2" floated="right">
 						Total Balance
-						{accountsFetchAllTask.response && (
+						{!!accounts.accounts.length && (
 							<Spring
 								delay={0}
 								from={{
@@ -155,19 +129,19 @@ class Accounts extends React.Component<LocalProps, State> {
 				<br />
 				<Grid>
 					<Grid.Column width="16">
-						{accountsFetchAllTask.response && (
+						{!!accounts.accounts.length && (
 							<Animation direction="right">
 								<div>
 									<Card.Group centered={true}>
-										{accountsFetchAllTask.response!.map(
+										{accounts.accounts!.map(
 											(account, i) => (
 												<AccountCard
 													unlocked={
-														(accountUnlockTask.response &&
-															accountUnlockTask
-																.response
-																.address ===
-																account.address) ||
+														// (accountUnlockTask.response &&
+														// 	accountUnlockTask
+														// 		.response
+														// 		.address ===
+														// 		account.address) ||
 														false
 													}
 													key={account.address}
@@ -184,8 +158,8 @@ class Accounts extends React.Component<LocalProps, State> {
 				<AccountCreate />
 				<FloatingButton bottomOffset={57}>
 					<LoadingButton
-						isLoading={this.props.accountsFetchAllTask.isLoading}
-						onClickHandler={this.handleFetchAllAccounts}
+						isLoading={this.props.accounts.loading.list}
+						onClickHandler={this.handleListAccounts}
 					/>
 				</FloatingButton>
 			</React.Fragment>
@@ -194,19 +168,18 @@ class Accounts extends React.Component<LocalProps, State> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	accountsFetchAllTask: store.accounts.fetchAll,
-	configLoadTask: store.config.load,
-	accountUnlockTask: store.accounts.unlock
+	accounts: store.accounts,
+	configuration: store.config
+	// accountUnlockTask: store.accounts.unlock
 });
 
-const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleFetchAllAccounts: payload =>
-		dispatch(redux.actions.accounts.fetchAll.handlers.init(payload)),
-	appendNewNotification: payload =>
-		dispatch(
-			redux.actions.notifications.notification.handlers.append(payload)
-		)
-});
+const mapsDispatchToProps = (dispatch: any): any =>
+	bindActionCreators(
+		{
+			list
+		},
+		dispatch
+	);
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,

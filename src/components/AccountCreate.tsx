@@ -2,19 +2,16 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
+import { Store } from 'src/store';
 import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { config, Transition } from 'react-spring/renderprops';
 import { Input, Button } from 'semantic-ui-react';
-import { V3JSONKeyStore, Static } from 'evm-lite-lib';
-
-import { AccountsCreateReducer } from '../redux/reducers/Accounts';
-import { AccountsCreatePayLoad } from '../redux/actions/Accounts';
-import { Store } from '../redux';
+import { BaseAccount, V3JSONKeyStore, Static } from 'evm-lite-lib';
 
 import Animation from './animations/Animation';
 
-import redux from '../redux.config';
+import { AccountsState, create } from '../modules/accounts';
 
 const CreateAccountSlider = styled.div`
 	position: fixed;
@@ -91,11 +88,11 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	accountCreateTask: AccountsCreateReducer;
+	accounts: AccountsState;
 }
 
 interface DispatchProps {
-	handleCreateAccount: (payload: AccountsCreatePayLoad) => void;
+	create: (password: string) => Promise<BaseAccount>;
 }
 
 type Props = StoreProps & AlertProps & DispatchProps;
@@ -110,13 +107,10 @@ class AccountCreate extends React.Component<Props, State> {
 	};
 
 	public componentWillReceiveProps = (nextProps: Props) => {
-		if (
-			!this.props.accountCreateTask.response &&
-			nextProps.accountCreateTask.response
-		) {
+		const nextAccountLength = nextProps.accounts.accounts.length;
+		if (this.props.accounts.accounts.length < nextAccountLength) {
 			const account: V3JSONKeyStore =
-				nextProps.accountCreateTask.response;
-
+				nextProps.accounts.accounts[nextAccountLength - 1];
 			this.props.alert.success(
 				`Account created:  ${Static.cleanAddress(
 					account.address.substring(0, 8)
@@ -146,13 +140,11 @@ class AccountCreate extends React.Component<Props, State> {
 			}
 		});
 
-		this.props.handleCreateAccount({
-			password: fields.password
-		});
+		this.props.create(fields.password);
 	};
 
 	public render() {
-		const { accountCreateTask } = this.props;
+		const { accounts } = this.props;
 		const { visible } = this.state;
 
 		return (
@@ -174,8 +166,8 @@ class AccountCreate extends React.Component<Props, State> {
 								<Button
 									icon="check"
 									color="green"
-									disabled={accountCreateTask.isLoading}
-									loading={accountCreateTask.isLoading}
+									disabled={accounts.loading.create}
+									loading={accounts.loading.create}
 								/>
 							</CreateAccountSlider>
 						))
@@ -264,12 +256,11 @@ class AccountCreate extends React.Component<Props, State> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	accountCreateTask: store.accounts.create
+	accounts: store.accounts
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleCreateAccount: payload =>
-		dispatch(redux.actions.accounts.create.handlers.init(payload))
+	create: password => dispatch(create(password))
 });
 
 export default connect<StoreProps, DispatchProps, {}, Store>(

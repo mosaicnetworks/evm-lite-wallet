@@ -1,17 +1,13 @@
-import * as path from 'path';
 import * as React from 'react';
 
+import { Store } from 'src/store';
 import { connect } from 'react-redux';
 import { HashRouter, Route } from 'react-router-dom';
 import { InjectedAlertProp, withAlert } from 'react-alert';
+import { ConfigSchema } from 'evm-lite-lib';
 
-import {
-	Store,
-	DataDirectorySetReducer,
-	DataDirectorySetPayLoad
-} from '../redux';
-
-import ReduxSagaAlert, { notificationHandler } from '../poa/alerts';
+import { load } from '../modules/configuration';
+import { initialize } from '../modules/application';
 
 import Accounts from '../pages/Accounts';
 import POA from '../pages/POA';
@@ -19,18 +15,18 @@ import Account from '../pages/Account';
 import Configuration from '../pages/Configuration';
 
 import Wrapper from '../components/Wrapper';
-import redux from '../redux.config';
 
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
 
 interface StoreProps {
-	setDataDirectoryTask: DataDirectorySetReducer;
+	empty?: null;
 }
 
 interface DispatchProps {
-	handleSetDataDirectory: (payload: DataDirectorySetPayLoad) => void;
+	loadConfig: () => Promise<ConfigSchema>;
+	initializeApp: () => Promise<void>;
 }
 
 interface OwnProps {
@@ -40,27 +36,8 @@ interface OwnProps {
 type LocalProps = OwnProps & DispatchProps & StoreProps & AlertProps;
 
 class App extends React.Component<LocalProps, any> {
-	public componentWillReceiveProps(nextProps: Readonly<LocalProps>): void {
-		if (
-			nextProps.setDataDirectoryTask.response !==
-			this.props.setDataDirectoryTask.response
-		) {
-			ReduxSagaAlert.wrap(
-				nextProps.setDataDirectoryTask,
-				'Data directory successfully set.',
-				'Failed setting directory.',
-				notificationHandler(this)
-			);
-		}
-	}
-
 	public componentDidMount() {
-		// @ts-ignore
-		const defaultPath = path.join(window.require('os').homedir(), '.evmlc');
-
-		this.props.handleSetDataDirectory(
-			this.props.setDataDirectoryTask.response || defaultPath
-		);
+		this.props.initializeApp();
 	}
 
 	public render() {
@@ -87,15 +64,11 @@ class App extends React.Component<LocalProps, any> {
 	}
 }
 
-const mapStoreToProps = (store: Store): StoreProps => ({
-	setDataDirectoryTask: store.dataDirectory.setDirectory
-});
+const mapStoreToProps = (store: Store): StoreProps => ({});
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleSetDataDirectory: payload =>
-		dispatch(
-			redux.actions.dataDirectory.setDirectory.handlers.init(payload)
-		)
+	loadConfig: () => dispatch(load()),
+	initializeApp: () => dispatch(initialize())
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

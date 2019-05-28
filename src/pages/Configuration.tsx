@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { Spring, config } from 'react-spring/renderprops';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Header, Message, Form, Grid } from 'semantic-ui-react';
+import { Static } from 'evm-lite-lib';
 
 import {
 	Store,
@@ -22,7 +23,6 @@ import Banner from '../components/Banner';
 import redux from '../redux.config';
 
 import './styles/Configuration.css';
-import { Static } from 'evm-lite-lib';
 
 const Section = styled.div`
 	background: #fff !important;
