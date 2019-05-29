@@ -6,9 +6,16 @@ Last Updated: 29/05/2019
 - Importing
 - Exporting
 - Updating password
+- Transfer
 
 ## Configuration
 - Save
+
+## Contract
+- Deploy contract
+- Execute contract methods
+- Some sort of log to show history
+
 
 ## Proof of Authority
 - List nominees
