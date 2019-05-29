@@ -49,7 +49,7 @@ class App extends React.Component<LocalProps, any> {
 						<Route
 							name="account"
 							exact={true}
-							path="/account/:address/:balance/:nonce"
+							path="/account/:address"
 							component={Account}
 						/>
 						<Route path="/poa" component={POA} />

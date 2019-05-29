@@ -83,14 +83,14 @@ class Accounts extends React.Component<LocalProps, State> {
 					</Spring>
 					<Header as="h2" floated="right">
 						Accounts
-						{!!accounts.accounts.length && (
+						{!!accounts.all.length && (
 							<Spring
 								delay={0}
 								from={{
 									accounts: 0
 								}}
 								to={{
-									accounts: accounts.accounts.length || 0
+									accounts: accounts.all.length || 0
 								}}
 								config={config.wobbly}
 							>
@@ -104,7 +104,7 @@ class Accounts extends React.Component<LocalProps, State> {
 					</Header>
 					<Header as="h2" floated="right">
 						Total Balance
-						{!!accounts.accounts.length && (
+						{!!accounts.all.length && (
 							<Spring
 								delay={0}
 								from={{
@@ -129,26 +129,23 @@ class Accounts extends React.Component<LocalProps, State> {
 				<br />
 				<Grid>
 					<Grid.Column width="16">
-						{!!accounts.accounts.length && (
+						{!!accounts.all.length && (
 							<Animation direction="right">
 								<div>
 									<Card.Group centered={true}>
-										{accounts.accounts!.map(
-											(account, i) => (
-												<AccountCard
-													unlocked={
-														// (accountUnlockTask.response &&
-														// 	accountUnlockTask
-														// 		.response
-														// 		.address ===
-														// 		account.address) ||
-														false
-													}
-													key={account.address}
-													account={account}
-												/>
-											)
-										)}
+										{accounts.all.map((account, i) => (
+											<AccountCard
+												unlocked={
+													(accounts.unlocked &&
+														accounts.unlocked
+															.address ===
+															account.address) ||
+													false
+												}
+												key={account.address}
+												account={account}
+											/>
+										))}
 									</Card.Group>
 								</div>
 							</Animation>

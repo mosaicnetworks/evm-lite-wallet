@@ -31,17 +31,11 @@ class Account extends React.Component<LocalProps, any> {
 	};
 
 	public render() {
-		const newTo = {
-			pathname: `/account/${this.props.account.address}/${
-				this.props.account.balance
-			}/${this.props.account.nonce}`
-		};
-
 		return (
 			<Card fluid={false}>
 				<Card.Content className={'sticky-account-heading'}>
 					<Card.Header className={'address'}>
-						<Link to={newTo}>
+						<Link to={`/account/${this.props.account.address}`}>
 							<Address>
 								{Static.cleanAddress(
 									this.props.account.address

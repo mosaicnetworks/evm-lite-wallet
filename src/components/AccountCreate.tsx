@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { config, Transition } from 'react-spring/renderprops';
 import { Input, Button } from 'semantic-ui-react';
-import { BaseAccount, V3JSONKeyStore, Static } from 'evm-lite-lib';
+import { BaseAccount } from 'evm-lite-lib';
 
 import Animation from './animations/Animation';
 
@@ -103,19 +103,6 @@ class AccountCreate extends React.Component<Props, State> {
 		fields: {
 			password: '',
 			verifyPassword: ''
-		}
-	};
-
-	public componentWillReceiveProps = (nextProps: Props) => {
-		const nextAccountLength = nextProps.accounts.accounts.length;
-		if (this.props.accounts.accounts.length < nextAccountLength) {
-			const account: V3JSONKeyStore =
-				nextProps.accounts.accounts[nextAccountLength - 1];
-			this.props.alert.success(
-				`Account created:  ${Static.cleanAddress(
-					account.address.substring(0, 8)
-				)}...`
-			);
 		}
 	};
 

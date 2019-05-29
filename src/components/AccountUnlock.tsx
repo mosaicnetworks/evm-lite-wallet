@@ -7,13 +7,10 @@ import { InjectedAlertProp, withAlert } from 'react-alert';
 import { config, Transition } from 'react-spring/renderprops';
 import { Input, Button } from 'semantic-ui-react';
 
-import { AccountsUnlockReducer } from '../redux/reducers/Accounts';
-import { AccountsUnlockPayLoad } from '../redux/actions/Accounts';
-import { Store } from '../redux';
+import { Store } from 'src/store';
+import { AccountsState, unlock } from '../modules/accounts';
 
 import Animation from './animations/Animation';
-
-import redux from '../redux.config';
 
 const Open = styled.div`
 	position: fixed;
@@ -89,11 +86,11 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	accountUnlockTask: AccountsUnlockReducer;
+	accounts: AccountsState;
 }
 
 interface DispatchProps {
-	handleUnlockAccount: (payload: AccountsUnlockPayLoad) => void;
+	unlock: (address: string, password: string) => Promise<Account | undefined>;
 }
 
 interface OwnProps {
@@ -124,14 +121,11 @@ class AccountUnlock extends React.Component<Props, State> {
 			}
 		});
 
-		this.props.handleUnlockAccount({
-			address: this.props.address,
-			password: fields.password
-		});
+		this.props.unlock(this.props.address, fields.password);
 	};
 
 	public render() {
-		const { accountUnlockTask } = this.props;
+		const { accounts } = this.props;
 		const { show } = this.state;
 
 		return (
@@ -151,8 +145,8 @@ class AccountUnlock extends React.Component<Props, State> {
 									icon="check"
 									color="green"
 									onClick={this.handleUnlockAccount}
-									disabled={accountUnlockTask.isLoading}
-									loading={accountUnlockTask.isLoading}
+									disabled={accounts.loading.unlock}
+									loading={accounts.loading.unlock}
 								/>
 							</Open>
 						))
@@ -209,7 +203,7 @@ class AccountUnlock extends React.Component<Props, State> {
 								<Input
 									placeholder="Password"
 									type="password"
-									onChange={(e, { value }) =>
+									onChange={(_, { value }) =>
 										this.setState({
 											fields: {
 												...this.state.fields,
@@ -228,12 +222,11 @@ class AccountUnlock extends React.Component<Props, State> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	accountUnlockTask: store.accounts.unlock
+	accounts: store.accounts
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleUnlockAccount: payload =>
-		dispatch(redux.actions.accounts.unlock.handlers.init(payload))
+	unlock: (address, password) => dispatch(unlock(address, password))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

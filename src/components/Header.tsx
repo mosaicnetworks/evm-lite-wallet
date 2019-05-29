@@ -7,10 +7,8 @@ import { connect } from 'react-redux';
 import { NavLink as Link } from 'react-router-dom';
 import { Container, Icon, Image, Label } from 'semantic-ui-react';
 
-import { Store } from '../redux';
-// import { AccountsUnlockReducer } from '../redux/reducers/Accounts';
-
-import redux from '../redux.config';
+import { Store } from 'src/store';
+import { AccountsState, resetUnlock } from '../modules/accounts';
 
 import * as MONET_LOGO from '../assets/monet_logo.png';
 
@@ -98,11 +96,11 @@ interface OwnProps {
 }
 
 interface StoreProps {
-	// accountUnlockTask: AccountsUnlockReducer;
+	accounts: AccountsState;
 }
 
 interface DispatchProps {
-	// handleAccountUnlockReset: () => void;
+	resetUnlock: () => void;
 }
 
 type LocalProps = OwnProps & StoreProps & DispatchProps;
@@ -111,25 +109,24 @@ class Header extends React.Component<LocalProps, any> {
 	public state = {};
 
 	public handleAccountUnlockReset = () => {
-		// if (this.props.accountUnlockTask.response) {
-		// 	this.props.handleAccountUnlockReset();
-		// } else {
-		// 	console.log('Already reset');
-		// }
+		if (this.props.accounts.unlocked) {
+			this.props.resetUnlock();
+		} else {
+			console.log('Already reset');
+		}
 	};
 
 	public render() {
-		// const { accountUnlockTask } = this.props;
+		const { accounts } = this.props;
 
 		let to: any;
 
-		// if (accountUnlockTask.response) {
-		// 	to = {
-		// 		pathname: `/account/${accountUnlockTask.response.address}/${
-		// 			accountUnlockTask.response.balance
-		// 		}/${accountUnlockTask.response.nonce}`
-		// 	};
-		// }
+		if (accounts.unlocked) {
+			to = {
+				pathname: `/account/${accounts.unlocked.address}`
+			};
+		}
+
 		return (
 			<Container fluid={true}>
 				<WalletHeader>
@@ -145,8 +142,7 @@ class Header extends React.Component<LocalProps, any> {
 							}}
 						>
 							<Transition
-								// items={accountUnlockTask.response}
-								items={true}
+								items={!!accounts.unlocked}
 								from={{ opacity: 0, marginRight: -50 }}
 								enter={{ opacity: 1, marginRight: 10 }}
 								leave={{ opacity: 0 }}
@@ -157,7 +153,10 @@ class Header extends React.Component<LocalProps, any> {
 									(props => (
 										<Label style={props}>
 											<Link to={to || ''}>
-												'Accounts Unlocked'
+												{(accounts.unlocked &&
+													accounts.unlocked
+														.address) ||
+													''}
 											</Link>
 											<Icon
 												style={{
@@ -234,12 +233,11 @@ class Header extends React.Component<LocalProps, any> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	accountUnlockTask: store.accounts.unlock
+	accounts: store.accounts
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleAccountUnlockReset: () =>
-		dispatch(redux.actions.accounts.unlock.handlers.reset())
+	resetUnlock: () => dispatch(resetUnlock())
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(

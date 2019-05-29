@@ -1,6 +1,12 @@
-import { BaseAccount, Keystore, V3JSONKeyStore } from 'evm-lite-lib';
+import {
+	BaseAccount,
+	Keystore,
+	V3JSONKeyStore,
+	EVMLC,
+	Static,
+	Account
+} from 'evm-lite-lib';
 
-import { Store } from 'src/store';
 import { BaseAction, ThunkResult } from 'src/modules';
 
 // Lists all accounts in keystore
@@ -13,12 +19,25 @@ const CREATE_REQUEST = '@monet/accounts/CREATE/REQUEST';
 const CREATE_SUCCESS = '@monet/accounts/CREATE/SUCCESS';
 const CREATE_ERROR = '@monet/accounts/CREATE/ERROR';
 
-// const UNLOCK = 'monet/accounts/UNLOCK'; // For decrypting an account
-// const GET = 'monet/accounts/GET'; // Get account balance and nonce from node
+// Get account balance and nonce from node
+const GET_REQUEST = '@monet/accounts/GET/REQUEST';
+const GET_SUCCESS = '@monet/accounts/GET/SUCCESS';
+const GET_ERROR = '@monet/accounts/GET/ERROR';
+
+// For decrypting an account
+const UNLOCK_REQUEST = 'monet/accounts/UNLOCK/REQUEST';
+const UNLOCK_SUCCESS = 'monet/accounts/UNLOCK/SUCCESS';
+const UNLOCK_ERROR = 'monet/accounts/UNLOCK/ERROR';
+const UNLOCK_RESET = 'monet/accounts/UNLOCK/RESET';
+
+function integerWithCommas(x: number | string) {
+	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
 
 // Accounts state structure
 export interface AccountsState {
-	accounts: any[];
+	all: any[];
+	unlocked?: Account;
 	error?: string;
 	loading: {
 		list: boolean;
@@ -29,7 +48,7 @@ export interface AccountsState {
 }
 
 const initialState: AccountsState = {
-	accounts: [],
+	all: [],
 	loading: {
 		list: false,
 		get: false,
@@ -47,7 +66,7 @@ export default function reducer(
 		case LIST_REQUEST:
 			return {
 				...state,
-				accounts: [],
+				all: [],
 				error: undefined,
 				loading: {
 					...state.loading,
@@ -56,7 +75,7 @@ export default function reducer(
 			};
 		case LIST_SUCCESS:
 			return {
-				accounts: action.payload,
+				all: action.payload,
 				loading: {
 					...state.loading,
 					list: false
@@ -65,7 +84,7 @@ export default function reducer(
 		case LIST_ERROR:
 			return {
 				...state,
-				accounts: [],
+				all: [],
 				error: action.payload,
 				loading: {
 					...state.loading,
@@ -87,7 +106,7 @@ export default function reducer(
 			return {
 				...state,
 				error: undefined,
-				accounts: [...state.accounts, action.payload],
+				all: [...state.all, action.payload],
 				loading: {
 					...state.loading,
 					create: false
@@ -103,6 +122,87 @@ export default function reducer(
 				}
 			};
 
+		// Get account
+		case GET_REQUEST:
+			return {
+				...state,
+				error: undefined,
+				loading: {
+					...state.loading,
+					get: true
+				}
+			};
+		case GET_SUCCESS:
+			const accounts = state.all.map(acc => {
+				if (
+					Static.cleanAddress(acc.address) ===
+					Static.cleanAddress(action.payload.address)
+				) {
+					acc.balance = action.payload.balance;
+					acc.nonce = action.payload.nonce;
+				}
+
+				return acc;
+			});
+
+			return {
+				...state,
+				error: undefined,
+				all: accounts,
+				loading: {
+					...state.loading,
+					get: false
+				}
+			};
+		case GET_ERROR:
+			return {
+				...state,
+				error: action.payload,
+				loading: {
+					...state.loading,
+					get: false
+				}
+			};
+
+		// Unlock account
+		case UNLOCK_REQUEST:
+			return {
+				...state,
+				error: undefined,
+				loading: {
+					...state.loading,
+					unlock: true
+				}
+			};
+		case UNLOCK_SUCCESS:
+			return {
+				...state,
+				unlocked: action.payload,
+				error: undefined,
+				loading: {
+					...state.loading,
+					unlock: false
+				}
+			};
+		case UNLOCK_ERROR:
+			return {
+				...state,
+				error: action.payload,
+				loading: {
+					...state.loading,
+					unlock: false
+				}
+			};
+		case UNLOCK_RESET:
+			return {
+				...state,
+				error: undefined,
+				unlocked: undefined,
+				loading: {
+					...state.loading,
+					unlock: false
+				}
+			};
 		default:
 			return state;
 	}
@@ -110,7 +210,7 @@ export default function reducer(
 
 export function list(): ThunkResult<Promise<BaseAccount[]>> {
 	return async (dispatch, getState) => {
-		const state: Store = getState();
+		const state = getState();
 		let accounts: BaseAccount[] = [];
 
 		dispatch({
@@ -118,14 +218,30 @@ export function list(): ThunkResult<Promise<BaseAccount[]>> {
 		});
 
 		try {
+			let connection: EVMLC;
 			const config = state.config.config;
 
 			if (!config.storage) {
 				throw Error('Configuration data not loaded.');
 			}
 
+			connection = new EVMLC(
+				config.connection.host,
+				config.connection.port,
+				{
+					from: config.defaults.from,
+					gas: config.defaults.gas,
+					gasPrice: config.defaults.gasPrice
+				}
+			);
+
+			await connection.testConnection().catch(error => {
+				throw Error(error.toStrin());
+			});
+
 			const keystore = new Keystore(config.storage.keystore);
-			accounts = await keystore.list().catch(error => {
+
+			accounts = await keystore.list(connection).catch(error => {
 				dispatch({
 					type: LIST_ERROR,
 					payload: error.toString()
@@ -151,7 +267,7 @@ export function list(): ThunkResult<Promise<BaseAccount[]>> {
 
 export function create(password: string): ThunkResult<Promise<BaseAccount>> {
 	return async (dispatch, getState) => {
-		const state: Store = getState();
+		const state = getState();
 		const config = state.config.config;
 
 		const account: BaseAccount = {
@@ -160,10 +276,13 @@ export function create(password: string): ThunkResult<Promise<BaseAccount>> {
 			nonce: 0
 		};
 
+		dispatch({
+			type: CREATE_REQUEST
+		});
+
 		try {
 			if (config.storage) {
 				const keystore = new Keystore(config.storage.keystore);
-
 				const acc: V3JSONKeyStore = JSON.parse(
 					await keystore.create(password).catch(error => {
 						throw Error(error.toString());
@@ -187,5 +306,123 @@ export function create(password: string): ThunkResult<Promise<BaseAccount>> {
 		}
 
 		return account;
+	};
+}
+
+export function get(address: string): ThunkResult<Promise<BaseAccount>> {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const config = state.config.config;
+		let account = {
+			address,
+			balance: '',
+			nonce: 0
+		};
+
+		dispatch({
+			type: GET_REQUEST
+		});
+
+		try {
+			if (config.connection) {
+				const connection = new EVMLC(
+					config.connection.host,
+					config.connection.port,
+					{
+						from: config.defaults.from,
+						gas: config.defaults.gas,
+						gasPrice: config.defaults.gasPrice
+					}
+				);
+
+				account = await connection.accounts
+					.getAccount(address)
+					.catch(error => {
+						throw Error(error.toString());
+					});
+
+				account.balance = integerWithCommas(
+					account.balance
+						.toString()
+						.split(',')
+						.join('')
+				);
+
+				dispatch({
+					type: GET_SUCCESS,
+					payload: account
+				});
+			} else {
+				throw Error('Configuration could not loaded.');
+			}
+		} catch (error) {
+			dispatch({
+				type: GET_ERROR,
+				payload: error.toString()
+			});
+		}
+
+		return account;
+	};
+}
+
+export function unlock(
+	address: string,
+	password: string
+): ThunkResult<Promise<Account | undefined>> {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const config = state.config.config;
+		let account: Account;
+
+		dispatch({
+			type: UNLOCK_REQUEST
+		});
+
+		try {
+			if (config.connection) {
+				const connection = new EVMLC(
+					config.connection.host,
+					config.connection.port,
+					{
+						from: config.defaults.from,
+						gas: config.defaults.gas,
+						gasPrice: config.defaults.gasPrice
+					}
+				);
+
+				await connection.testConnection().catch(error => {
+					throw Error(error.toStrin());
+				});
+
+				const keystore = new Keystore(config.storage.keystore);
+				account = await keystore.decrypt(address, password, connection);
+
+				console.log(account);
+				dispatch({
+					type: UNLOCK_SUCCESS,
+					payload: account
+				});
+
+				return account;
+			} else {
+				throw Error('Configuration could not loaded.');
+			}
+		} catch (error) {
+			dispatch({
+				type: UNLOCK_ERROR,
+				payload: error.toString()
+			});
+
+			return undefined;
+		}
+	};
+}
+
+export function resetUnlock(): ThunkResult<void> {
+	return dispatch => {
+		dispatch({
+			type: UNLOCK_RESET
+		});
 	};
 }

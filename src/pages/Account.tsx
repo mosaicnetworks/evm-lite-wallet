@@ -6,18 +6,11 @@ import { connect } from 'react-redux';
 import { Spring, config, Transition } from 'react-spring/renderprops';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Header } from 'semantic-ui-react';
-
 import { BaseAccount, Static } from 'evm-lite-lib';
+import { RouteComponentProps } from 'react-router-dom';
 
-import { Store } from '../redux';
-import { AccountsFetchOnePayLoad } from '../redux/actions/Accounts';
-import {
-	AccountsFetchOneReducer,
-	AccountsFetchAllReducer,
-	AccountsUnlockReducer
-} from '../redux/reducers/Accounts';
-import { ConfigLoadReducer } from '../redux/reducers/Config';
-
+import { Store } from 'src/store';
+import { AccountsState, get } from '../modules/accounts';
 import { Jumbo, PaddedContent } from '../components/Styling';
 
 import LoadingButton from '../components/LoadingButton';
@@ -25,8 +18,6 @@ import AccountUnlock from '../components/AccountUnlock';
 import FloatingButton from '../components/FloatingButton';
 import Banner from '../components/Banner';
 import Transaction, { SentTransaction } from '../components/Transaction';
-
-import redux from '../redux.config';
 
 import Misc from '../classes/Misc';
 
@@ -36,25 +27,24 @@ const Transactions = styled.div`
 	}
 `;
 
+interface RouterParams {
+	address: string;
+}
+
 interface AlertProps {
 	alert: InjectedAlertProp;
 }
 
 interface StoreProps {
-	accountFetchTask: AccountsFetchOneReducer;
-	accountFetchAllTask: AccountsFetchAllReducer;
-	configLoadTask: ConfigLoadReducer;
-	accountUnlockTask: AccountsUnlockReducer;
+	accounts: AccountsState;
 }
 
 interface DispatchProps {
-	handleFetchAccount: (payload: AccountsFetchOnePayLoad) => BaseAccount;
+	get: (address: string) => BaseAccount;
 }
 
 interface OwnProps {
-	account?: BaseAccount;
-	match: any;
-	location: any;
+	empty?: null;
 }
 
 interface TimeStampedAccount extends BaseAccount {
@@ -66,33 +56,37 @@ interface State {
 	transactions: SentTransaction[];
 }
 
-type LocalProps = OwnProps & StoreProps & DispatchProps & AlertProps;
+type LocalProps = OwnProps &
+	StoreProps &
+	DispatchProps &
+	AlertProps &
+	RouteComponentProps<RouterParams>;
 
 const transactions: SentTransaction[] = [
-	{
-		id: 1,
-		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-		value: 500000,
-		status: true,
-		incoming: true
-	},
-	{
-		id: 2,
-		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-		value: 10000,
-		status: true,
-		incoming: false
-	},
-	{
-		id: 3,
-		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-		value: 100000,
-		status: false,
-		incoming: true
-	}
+	// {
+	// 	id: 1,
+	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+	// 	value: 500000,
+	// 	status: true,
+	// 	incoming: true
+	// },
+	// {
+	// 	id: 2,
+	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+	// 	value: 10000,
+	// 	status: true,
+	// 	incoming: false
+	// },
+	// {
+	// 	id: 3,
+	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+	// 	value: 100000,
+	// 	status: false,
+	// 	incoming: true
+	// }
 ];
 
 class Account extends React.Component<LocalProps, State> {
@@ -100,70 +94,62 @@ class Account extends React.Component<LocalProps, State> {
 		transactions,
 		account: {
 			address: this.props.match.params.address,
-			balance: parseInt(
-				this.props.match.params.balance.split(',').join(''),
-				10
-			),
-			nonce: parseInt(this.props.match.params.nonce, 10),
+			balance: 0,
+			nonce: 0,
 			lastUpdated: ''
 		}
 	};
 
 	public componentWillReceiveProps(nextProps: LocalProps) {
 		if (
-			nextProps.accountFetchTask.response &&
-			!this.props.accountFetchTask.response
+			this.props.accounts.loading.get &&
+			!nextProps.accounts.loading.get
 		) {
-			let newBalance: number = 0;
-			const {
-				address,
-				balance,
-				nonce
-			} = nextProps.accountFetchTask.response;
+			const accounts = this.props.accounts.all.filter(account => {
+				return account.address === this.state.account.address;
+			});
 
-			if (typeof balance === 'string') {
-				newBalance = parseInt(balance.split(',').join(''), 10);
-			} else {
-				newBalance = balance;
+			if (!!accounts.length) {
+				const account: BaseAccount = accounts[0];
+
+				this.setState({
+					account: {
+						...account,
+						lastUpdated: ''
+					}
+				});
 			}
+		}
+	}
+
+	public componentDidMount() {
+		const { address } = this.props.match.params;
+
+		const accounts = this.props.accounts.all.filter(account => {
+			return account.address === address;
+		});
+
+		if (!!accounts.length) {
+			const account: BaseAccount = accounts[0];
 
 			this.setState({
-				transactions,
 				account: {
-					address,
-					balance: newBalance,
-					nonce,
-					lastUpdated: new Date().toLocaleString()
+					...account,
+					lastUpdated: ''
 				}
 			});
 		}
 	}
 
 	public fetchAccount = async () => {
-		if (this.props.configLoadTask.response) {
-			this.setState({
-				transactions: []
-			});
-			await this.props.handleFetchAccount({
-				keystoreDirectory: this.props.configLoadTask.response.storage
-					.keystore,
-				address: this.props.match.params.address
-			});
-		} else {
-			this.props.alert.info(
-				'Looks like there was a problem reading the config file.'
-			);
-		}
+		this.props.get(this.state.account.address);
 	};
 
 	public renderAccountUnlockButton = () => {
 		const { account } = this.state;
-		const { accountUnlockTask } = this.props;
+		const { accounts } = this.props;
 
-		if (
-			accountUnlockTask.response &&
-			accountUnlockTask.response.address === account.address
-		) {
+		if (accounts.unlocked) {
 			return null;
 		}
 
@@ -171,8 +157,8 @@ class Account extends React.Component<LocalProps, State> {
 	};
 
 	public render() {
-		const { accountFetchTask, accountUnlockTask } = this.props;
-		const { account, transactions } = this.state;
+		const { accounts } = this.props;
+		const { transactions, account } = this.state;
 
 		return (
 			<React.Fragment>
@@ -199,7 +185,7 @@ class Account extends React.Component<LocalProps, State> {
 					</Spring>
 					<Header as="h2" floated="right">
 						Nonce
-						{(accountFetchTask.response && (
+						{(!!accounts.all.length && (
 							<Spring
 								from={{
 									nonce: account.nonce - 250
@@ -227,38 +213,13 @@ class Account extends React.Component<LocalProps, State> {
 					</Header>
 					<Header as="h2" floated="right">
 						Balance
-						{(accountFetchTask.response && (
-							<Spring
-								from={{
-									balance: account.balance - 250
-								}}
-								to={{
-									balance: account.balance
-								}}
-								config={config.wobbly}
-							>
-								{props => (
-									<Header.Subheader>
-										{Misc.integerWithCommas(
-											Math.round(props.balance)
-										)}
-									</Header.Subheader>
-								)}
-							</Spring>
-						)) || (
-							<Header.Subheader>
-								{Misc.integerWithCommas(
-									account.balance.toString()
-								)}
-							</Header.Subheader>
-						)}
+						<Header.Subheader>
+							{Misc.integerWithCommas(account.balance.toString())}
+						</Header.Subheader>
 					</Header>
 				</Jumbo>
 				<Transition
-					items={
-						accountUnlockTask.response &&
-						accountUnlockTask.response.address === account.address
-					}
+					items={!!accounts.unlocked}
 					from={{ opacity: 0 }}
 					enter={{ opacity: 1 }}
 					leave={{ opacity: 0 }}
@@ -316,7 +277,7 @@ class Account extends React.Component<LocalProps, State> {
 				<FloatingButton bottomOffset={57}>
 					<LoadingButton
 						onClickHandler={this.fetchAccount}
-						isLoading={accountFetchTask.isLoading}
+						isLoading={accounts.loading.get}
 					/>
 				</FloatingButton>
 			</React.Fragment>
@@ -325,15 +286,11 @@ class Account extends React.Component<LocalProps, State> {
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	accountFetchTask: store.accounts.fetchOne,
-	configLoadTask: store.config.load,
-	accountFetchAllTask: store.accounts.fetchAll,
-	accountUnlockTask: store.accounts.unlock
+	accounts: store.accounts
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleFetchAccount: payload =>
-		dispatch(redux.actions.accounts.fetchOne.handlers.init(payload))
+	get: address => dispatch(get(address))
 });
 
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
