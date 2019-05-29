@@ -16,6 +16,7 @@ In order to add a module you need to have the following coded:
 
 As an example I will try and add the listing of accounts feature into the `accounts` module. Firstly I would create a file name `accounts.ts` in `src/modules`. Then define the following `const`'s to represent the different stages in listing accounts.
 
+The format of an action is as follows: `const ACTION_STEP = '@monet/module/ACTION/STEP'`
 ```typescript
 // When the `List` request is initialized
 const LIST_REQUEST = '@monet/accounts/LIST/REQUEST';
@@ -27,7 +28,7 @@ const LIST_SUCCESS = '@monet/accounts/LIST/SUCCESS';
 const LIST_ERROR = '@monet/accounts/LIST/ERROR';
 ```
 
-Now that we have defined the `actions`, to represent the intemediary steps in listing accounts, we need now need to define a reducer to handle what happens to the `state` when it receives one of these `actions. 
+Now that we have defined the `actions`, to represent the intemediary steps in listing accounts, we need now need to define a reducer to handle what happens to the `state` when it receives one of these `actions`. 
 
 Note: `reducers` are pure functions.
 
