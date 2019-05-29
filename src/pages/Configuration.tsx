@@ -8,19 +8,15 @@ import { InjectedAlertProp, withAlert } from 'react-alert';
 import { Header, Message, Form, Grid } from 'semantic-ui-react';
 import { Static } from 'evm-lite-lib';
 
-import {
-	Store,
-	DataDirectorySetReducer,
-	ConfigLoadReducer,
-	DataDirectorySetPayLoad,
-	AccountsFetchAllReducer
-} from '../redux';
+import { Store } from 'src/store';
 import { PaddedContent } from '../components/Styling';
+import { AccountsState } from '../modules/accounts';
+import { ApplicationState, setDirectory } from '../modules/application';
+import { ConfigurationState } from '../modules/configuration';
 
 import Heading from '../components/Heading';
 import Misc from '../classes/Misc';
 import Banner from '../components/Banner';
-import redux from '../redux.config';
 
 import './styles/Configuration.css';
 
@@ -35,13 +31,13 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	accountFetchAllTask: AccountsFetchAllReducer;
-	dataDirectorySetTask: DataDirectorySetReducer;
-	configLoadTask: ConfigLoadReducer;
+	accounts: AccountsState;
+	app: ApplicationState;
+	config: ConfigurationState;
 }
 
 interface DispatchProps {
-	handleSetDataDirectory: (payload: DataDirectorySetPayLoad) => void;
+	handleSetDataDirectory: (path: string) => void;
 }
 
 interface State {
@@ -70,17 +66,17 @@ class Configuration extends React.Component<LocalProps, State> {
 	};
 
 	public componentDidMount() {
-		if (this.props.dataDirectorySetTask.response) {
+		if (this.props.app.directory) {
 			this.setState(
 				{
 					fields: {
 						...this.state.fields,
-						dataDirectory: this.props.dataDirectorySetTask.response
+						dataDirectory: this.props.app.directory
 					}
 				},
 				() => {
-					if (this.props.configLoadTask.response) {
-						const config = this.props.configLoadTask.response;
+					if (this.props.config.data.defaults) {
+						const config = this.props.config.data;
 
 						this.setState({
 							fields: {
@@ -97,21 +93,17 @@ class Configuration extends React.Component<LocalProps, State> {
 	}
 
 	public componentWillReceiveProps(nextProps: LocalProps) {
-		if (
-			nextProps.dataDirectorySetTask.response &&
-			this.state.fields.dataDirectory !==
-				nextProps.dataDirectorySetTask.response
-		) {
+		if (nextProps.app.directory !== this.props.app.directory) {
 			this.setState({
 				fields: {
 					...this.state.fields,
-					dataDirectory: nextProps.dataDirectorySetTask.response
+					dataDirectory: nextProps.app.directory
 				}
 			});
 		}
 
-		if (nextProps.configLoadTask.response) {
-			const config = nextProps.configLoadTask.response;
+		if (nextProps.config.data.defaults) {
+			const config = nextProps.config.data;
 
 			this.setState({
 				fields: {
@@ -144,15 +136,10 @@ class Configuration extends React.Component<LocalProps, State> {
 	};
 
 	public render() {
-		const {
-			dataDirectorySetTask,
-			configLoadTask,
-			accountFetchAllTask
-		} = this.props;
+		const { app, accounts } = this.props;
 		const { fields } = this.state;
 
-		const response = accountFetchAllTask.response || [];
-		const accounts = response.map((account, i) => {
+		const selectAccounts = accounts.all.map((account, i) => {
 			return {
 				key: account.address.toLowerCase(),
 				text: account.address.toLowerCase(),
@@ -164,11 +151,7 @@ class Configuration extends React.Component<LocalProps, State> {
 			<React.Fragment>
 				<Heading
 					heading={'Configuration'}
-					subHeading={
-						(dataDirectorySetTask.response &&
-							dataDirectorySetTask.payload) ||
-						''
-					}
+					subHeading={app.directory || ''}
 				/>
 				<Banner color="black">
 					These configuration values will be read in by all actions
@@ -179,161 +162,140 @@ class Configuration extends React.Component<LocalProps, State> {
 				<br />
 				<PaddedContent>
 					<Header as="h3">
-						Data Directory (
-						{(dataDirectorySetTask.response &&
-							dataDirectorySetTask.payload) ||
-							'N/A'}
-						)
+						Data Directory ({app.directory || 'N/A'})
 					</Header>
 				</PaddedContent>
-				{dataDirectorySetTask.response && (
-					<Spring
-						from={{
-							marginRight: -Misc.MARGIN_CONSTANT,
-							opacity: 0
-						}}
-						to={{
-							marginRight: 0,
-							opacity: 1
-						}}
-						config={config.wobbly}
-					>
-						{props => (
-							<Section style={props}>
-								<Message info={true}>
-									Note: This must be an absolute path.
-								</Message>
-								<div>
-									<Form.Group>
-										<Form.Input
-											fluid={true}
-											icon="folder"
-											placeholder={
-												(dataDirectorySetTask.response &&
-													dataDirectorySetTask.payload) ||
-												'N/A'
-											}
-											onChange={(_, { value }) =>
-												this.setState({
-													fields: {
-														...fields,
-														dataDirectory: value
-													}
-												})
-											}
-											defaultValue={fields.dataDirectory}
-										/>
-										<br />
-										<Form.Button
-											color="blue"
-											content="Set"
-											onClick={
-												this.handleSetDataDirectory
-											}
-										/>
-									</Form.Group>
-								</div>
-							</Section>
-						)}
-					</Spring>
-				)}
+				<Spring
+					from={{
+						marginRight: -Misc.MARGIN_CONSTANT,
+						opacity: 0
+					}}
+					to={{
+						marginRight: 0,
+						opacity: 1
+					}}
+					config={config.wobbly}
+				>
+					{props => (
+						<Section style={props}>
+							<Message info={true}>
+								Note: This must be an absolute path.
+							</Message>
+							<div>
+								<Form.Group>
+									<Form.Input
+										fluid={true}
+										icon="folder"
+										placeholder={app.directory || 'N/A'}
+										onChange={(_, { value }) =>
+											this.setState({
+												fields: {
+													...fields,
+													dataDirectory: value
+												}
+											})
+										}
+										defaultValue={fields.dataDirectory}
+									/>
+									<br />
+									<Form.Button
+										color="blue"
+										content="Set"
+										onClick={this.handleSetDataDirectory}
+									/>
+								</Form.Group>
+							</div>
+						</Section>
+					)}
+				</Spring>
 				<br />
 				<br />
 				<PaddedContent>
 					<Header as="h3">Defaults & Keystore</Header>
 				</PaddedContent>
 				<br />
-				{configLoadTask.response && (
-					<Spring
-						from={{
-							marginRight: -Misc.MARGIN_CONSTANT,
-							opacity: 0
-						}}
-						to={{
-							marginRight: 0,
-							opacity: 1
-						}}
-						config={config.wobbly}
-					>
-						{props => (
-							<Grid style={props} columns="equal">
-								<Grid.Column className="data">
-									<div>
-										<Form.Group>
-											<Form.Select
-												// selection={true}
-												fluid={true}
-												placeholder={fields.from}
-												options={accounts}
-												defaultValue={1}
-											/>
-										</Form.Group>
-										<Form.Group>
-											<Form.Input
-												type="number"
-												fluid={true}
-												placeholder="Default Gas"
-												defaultValue={fields.gas}
-											/>
-										</Form.Group>
-										<Form.Group>
-											<Form.Input
-												type="number"
-												fluid={true}
-												placeholder="Default Gas Price"
-												defaultValue={
-													fields.gasPrice || ''
-												}
-											/>
-										</Form.Group>
+				<Spring
+					from={{
+						marginRight: -Misc.MARGIN_CONSTANT,
+						opacity: 0
+					}}
+					to={{
+						marginRight: 0,
+						opacity: 1
+					}}
+					config={config.wobbly}
+				>
+					{props => (
+						<Grid style={props} columns="equal">
+							<Grid.Column className="data">
+								<div>
+									<Form.Group>
+										<Form.Select
+											// selection={true}
+											fluid={true}
+											placeholder={fields.from}
+											options={selectAccounts}
+											defaultValue={1}
+										/>
+									</Form.Group>
+									<Form.Group>
+										<Form.Input
+											type="number"
+											fluid={true}
+											placeholder="Default Gas"
+											defaultValue={fields.gas}
+										/>
+									</Form.Group>
+									<Form.Group>
+										<Form.Input
+											type="number"
+											fluid={true}
+											placeholder="Default Gas Price"
+											defaultValue={fields.gasPrice || ''}
+										/>
+									</Form.Group>
+									<br />
+									<Form.Group>
+										<Form.Button
+											color="blue"
+											content="Set"
+										/>
+									</Form.Group>
+								</div>
+							</Grid.Column>
+							<Grid.Column className="data">
+								<div>
+									<Form.Group>
+										<Form.Input
+											fluid={true}
+											icon="folder"
+											placeholder={'Keystore Directory'}
+											defaultValue={fields.keystore}
+										/>
 										<br />
-										<Form.Group>
-											<Form.Button
-												color="blue"
-												content="Set"
-											/>
-										</Form.Group>
-									</div>
-								</Grid.Column>
-								<Grid.Column className="data">
-									<div>
-										<Form.Group>
-											<Form.Input
-												fluid={true}
-												icon="folder"
-												placeholder={
-													'Keystore Directory'
-												}
-												defaultValue={fields.keystore}
-											/>
-											<br />
-											<Form.Button
-												color="blue"
-												content="Set"
-											/>
-										</Form.Group>
-									</div>
-								</Grid.Column>
-							</Grid>
-						)}
-					</Spring>
-				)}
+										<Form.Button
+											color="blue"
+											content="Set"
+										/>
+									</Form.Group>
+								</div>
+							</Grid.Column>
+						</Grid>
+					)}
+				</Spring>
 			</React.Fragment>
 		);
 	}
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	dataDirectorySetTask: store.dataDirectory.setDirectory,
-	configLoadTask: store.config.load,
-	accountFetchAllTask: store.accounts.fetchAll
+	accounts: store.accounts,
+	app: store.app,
+	config: store.config
 });
 
 const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleSetDataDirectory: payload =>
-		dispatch(
-			redux.actions.dataDirectory.setDirectory.handlers.init(payload)
-		)
+	handleSetDataDirectory: path => dispatch(setDirectory(path))
 });
 
 export default connect<StoreProps, {}, {}, Store>(

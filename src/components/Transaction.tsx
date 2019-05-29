@@ -3,11 +3,8 @@ import * as React from 'react';
 import styled from 'styled-components';
 import Highlight from 'react-highlight';
 
-import { connect } from 'react-redux';
 import { Segment, Icon, Image, Table, Grid } from 'semantic-ui-react';
 import { Static } from 'evm-lite-lib';
-
-import { Store } from '../redux';
 
 import Misc from '../classes/Misc';
 
@@ -34,10 +31,6 @@ export interface SentTransaction {
 	incoming: boolean;
 }
 
-interface StoreProps {
-	currentDataDirectory?: undefined;
-}
-
 interface OwnProps {
 	transaction: SentTransaction;
 	style?: any;
@@ -47,7 +40,7 @@ interface State {
 	visible: boolean;
 }
 
-type LocalProps = StoreProps & OwnProps;
+type LocalProps = OwnProps;
 
 class Transaction extends React.Component<LocalProps, State> {
 	public state = {
@@ -196,11 +189,4 @@ class Transaction extends React.Component<LocalProps, State> {
 	}
 }
 
-const mapStoreToProps = (store: Store): StoreProps => ({});
-
-const mapsDispatchToProps = (dispatch: any) => ({});
-
-export default connect<StoreProps, {}, {}, Store>(
-	mapStoreToProps,
-	mapsDispatchToProps
-)(Transaction);
+export default Transaction;

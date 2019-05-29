@@ -218,8 +218,8 @@ export function list(): ThunkResult<Promise<BaseAccount[]>> {
 		});
 
 		try {
-			let connection: EVMLC;
-			const config = state.config.config;
+			let connection: EVMLC | undefined;
+			const config = state.config.data;
 
 			if (!config.storage) {
 				throw Error('Configuration data not loaded.');
@@ -235,8 +235,8 @@ export function list(): ThunkResult<Promise<BaseAccount[]>> {
 				}
 			);
 
-			await connection.testConnection().catch(error => {
-				throw Error(error.toStrin());
+			await connection.testConnection().catch(() => {
+				connection = undefined;
 			});
 
 			const keystore = new Keystore(config.storage.keystore);
@@ -268,7 +268,7 @@ export function list(): ThunkResult<Promise<BaseAccount[]>> {
 export function create(password: string): ThunkResult<Promise<BaseAccount>> {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const config = state.config.config;
+		const config = state.config.data;
 
 		const account: BaseAccount = {
 			address: '',
@@ -312,7 +312,7 @@ export function create(password: string): ThunkResult<Promise<BaseAccount>> {
 export function get(address: string): ThunkResult<Promise<BaseAccount>> {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const config = state.config.config;
+		const config = state.config.data;
 		let account = {
 			address,
 			balance: '',
@@ -372,7 +372,7 @@ export function unlock(
 ): ThunkResult<Promise<Account | undefined>> {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const config = state.config.config;
+		const config = state.config.data;
 		let account: Account;
 
 		dispatch({
@@ -381,7 +381,7 @@ export function unlock(
 
 		try {
 			if (config.connection) {
-				const connection = new EVMLC(
+				let connection: EVMLC | undefined = new EVMLC(
 					config.connection.host,
 					config.connection.port,
 					{
@@ -391,8 +391,8 @@ export function unlock(
 					}
 				);
 
-				await connection.testConnection().catch(error => {
-					throw Error(error.toStrin());
+				await connection.testConnection().catch(() => {
+					connection = undefined;
 				});
 
 				const keystore = new Keystore(config.storage.keystore);

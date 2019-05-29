@@ -5,25 +5,22 @@ import styled from 'styled-components';
 import { Spring, config } from 'react-spring/renderprops';
 import { connect } from 'react-redux';
 import { Button, Grid } from 'semantic-ui-react';
-import { Static } from 'evm-lite-lib';
+// import { Static } from 'evm-lite-lib';
 
-import { POAWhiteListReducer } from '../redux/reducers/POA';
-import { Store } from '../redux';
+import { Store } from 'src/store';
 
 import Heading from '../components/Heading';
 import FloatingButton from '../components/FloatingButton';
 import Banner from '../components/Banner';
 import Nominee from '../components/Nominee';
 
-import redux from '../redux.config';
-
 import Misc from '../classes/Misc';
 
-const capitalize = (word: string) =>
-	word
-		.toString()
-		.charAt(0)
-		.toUpperCase() + word.slice(1);
+// const capitalize = (word: string) =>
+// 	word
+// 		.toString()
+// 		.charAt(0)
+// 		.toUpperCase() + word.slice(1);
 
 const WhiteListHeader = styled.h3``;
 
@@ -54,11 +51,11 @@ const Content = styled.div`
 `;
 
 interface StoreProps {
-	whiteListTask: POAWhiteListReducer;
+	empty?: undefined;
 }
 
 interface DispatchProps {
-	handleFetchWhiteList: () => void;
+	empty?: undefined;
 }
 
 interface State {
@@ -71,11 +68,11 @@ class POA extends React.Component<LocalProps, State> {
 	public state = {};
 
 	public handleFetchWhiteList = () => {
-		this.props.handleFetchWhiteList();
+		// this.props.handleFetchWhiteList();
 	};
 
 	public render() {
-		const { whiteListTask } = this.props;
+		// const { whiteListTask } = this.props;
 
 		return (
 			<React.Fragment>
@@ -116,7 +113,7 @@ class POA extends React.Component<LocalProps, State> {
 						<Grid.Column>
 							<WhiteListHeader>Whitelist</WhiteListHeader>
 							<WhiteList>
-								{whiteListTask.response &&
+								{/* {whiteListTask.response &&
 									whiteListTask.response.map((entry, i) => {
 										return (
 											<WhiteListEntry
@@ -135,19 +132,19 @@ class POA extends React.Component<LocalProps, State> {
 												</WhiteListEntry.Address>
 											</WhiteListEntry>
 										);
-									})}
+									})} */}
 							</WhiteList>
 						</Grid.Column>
 					</Grid>
 				</Content>
 				<FloatingButton bottomOffset={57}>
-					<Button
+					{/* <Button
 						loading={whiteListTask.isLoading}
 						disabled={whiteListTask.isLoading}
 						onClick={this.handleFetchWhiteList}
 						color="blue"
 						icon="circle notch"
-					/>
+					/> */}
 				</FloatingButton>
 				<FloatingButton bottomOffset={100}>
 					<Button color="green" icon="plus" />
@@ -157,14 +154,9 @@ class POA extends React.Component<LocalProps, State> {
 	}
 }
 
-const mapStoreToProps = (store: Store): StoreProps => ({
-	whiteListTask: store.poa.whiteList
-});
+const mapStoreToProps = (store: Store): StoreProps => ({});
 
-const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
-	handleFetchWhiteList: () =>
-		dispatch(redux.actions.poa.whiteList.handlers.init(undefined))
-});
+const mapsDispatchToProps = (dispatch: any): DispatchProps => ({});
 
 export default connect<StoreProps, {}, {}, Store>(
 	mapStoreToProps,

@@ -3,10 +3,9 @@ import * as ReactDOM from 'react-dom';
 
 import { Provider } from 'react-redux';
 import { Provider as AlertProvider } from 'react-alert';
-// import { PersistGate } from 'redux-persist/integration/react';
+import { PersistGate } from 'redux-persist/integration/react';
 
-// import redux from '../redux.config';
-import store from '../store';
+import getStores from '../store';
 
 import AlertTemplate from 'react-alert-template-basic';
 import App from './App';
@@ -19,17 +18,19 @@ const options = {
 	zIndex: 10000000
 };
 
+const stores = getStores();
+
 ReactDOM.render(
-	<Provider store={store}>
+	<Provider store={stores.store}>
 		<AlertProvider
 			template={AlertTemplate}
 			position={'bottom left'}
 			{...options}
 			transition={'scale'}
 		>
-			{/* <PersistGate loading={null} persistor={redux.stores.persistor}> */}
-			<App />
-			{/* </PersistGate> */}
+			<PersistGate loading={null} persistor={stores.persistor}>
+				<App />
+			</PersistGate>
 		</AlertProvider>
 	</Provider>,
 	document.getElementById('root') as HTMLElement

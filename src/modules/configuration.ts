@@ -9,7 +9,7 @@ const LOAD_SUCCESS = '@monet/configuration/LOAD/SUCCESS';
 const LOAD_ERROR = '@monet/configuration/LOAD/ERROR';
 
 export interface ConfigurationState {
-	config: ConfigSchema;
+	data: ConfigSchema;
 	error?: string;
 	loading: {
 		load: boolean;
@@ -18,7 +18,7 @@ export interface ConfigurationState {
 }
 
 const initialState: ConfigurationState = {
-	config: {} as ConfigSchema,
+	data: {} as ConfigSchema,
 	loading: {
 		load: false,
 		save: false
@@ -42,7 +42,7 @@ export default function reducer(
 		case LOAD_SUCCESS:
 			return {
 				...state,
-				config: action.payload,
+				data: action.payload,
 				loading: {
 					...state.loading,
 					load: false

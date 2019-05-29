@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import { Static } from 'evm-lite-lib';
+import { Static, DataDirectory } from 'evm-lite-lib';
 
 import { BaseAction, ThunkResult } from 'src/modules';
 import { Store } from 'src/store';
@@ -47,7 +47,7 @@ export default function reducer(
 
 export function setDirectory(path: string): ThunkResult<Promise<string>> {
 	return async dispatch => {
-		if (!Static.isDirectory(path)) {
+		if (Static.exists(path) && !Static.isDirectory(path)) {
 			dispatch({
 				type: SET_DIRECTORY_ERROR,
 				payload: `Provided path '${path}' is not a directory.`
@@ -56,10 +56,15 @@ export function setDirectory(path: string): ThunkResult<Promise<string>> {
 			return path;
 		}
 
+		const _ = new DataDirectory(path);
+		console.log(_.path);
+
 		dispatch({
 			type: SET_DIRECTORY_SUCCESS,
 			payload: path
 		});
+
+		dispatch(load()).then(() => dispatch(list()));
 
 		return path;
 	};
@@ -68,7 +73,7 @@ export function setDirectory(path: string): ThunkResult<Promise<string>> {
 export function initialize(): ThunkResult<Promise<void>> {
 	return async (dispatch, getState) => {
 		const state: Store = getState();
-		const config = state.config.config;
+		const config = state.config.data;
 
 		if (config.storage) {
 			dispatch(list());

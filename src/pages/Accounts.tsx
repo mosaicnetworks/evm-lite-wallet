@@ -75,8 +75,8 @@ class Accounts extends React.Component<LocalProps, State> {
 							<Header style={props} as="h2" floated="left">
 								Account Settings
 								<Header.Subheader>
-									{configuration.config.storage &&
-										configuration.config.storage.keystore}
+									{configuration.data.storage &&
+										configuration.data.storage.keystore}
 								</Header.Subheader>
 							</Header>
 						)}
@@ -108,10 +108,13 @@ class Accounts extends React.Component<LocalProps, State> {
 							<Spring
 								delay={0}
 								from={{
-									balance: this.state.totalBalance - 300
+									balance:
+										this.state.totalBalance > 0
+											? this.state.totalBalance - 300
+											: 0
 								}}
 								to={{
-									balance: this.state.totalBalance
+									balance: this.state.totalBalance || 0
 								}}
 								config={config.wobbly}
 							>
@@ -119,7 +122,7 @@ class Accounts extends React.Component<LocalProps, State> {
 									<Header.Subheader>
 										{Misc.integerWithCommas(
 											Math.round(props.balance)
-										)}
+										) || 0}
 									</Header.Subheader>
 								)}
 							</Spring>

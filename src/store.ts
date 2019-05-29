@@ -1,7 +1,9 @@
-import { createStore, applyMiddleware } from 'redux';
-
+import dynamicStorage from 'redux-persist/lib/storage';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
+
+import { createStore, applyMiddleware } from 'redux';
+import { PersistConfig, persistReducer, persistStore } from 'redux-persist';
 
 import rootReducer from './modules';
 
@@ -15,6 +17,17 @@ export interface Store {
 	config: ConfigurationState;
 }
 
+const persistConfig: PersistConfig = {
+	key: 'root',
+	storage: dynamicStorage,
+	whitelist: ['app']
+};
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 const middleware = [thunk, logger];
 
-export default createStore(rootReducer, applyMiddleware(...middleware));
+export default () => {
+	const store = createStore(persistedReducer, applyMiddleware(...middleware));
+	const persistor = persistStore(store);
+
+	return { store, persistor };
+};
