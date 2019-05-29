@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { Static } from 'evm-lite-lib';
 import { Spring, config } from 'react-spring/renderprops';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -140,9 +141,13 @@ class Accounts extends React.Component<LocalProps, State> {
 											<AccountCard
 												unlocked={
 													(accounts.unlocked &&
-														accounts.unlocked
-															.address ===
-															account.address) ||
+														Static.cleanAddress(
+															accounts.unlocked
+																.address
+														) ===
+															Static.cleanAddress(
+																account.address
+															)) ||
 													false
 												}
 												key={account.address}

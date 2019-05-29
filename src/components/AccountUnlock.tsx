@@ -58,22 +58,31 @@ const Content = styled.div`
 	position: fixed;
 	bottom: 100px;
 	right: -341px;
-	width: auto;
-	padding: 20px;
+	width: 340px !important;
 	background: #fff !important;
 	box-shadow: 0 4px 20px -6px #999 !important;
 
-	&:hover {
-		cursor: pointer;
+	& h4 {
+		background: rgba(0, 0, 0, 0.04);
+		padding: 10px;
+		letter-spacing: 0.5px;
+		margin: 0 !important;
 	}
 
-	& span {
-		margin-bottom: 10px !important;
-		display: block !important;
-		font-size: 17px;
-		font-weight: bold !important;
+	& div {
+		padding: 5px 10px;
+		padding-top: 0px;
+	}
+
+	& div.help {
+		background: rgba(0, 0, 0, 0.02);
+		font-size: 13px;
+		padding: 4px 10px;
+		color: #888;
+		margin-bottom: 14px;
 	}
 `;
+
 interface State {
 	show: boolean;
 	fields: {
@@ -190,9 +199,9 @@ class AccountUnlock extends React.Component<Props, State> {
 				)}
 				<Transition
 					items={show}
-					from={{ right: '-341px' }}
+					from={{ right: '-340px' }}
 					enter={{ right: '0px' }}
-					leave={{ right: '-341px' }}
+					leave={{ right: '-340px' }}
 					config={config.stiff}
 				>
 					{show =>
@@ -200,18 +209,24 @@ class AccountUnlock extends React.Component<Props, State> {
 						(props => (
 							<Content style={props}>
 								<h4>Unlock account</h4>
-								<Input
-									placeholder="Password"
-									type="password"
-									onChange={(_, { value }) =>
-										this.setState({
-											fields: {
-												...this.state.fields,
-												password: value
-											}
-										})
-									}
-								/>
+								<div className="help">
+									Unlocked accounts can be used to sign
+									transactions without a password.
+								</div>
+								<div>
+									<Input
+										placeholder="Password"
+										type="password"
+										onChange={(_, { value }) =>
+											this.setState({
+												fields: {
+													...this.state.fields,
+													password: value
+												}
+											})
+										}
+									/>
+								</div>
 							</Content>
 						))
 					}

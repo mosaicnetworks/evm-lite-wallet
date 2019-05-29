@@ -219,7 +219,11 @@ class Account extends React.Component<LocalProps, State> {
 					</Header>
 				</Jumbo>
 				<Transition
-					items={!!accounts.unlocked}
+					items={
+						!!accounts.unlocked &&
+						Static.cleanAddress(accounts.unlocked.address) ===
+							Static.cleanAddress(account.address)
+					}
 					from={{ opacity: 0 }}
 					enter={{ opacity: 1 }}
 					leave={{ opacity: 0 }}
@@ -228,7 +232,6 @@ class Account extends React.Component<LocalProps, State> {
 					{show =>
 						show &&
 						(props => (
-							// @ts-ignore
 							<Banner color="orange" style={props}>
 								This account is currently unlocked and will
 								allow you to transfer funds and interact with

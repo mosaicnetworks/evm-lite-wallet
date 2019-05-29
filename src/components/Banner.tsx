@@ -10,6 +10,7 @@ const colors = {
 
 interface Props {
 	color: 'purple' | 'orange' | 'black';
+	style?: any;
 }
 
 class Banner extends React.Component<Props, any> {
@@ -30,7 +31,7 @@ class Banner extends React.Component<Props, any> {
 				0 0 40px rgba(0, 0, 0, 0.1) inset;
 		`;
 
-		return <Banner>{this.props.children}</Banner>;
+		return <Banner style={this.props.style}>{this.props.children}</Banner>;
 	}
 }
 

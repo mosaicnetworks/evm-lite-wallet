@@ -13,7 +13,7 @@ import Animation from './animations/Animation';
 
 import { AccountsState, create } from '../modules/accounts';
 
-const CreateAccountSlider = styled.div`
+const Open = styled.div`
 	position: fixed;
 	bottom: 100px;
 	right: 0;
@@ -34,7 +34,7 @@ const CreateAccountSlider = styled.div`
 	}
 `;
 
-const CreateAccountSliderClose = styled.div`
+const Close = styled.div`
 	position: fixed;
 	bottom: 140px;
 	right: 0;
@@ -55,24 +55,32 @@ const CreateAccountSliderClose = styled.div`
 	}
 `;
 
-const CreateAccountContent = styled.div`
+const Content = styled.div`
 	position: fixed;
 	bottom: 100px;
 	right: -341px;
 	width: auto;
-	padding: 20px;
 	background: #fff !important;
 	box-shadow: 0 4px 20px -6px #999 !important;
 
-	&:hover {
-		cursor: pointer;
+	& h4 {
+		background: rgba(0, 0, 0, 0.04);
+		padding: 10px;
+		letter-spacing: 0.5px;
+		margin: 0 !important;
 	}
 
-	& span {
-		margin-bottom: 10px !important;
-		display: block !important;
-		font-size: 17px;
-		font-weight: bold !important;
+	& div {
+		padding: 5px 10px;
+		padding-top: 0px;
+	}
+
+	& div.help {
+		background: rgba(0, 0, 0, 0.02);
+		font-size: 13px;
+		padding: 4px 10px;
+		color: #888;
+		margin-bottom: 14px;
 	}
 `;
 interface State {
@@ -146,7 +154,7 @@ class AccountCreate extends React.Component<Props, State> {
 					{show =>
 						show &&
 						(props => (
-							<CreateAccountSlider
+							<Open
 								style={props}
 								onClick={this.handleCreateAccount}
 							>
@@ -156,7 +164,7 @@ class AccountCreate extends React.Component<Props, State> {
 									disabled={accounts.loading.create}
 									loading={accounts.loading.create}
 								/>
-							</CreateAccountSlider>
+							</Open>
 						))
 					}
 				</Transition>
@@ -170,7 +178,7 @@ class AccountCreate extends React.Component<Props, State> {
 					{show =>
 						show &&
 						(props => (
-							<CreateAccountSliderClose
+							<Close
 								style={props}
 								onClick={() =>
 									this.setState({
@@ -178,22 +186,32 @@ class AccountCreate extends React.Component<Props, State> {
 									})
 								}
 							>
-								<Button icon="times" color="red" />
-							</CreateAccountSliderClose>
+								<Button
+									icon="times"
+									disabled={accounts.loading.create}
+									loading={accounts.loading.create}
+									color="red"
+								/>
+							</Close>
 						))
 					}
 				</Transition>
 				{!visible && (
 					<Animation direction="right">
-						<CreateAccountSlider
+						<Open
 							onClick={() =>
 								this.setState({
 									visible: true
 								})
 							}
 						>
-							<Button icon="plus" color="green" />
-						</CreateAccountSlider>
+							<Button
+								icon="plus"
+								disabled={accounts.loading.create}
+								loading={accounts.loading.create}
+								color="green"
+							/>
+						</Open>
 					</Animation>
 				)}
 				<Transition
@@ -206,34 +224,40 @@ class AccountCreate extends React.Component<Props, State> {
 					{show =>
 						show &&
 						(props => (
-							<CreateAccountContent style={props}>
+							<Content style={props}>
 								<h4>Create An Account</h4>
-								<Input
-									placeholder="Set Password"
-									type="password"
-									onChange={(e, { value }) =>
-										this.setState({
-											fields: {
-												...this.state.fields,
-												password: value
-											}
-										})
-									}
-								/>
-								<br />
-								<Input
-									placeholder="Verify Password"
-									type="password"
-									onChange={(e, { value }) =>
-										this.setState({
-											fields: {
-												...this.state.fields,
-												verifyPassword: value
-											}
-										})
-									}
-								/>
-							</CreateAccountContent>
+								<div className="help">
+									Enter a password to encrypt the created
+									account.
+								</div>
+								<div>
+									<Input
+										placeholder="Set Password"
+										type="password"
+										onChange={(e, { value }) =>
+											this.setState({
+												fields: {
+													...this.state.fields,
+													password: value
+												}
+											})
+										}
+									/>
+									<br />
+									<Input
+										placeholder="Verify Password"
+										type="password"
+										onChange={(e, { value }) =>
+											this.setState({
+												fields: {
+													...this.state.fields,
+													verifyPassword: value
+												}
+											})
+										}
+									/>
+								</div>
+							</Content>
 						))
 					}
 				</Transition>

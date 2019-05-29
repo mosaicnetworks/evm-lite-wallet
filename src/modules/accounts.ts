@@ -75,6 +75,7 @@ export default function reducer(
 			};
 		case LIST_SUCCESS:
 			return {
+				...state,
 				all: action.payload,
 				loading: {
 					...state.loading,
