@@ -41,9 +41,6 @@ export interface AccountsState {
     error?: string;
     loading: {
         list: boolean;
-        get: boolean;
-        create: boolean;
-        unlock: boolean;
     };
 }
 
@@ -52,9 +49,6 @@ const initialState: AccountsState = {
     all: [],
     loading: {
         list: false,
-        get: false,
-        create: false,
-        unlock: false
     }
 };
 
