@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import { Static, DataDirectory } from 'evm-lite-lib';
+import { DataDirectory, Static } from 'evm-lite-lib';
 
 import { BaseAction, ThunkResult } from 'src/modules';
 import { Store } from 'src/store';

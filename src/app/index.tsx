@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { Provider } from 'react-redux';
 import { Provider as AlertProvider } from 'react-alert';
+import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import getStores from '../store';
 
+// @ts-ignore
 import AlertTemplate from 'react-alert-template-basic';
 import App from './App';
 

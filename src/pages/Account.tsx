@@ -2,22 +2,25 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { connect } from 'react-redux';
-import { Spring, config, Transition } from 'react-spring/renderprops';
-import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Header } from 'semantic-ui-react';
 import { BaseAccount, Static } from 'evm-lite-lib';
+import { InjectedAlertProp, withAlert } from 'react-alert';
+import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
+import { config, Spring, Transition } from 'react-spring/renderprops';
+import { Header } from 'semantic-ui-react';
 
 import { Store } from 'src/store';
-import { AccountsState, get } from '../modules/accounts';
 import { Jumbo, PaddedContent } from '../components/Styling';
+import { AccountsState, get } from '../modules/accounts';
 
-import LoadingButton from '../components/LoadingButton';
-import AccountUnlock from '../components/AccountUnlock';
-import FloatingButton from '../components/FloatingButton';
-import Banner from '../components/Banner';
-import Transaction, { SentTransaction } from '../components/Transaction';
+import {
+	AccountUnlock,
+	Banner,
+	FloatingButton,
+	LoadingButton,
+	Transaction
+} from '../components';
+import { SentTransaction } from '../components/Transaction';
 
 import Misc from '../classes/Misc';
 
@@ -63,30 +66,30 @@ type LocalProps = OwnProps &
 	RouteComponentProps<RouterParams>;
 
 const transactions: SentTransaction[] = [
-	// {
-	// 	id: 1,
-	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-	// 	value: 500000,
-	// 	status: true,
-	// 	incoming: true
-	// },
-	// {
-	// 	id: 2,
-	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-	// 	value: 10000,
-	// 	status: true,
-	// 	incoming: false
-	// },
-	// {
-	// 	id: 3,
-	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-	// 	value: 100000,
-	// 	status: false,
-	// 	incoming: true
-	// }
+	{
+		id: 1,
+		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+		value: 500000,
+		status: true,
+		incoming: true
+	},
+	{
+		id: 2,
+		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+		value: 10000,
+		status: true,
+		incoming: false
+	},
+	{
+		id: 3,
+		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+		value: 100000,
+		status: false,
+		incoming: true
+	}
 ];
 
 class Account extends React.Component<LocalProps, State> {
@@ -299,4 +302,4 @@ const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
-)(withAlert<AlertProps>(Account));
+)(withAlert<LocalProps>(Account));

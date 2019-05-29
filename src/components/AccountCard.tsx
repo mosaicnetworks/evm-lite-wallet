@@ -2,8 +2,8 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { Transition, config } from 'react-spring/renderprops';
 import { Link } from 'react-router-dom';
+import { config, Transition } from 'react-spring/renderprops';
 import { Card, Label } from 'semantic-ui-react';
 
 import { BaseAccount, Static } from 'evm-lite-lib';

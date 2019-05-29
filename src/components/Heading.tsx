@@ -2,8 +2,8 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { Spring, config } from 'react-spring/renderprops';
 import { InjectedAlertProp, withAlert } from 'react-alert';
+import { config, Spring } from 'react-spring/renderprops';
 import { Header } from 'semantic-ui-react';
 
 import Misc from '../classes/Misc';

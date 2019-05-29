@@ -1,14 +1,14 @@
 import * as React from 'react';
 
-import styled from 'styled-components';
 import Highlight from 'react-highlight';
+import styled from 'styled-components';
 
-import { Segment, Icon, Image, Table, Grid } from 'semantic-ui-react';
 import { Static } from 'evm-lite-lib';
+import { Grid, Icon, Image, Segment, Table } from 'semantic-ui-react';
 
 import Misc from '../classes/Misc';
 
-import * as TENOM from '../assets/logo.png';
+import TENOM from '../assets/logo.png';
 
 const BoldCentered = styled.div`
 	text-align: center !important;

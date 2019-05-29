@@ -2,15 +2,15 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { Transition, config } from 'react-spring/renderprops';
 import { connect } from 'react-redux';
 import { NavLink as Link } from 'react-router-dom';
+import { config, Transition } from 'react-spring/renderprops';
 import { Container, Icon, Image, Label } from 'semantic-ui-react';
 
 import { Store } from 'src/store';
 import { AccountsState, resetUnlock } from '../modules/accounts';
 
-import * as MONET_LOGO from '../assets/monet_logo.png';
+import MONET_LOGO from '../assets/monet_logo.png';
 
 const WalletHeader = styled.div`
 	position: fixed;

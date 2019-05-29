@@ -1,10 +1,10 @@
 import {
+	Account,
 	BaseAccount,
-	Keystore,
-	V3JSONKeyStore,
 	EVMLC,
+	Keystore,
 	Static,
-	Account
+	V3JSONKeyStore
 } from 'evm-lite-lib';
 
 import { BaseAction, ThunkResult } from 'src/modules';
@@ -399,7 +399,6 @@ export function unlock(
 				const keystore = new Keystore(config.storage.keystore);
 				account = await keystore.decrypt(address, password, connection);
 
-				console.log(account);
 				dispatch({
 					type: UNLOCK_SUCCESS,
 					payload: account

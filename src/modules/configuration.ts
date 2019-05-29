@@ -1,7 +1,7 @@
-import { ConfigSchema, Config } from 'evm-lite-lib';
+import { Config, ConfigSchema } from 'evm-lite-lib';
 
-import { Store } from 'src/store';
 import { BaseAction, ThunkResult } from 'src/modules';
+import { Store } from 'src/store';
 
 // Load configuration from data directory
 const LOAD_REQUEST = '@monet/configuration/LOAD/REQUEST';

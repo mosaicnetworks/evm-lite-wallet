@@ -1,25 +1,26 @@
 import * as React from 'react';
 
 import { Static } from 'evm-lite-lib';
-import { Spring, config } from 'react-spring/renderprops';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Card, Header, Grid } from 'semantic-ui-react';
+import { connect } from 'react-redux';
+import { config, Spring } from 'react-spring/renderprops';
+import { bindActionCreators } from 'redux';
+import { Card, Grid, Header } from 'semantic-ui-react';
 
-import { Jumbo } from '../components/Styling';
-
-import LoadingButton from '../components/LoadingButton';
-import AccountCard from '../components/AccountCard';
-import AccountCreate from '../components/AccountCreate';
-import FloatingButton from '../components/FloatingButton';
-import Animation from '../components/animations/Animation';
+import {
+	AccountCard,
+	AccountCreate,
+	Animation,
+	FloatingButton,
+	Jumbo,
+	LoadingButton
+} from '../components';
 
 import Misc from '../classes/Misc';
 
+import { Store } from 'src/store';
 import { AccountsState, list } from '../modules/accounts';
 import { ConfigurationState } from '../modules/configuration';
-import { Store } from 'src/store';
 
 interface AlertProps {
 	alert: InjectedAlertProp;
@@ -189,4 +190,4 @@ const mapsDispatchToProps = (dispatch: any): any =>
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
-)(withAlert<AlertProps>(Accounts));
+)(withAlert<LocalProps>(Accounts));

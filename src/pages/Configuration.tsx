@@ -2,21 +2,20 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { connect } from 'react-redux';
-import { Spring, config } from 'react-spring/renderprops';
-import { InjectedAlertProp, withAlert } from 'react-alert';
-import { Header, Message, Form, Grid } from 'semantic-ui-react';
 import { Static } from 'evm-lite-lib';
+import { InjectedAlertProp, withAlert } from 'react-alert';
+import { connect } from 'react-redux';
+import { config, Spring } from 'react-spring/renderprops';
+import { Form, Grid, Header, Message } from 'semantic-ui-react';
 
 import { Store } from 'src/store';
-import { PaddedContent } from '../components/Styling';
 import { AccountsState } from '../modules/accounts';
 import { ApplicationState, setDirectory } from '../modules/application';
 import { ConfigurationState } from '../modules/configuration';
 
-import Heading from '../components/Heading';
+import { Banner, Heading, PaddedContent } from '../components';
+
 import Misc from '../classes/Misc';
-import Banner from '../components/Banner';
 
 import './styles/Configuration.css';
 
@@ -301,4 +300,4 @@ const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
 export default connect<StoreProps, {}, {}, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
-)(withAlert<AlertProps>(Configuration));
+)(withAlert<LocalProps>(Configuration));

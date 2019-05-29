@@ -1,18 +1,18 @@
 import * as React from 'react';
 
-import { Store } from 'src/store';
+import { ConfigSchema } from 'evm-lite-lib';
+import { InjectedAlertProp, withAlert } from 'react-alert';
 import { connect } from 'react-redux';
 import { HashRouter, Route } from 'react-router-dom';
-import { InjectedAlertProp, withAlert } from 'react-alert';
-import { ConfigSchema } from 'evm-lite-lib';
+import { Store } from 'src/store';
 
-import { load } from '../modules/configuration';
 import { initialize } from '../modules/application';
+import { load } from '../modules/configuration';
 
-import Accounts from '../pages/Accounts';
-import POA from '../pages/POA';
 import Account from '../pages/Account';
+import Accounts from '../pages/Accounts';
 import Configuration from '../pages/Configuration';
+import POA from '../pages/POA';
 
 import Wrapper from '../components/Wrapper';
 
@@ -74,4 +74,4 @@ const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
-)(withAlert<AlertProps>(App));
+)(withAlert<LocalProps>(App));

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { Segment, Icon, Label } from 'semantic-ui-react';
+import { Icon, Label, Segment } from 'semantic-ui-react';
 
 import Animation from './animations/Animation';
 

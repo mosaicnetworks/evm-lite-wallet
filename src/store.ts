@@ -1,8 +1,8 @@
-import dynamicStorage from 'redux-persist/lib/storage';
 import logger from 'redux-logger';
+import dynamicStorage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 
-import { createStore, applyMiddleware } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import { PersistConfig, persistReducer, persistStore } from 'redux-persist';
 
 import rootReducer from './modules';

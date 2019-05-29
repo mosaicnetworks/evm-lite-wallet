@@ -2,16 +2,16 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { Store } from 'src/store';
-import { connect } from 'react-redux';
-import { InjectedAlertProp, withAlert } from 'react-alert';
-import { config, Transition } from 'react-spring/renderprops';
-import { Input, Button } from 'semantic-ui-react';
 import { BaseAccount } from 'evm-lite-lib';
+import { InjectedAlertProp, withAlert } from 'react-alert';
+import { connect } from 'react-redux';
+import { config, Transition } from 'react-spring/renderprops';
+import { Button, Input } from 'semantic-ui-react';
+
+import { Store } from 'src/store';
+import { AccountsState, create } from '../modules/accounts';
 
 import Animation from './animations/Animation';
-
-import { AccountsState, create } from '../modules/accounts';
 
 const Open = styled.div`
 	position: fixed;
@@ -277,4 +277,4 @@ const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
 export default connect<StoreProps, DispatchProps, {}, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
-)(withAlert<AlertProps>(AccountCreate));
+)(withAlert<Props>(AccountCreate));

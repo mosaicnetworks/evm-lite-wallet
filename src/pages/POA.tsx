@@ -2,17 +2,14 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { Spring, config } from 'react-spring/renderprops';
 import { connect } from 'react-redux';
+import { config, Spring } from 'react-spring/renderprops';
 import { Button, Grid } from 'semantic-ui-react';
 // import { Static } from 'evm-lite-lib';
 
 import { Store } from 'src/store';
 
-import Heading from '../components/Heading';
-import FloatingButton from '../components/FloatingButton';
-import Banner from '../components/Banner';
-import Nominee from '../components/Nominee';
+import { Banner, FloatingButton, Heading, Nominee } from '../components';
 
 import Misc from '../classes/Misc';
 
@@ -29,20 +26,20 @@ const WhiteList = styled.div`
 	box-shadow: 0 4px 20px -6px #eee !important;
 `;
 
-const WhiteListEntry = styled.div`
-	padding: 15px 20px;
-	background: #fff;
-`;
+// const WhiteListEntry = styled.div`
+// 	padding: 15px 20px;
+// 	background: #fff;
+// `;
 
-WhiteListEntry.Moniker = styled.div`
-	font-weight: bold !important;
-	font-size: 17px;
-	margin-bottom: 3px;
-`;
-WhiteListEntry.Address = styled.div`
-	word-wrap: break-word;
-	color: #555;
-`;
+// const WhiteListEntryMoniker = styled.div`
+// 	font-weight: bold !important;
+// 	font-size: 17px;
+// 	margin-bottom: 3px;
+// `;
+// const WhiteListEntryAddress = styled.div`
+// 	word-wrap: break-word;
+// 	color: #555;
+// `;
 
 const NomineeList = styled.div``;
 

@@ -2,10 +2,10 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { connect } from 'react-redux';
 import { InjectedAlertProp, withAlert } from 'react-alert';
+import { connect } from 'react-redux';
 import { config, Transition } from 'react-spring/renderprops';
-import { Input, Button } from 'semantic-ui-react';
+import { Button, Input } from 'semantic-ui-react';
 
 import { Store } from 'src/store';
 import { AccountsState, unlock } from '../modules/accounts';
@@ -121,6 +121,7 @@ class AccountUnlock extends React.Component<Props, State> {
 
 		if (!fields.password) {
 			this.props.alert.error('Password cannot be empty.');
+			return;
 		}
 
 		this.setState({
@@ -247,4 +248,4 @@ const mapsDispatchToProps = (dispatch: any): DispatchProps => ({
 export default connect<StoreProps, DispatchProps, OwnProps, Store>(
 	mapStoreToProps,
 	mapsDispatchToProps
-)(withAlert<AlertProps>(AccountUnlock));
+)(withAlert<Props>(AccountUnlock));
