@@ -13,7 +13,8 @@ import {
 	Animation,
 	FloatingButton,
 	Jumbo,
-	LoadingButton
+	LoadingButton,
+	Banner
 } from '../components';
 
 import Misc from '../classes/Misc';
@@ -131,6 +132,10 @@ class Accounts extends React.Component<LocalProps, State> {
 						)}
 					</Header>
 				</Jumbo>
+				<Banner color="blue">
+					All accounts listed here are read in locally from your
+					keystore.
+				</Banner>
 				<br />
 				<Grid>
 					<Grid.Column width="16">

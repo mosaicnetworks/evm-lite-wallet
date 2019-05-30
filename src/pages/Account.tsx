@@ -14,15 +14,23 @@ import { Jumbo, PaddedContent } from '../components/Styling';
 import { AccountsState, get } from '../modules/accounts';
 
 import {
+	AccountTransfer,
 	AccountUnlock,
 	Banner,
 	FloatingButton,
 	LoadingButton,
 	Transaction
 } from '../components';
+
 import { SentTransaction } from '../components/Transaction';
 
 import Misc from '../classes/Misc';
+
+const RedText = styled.div`
+	color: red;
+	padding: 20px;
+	padding-top: 0 !important;
+`;
 
 const Transactions = styled.div`
 	&.label {
@@ -244,15 +252,14 @@ class Account extends React.Component<LocalProps, State> {
 						))
 					}
 				</Transition>
-
 				<br />
-				{transactions.length !== 0 && (
-					<PaddedContent>
-						<Header as="h3">Transactions</Header>
-					</PaddedContent>
-				)}
+				<br />
+				<AccountTransfer account={account} />
+				<PaddedContent>
+					<Header as="h3">Transactions</Header>
+				</PaddedContent>
 				<Transactions>
-					{transactions.length !== 0 &&
+					{(transactions.length !== 0 &&
 						transactions.map((tx, i) => {
 							const transaction = tx as SentTransaction;
 							return (
@@ -277,7 +284,7 @@ class Account extends React.Component<LocalProps, State> {
 									)}
 								</Spring>
 							);
-						})}
+						})) || <RedText>No transaction history.</RedText>}
 				</Transactions>
 				{this.renderAccountUnlockButton()}
 				<FloatingButton bottomOffset={57}>

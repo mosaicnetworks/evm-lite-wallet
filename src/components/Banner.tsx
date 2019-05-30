@@ -3,13 +3,14 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 const colors = {
-	purple: 'rgba(126, 66, 149, 1)',
+	purple: 'rgba(126, 66, 149, 0.9)',
 	orange: '#f2711c',
-	black: '#222'
+	black: '#222',
+	blue: 'rgba(24, 64, 150, 0.9)'
 };
 
 interface Props {
-	color: 'purple' | 'orange' | 'black';
+	color: 'purple' | 'orange' | 'black' | 'blue';
 	style?: any;
 }
 

@@ -11,7 +11,7 @@ export { default as Nominee } from './Nominee';
 export { default as StatusBar } from './StatusBar';
 export { default as Transaction } from './Transaction';
 export { default as Wrapper } from './Wrapper';
-
+export { default as AccountTransfer } from './AccountTransfer';
 export { default as Animation } from './animations/Animation';
 
 export * from './Styling';

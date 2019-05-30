@@ -1,8 +1,8 @@
+import { app, BrowserWindow, nativeImage } from 'electron';
 import * as path from 'path';
-import * as electron from 'electron';
 
-const app = electron.app;
-let main: electron.BrowserWindow | null;
+const application = app;
+let main: BrowserWindow | null;
 
 // const createMenu = () => {
 // 	const { Menu } = electron;
@@ -30,11 +30,11 @@ let main: electron.BrowserWindow | null;
 // };
 
 function createWindow() {
-	const icon = electron.nativeImage.createFromPath(
+	const icon = nativeImage.createFromPath(
 		path.join(__dirname, 'src/assets/logo.png')
 	);
 
-	main = new electron.BrowserWindow({
+	main = new BrowserWindow({
 		width: 1350,
 		height: 757,
 		icon
@@ -50,15 +50,15 @@ function createWindow() {
 	});
 }
 
-app.on('ready', createWindow);
+application.on('ready', createWindow);
 
-app.on('window-all-closed', () => {
+application.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit();
 	}
 });
 
-app.on('activate', () => {
+application.on('activate', () => {
 	if (main === null) {
 		createWindow();
 	}

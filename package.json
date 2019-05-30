@@ -21,7 +21,7 @@
 		"start:dev": "webpack-dev-server --config config/webpack.config.js --hot --inline",
 		"start:electron": "electron ./dist",
 		"start:evml": "cd /Users/danu/code/src/github.com/mosaicnetworks/evm-lite/cmd/evml/ && ./evml solo",
-		"bin": "electron-packager ./dist EVM-Lite-Wallet --platform=win32 --out ./bin --overwrite --icon src/assets/logo.png",
+		"bin": "electron-packager ./dist EVM-Lite-Wallet --platform=darwin --arch=x64 --out ./bin --overwrite --icon src/assets/monet_logo.png",
 		"start": "npm install && npm run build && npm run start:electron"
 	},
 	"devDependencies": {

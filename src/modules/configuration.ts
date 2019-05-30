@@ -66,7 +66,7 @@ export default function reducer(
 export function load(): ThunkResult<Promise<ConfigSchema>> {
 	return async (dispatch, getState) => {
 		const state: Store = getState();
-		let config: ConfigSchema = {} as ConfigSchema;
+		let config = {} as ConfigSchema;
 
 		dispatch({
 			type: LOAD_REQUEST

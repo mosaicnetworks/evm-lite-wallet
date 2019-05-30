@@ -2,11 +2,21 @@
 
 Last Updated: 29/05/2019
 
+## Components
+- Need to modularise components further
+
 ## Accounts
+- Create
+  - ~~The feature to create an account in the current keystore encrypted with a custom password.~~
+- Unlock
+  - ~~The ability to unlock an account for the session to sign transactions without providing a password every time.~~
+- List
+  - ~~List all account with balances and nonce fetched from the node~~
+  - ~~A button to refresh accounts.~~
 - Importing
 - Exporting
 - Updating password
-- Transfer
+- Transfer (Partially Completed)
 
 ## Configuration
 - Save
