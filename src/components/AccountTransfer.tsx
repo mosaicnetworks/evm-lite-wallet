@@ -92,7 +92,7 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 				this.props.accounts.unlocked.address);
 
 		const TransferForm = styled(Grid.Column)`
-			opacity: ${disableTransfer ? 0.8 : 1};
+			/* opacity: ${disableTransfer ? 0.8 : 1}; */
 			background: #${disableTransfer ? 'fbfbfb' : 'fff'};
 			padding: 20px !important;
 		`;
@@ -105,27 +105,41 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 				<TransferContent>
 					<Grid columns="equal">
 						<TransferForm width="6">
+							{disableTransfer && (
+								<Message icon={true} info={true}>
+									<Icon name="lock" />
+									<Message.Content>
+										<Message.Header>
+											Unlock Account
+										</Message.Header>
+										You cannot make a transfer from this
+										account unless you unlock it using the
+										button on the bottom right.
+									</Message.Content>
+								</Message>
+							)}
 							<Form>
-								<Form.Input placeholder="To Address" />
-								<Form.Input placeholder="Value" type="number" />
 								<Form.Input
+									disabled={disableTransfer}
+									placeholder="To Address"
+								/>
+								<Form.Input
+									disabled={disableTransfer}
+									placeholder="Value"
+									type="number"
+								/>
+								<Form.Input
+									disabled={disableTransfer}
 									type="number"
 									placeholder="Gas"
 									defaultValue={fields.gas}
 								/>
 								<Form.Input
+									disabled={disableTransfer}
 									type="number"
 									placeholder="Gas Price"
 									defaultValue={fields.gasPrice}
 								/>
-								{disableTransfer && (
-									<Message info={true}>
-										<p>
-											Unlock this account to make a
-											transfer.
-										</p>
-									</Message>
-								)}
 								<Form.Button
 									disabled={disableTransfer}
 									color="green"

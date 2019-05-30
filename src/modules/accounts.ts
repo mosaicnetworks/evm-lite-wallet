@@ -490,9 +490,36 @@ export function transfer(
 		});
 
 		try {
-			if (config.connection) {
-				// pass
-				return '';
+			if (!state.accounts.unlocked) {
+				throw Error('No account unlocked to sign the transfer.');
+			}
+
+			if (!!Object.keys(config).length) {
+				const evmlc = new EVMLC(
+					config.connection.host,
+					config.connection.port,
+					{
+						from,
+						gas,
+						gasPrice
+					}
+				);
+
+				await evmlc.testConnection();
+
+				const transaction = evmlc.accounts.prepareTransfer(to, value);
+				transaction.submit(state.accounts.unlocked, {
+					timeout: 5
+				});
+
+				if (!transaction.hash) {
+					throw Error(
+						'Transaction hash not found after ' +
+							'transfer was submitted to node.'
+					);
+				}
+
+				return transaction.hash;
 			} else {
 				throw Error('Configuration could not loaded.');
 			}
