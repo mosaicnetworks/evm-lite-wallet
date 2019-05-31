@@ -32,7 +32,7 @@ const Content = styled.div`
 `;
 
 const Fields = styled(Grid.Column)`
-	background: #fbfbfb;
+	background: #fff;
 	padding: 20px !important;
 
 	& .ui.input {
@@ -45,8 +45,12 @@ const Fields = styled(Grid.Column)`
 const Details = styled(Grid.Column)`
 	padding: 0 !important;
 	background: #fff;
-
 	margin-left: 10px;
+	overflow-x: hidden;
+
+	& * {
+		word-wrap: break-word !important;
+	}
 `;
 
 const DetailsHeader = styled.div`
@@ -166,7 +170,7 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 					<Grid columns="equal">
 						<Fields
 							width={
-								!!accounts.transactions.lastestHash &&
+								!!accounts.transactions.lastestReceipt &&
 								allowTransfer
 									? 6
 									: 16
@@ -253,7 +257,7 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 						</Fields>
 						<Transition
 							items={
-								!!accounts.transactions.lastestHash &&
+								!!accounts.transactions.lastestReceipt &&
 								allowTransfer
 							}
 							from={{ opacity: 0 }}
@@ -269,7 +273,10 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 											Transaction Hash:{' '}
 											<span>
 												{accounts.transactions
-													.lastestHash || ''}
+													.lastestReceipt &&
+													accounts.transactions
+														.lastestReceipt
+														.transactionHash}
 											</span>
 										</DetailsHeader>
 										<DetailsContent>
@@ -285,7 +292,8 @@ class AccountTransfer extends React.Component<LocalProps, State> {
 											<b>Receipt: </b>
 											<Highlight className="javascript">
 												{JSON.stringify(
-													this.state.fields,
+													accounts.transactions
+														.lastestReceipt,
 													null,
 													4
 												)}

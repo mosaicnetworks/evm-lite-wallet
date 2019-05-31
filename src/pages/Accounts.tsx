@@ -11,10 +11,10 @@ import {
 	AccountCard,
 	AccountCreate,
 	Animation,
+	Banner,
 	FloatingButton,
 	Jumbo,
-	LoadingButton,
-	Banner
+	LoadingButton
 } from '../components';
 
 import Misc from '../classes/Misc';

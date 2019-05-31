@@ -6,6 +6,7 @@ import {
 	Keystore,
 	SentTX,
 	Static,
+	TXReceipt,
 	V3JSONKeyStore
 } from 'evm-lite-lib';
 
@@ -58,7 +59,7 @@ export interface AccountsState {
 	// Latest transaction hash
 	transactions: {
 		all: SentTX[];
-		lastestHash?: string;
+		lastestReceipt?: TXReceipt;
 	};
 
 	// A single error field to be used by this module for any action
@@ -235,6 +236,10 @@ export default function reducer(
 				loading: {
 					...state.loading,
 					unlock: false
+				},
+				transactions: {
+					...state.transactions,
+					lastestReceipt: undefined
 				}
 			};
 
@@ -244,7 +249,7 @@ export default function reducer(
 				...state,
 				transactions: {
 					...state.transactions,
-					lastestHash: undefined
+					lastestReceipt: undefined
 				},
 				loading: {
 					...state.loading,
@@ -257,7 +262,7 @@ export default function reducer(
 				...state,
 				transactions: {
 					...state.transactions,
-					lastestHash: action.payload
+					lastestReceipt: action.payload
 				},
 				loading: {
 					...state.loading,
@@ -269,7 +274,7 @@ export default function reducer(
 				...state,
 				transactions: {
 					...state.transactions,
-					lastestHash: undefined
+					lastestReceipt: undefined
 				},
 				loading: {
 					...state.loading,
@@ -299,7 +304,7 @@ export function list(): ThunkResult<Promise<BaseAccount[]>> {
 			let connection: EVMLC | undefined;
 			const config = state.config.data;
 
-			if (!config.storage) {
+			if (!Object.keys(config).length) {
 				throw Error('Configuration data not loaded.');
 			}
 
@@ -343,6 +348,11 @@ export function list(): ThunkResult<Promise<BaseAccount[]>> {
 	};
 }
 
+/**
+ * Creates an ethereum account and appends it into the list of all accounts.
+ *
+ * @param password - The string to used to encrypt the newly created account
+ */
 export function create(password: string): ThunkResult<Promise<BaseAccount>> {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -359,7 +369,7 @@ export function create(password: string): ThunkResult<Promise<BaseAccount>> {
 		});
 
 		try {
-			if (config.storage) {
+			if (!!Object.keys(config).length) {
 				const keystore = new Keystore(config.storage.keystore);
 				const acc: V3JSONKeyStore = JSON.parse(
 					await keystore.create(password)
@@ -385,6 +395,12 @@ export function create(password: string): ThunkResult<Promise<BaseAccount>> {
 	};
 }
 
+/**
+ * Should fetch `BaseAccount` type of the address prepopulating the object with
+ * the address's balance and nonce.
+ *
+ * @param address - The address to fetch from the node
+ */
 export function get(address: EVM.Address): ThunkResult<Promise<BaseAccount>> {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -400,7 +416,7 @@ export function get(address: EVM.Address): ThunkResult<Promise<BaseAccount>> {
 		});
 
 		try {
-			if (config.connection) {
+			if (!!Object.keys(config).length) {
 				const connection = new EVMLC(
 					config.connection.host,
 					config.connection.port,
@@ -437,6 +453,13 @@ export function get(address: EVM.Address): ThunkResult<Promise<BaseAccount>> {
 	};
 }
 
+/**
+ * Should decrypt an account and set the result into the redux state. The account
+ * will be removed after the session is closed or manually reset.
+ *
+ * @param address - The address of the account to unlock
+ * @param password - The associated password for the address in question
+ */
 export function unlock(
 	address: EVM.Address,
 	password: string
@@ -451,7 +474,7 @@ export function unlock(
 		});
 
 		try {
-			if (config.connection) {
+			if (!!Object.keys(config).length) {
 				let connection: EVMLC | undefined = new EVMLC(
 					config.connection.host,
 					config.connection.port,
@@ -489,6 +512,9 @@ export function unlock(
 	};
 }
 
+/**
+ * Reset function for unlocking an account.
+ */
 export function resetUnlock(): ThunkResult<void> {
 	return dispatch => {
 		dispatch({
@@ -497,13 +523,22 @@ export function resetUnlock(): ThunkResult<void> {
 	};
 }
 
+/**
+ * Should transfer the state amount of tokens/coins to the desired address.
+ *
+ * @param from - The `from` address of the transaction
+ * @param to - The `to` address of the transaction
+ * @param value - The amount of coin(s)/token(s) to send
+ * @param gas - The maximum `gas` to use for this transaction
+ * @param gasPrice - The price per `gas` to pay for the transaction
+ */
 export function transfer(
 	from: EVM.Address,
 	to: EVM.Address,
 	value: EVM.Value,
 	gas: EVM.Gas,
 	gasPrice: EVM.GasPrice
-): ThunkResult<Promise<string>> {
+): ThunkResult<Promise<TXReceipt>> {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config.data;
@@ -542,12 +577,14 @@ export function transfer(
 					);
 				}
 
+				const receipt = await transaction.receipt;
+
 				dispatch({
 					type: TRANSFER_SUCCESS,
-					payload: transaction.hash
+					payload: receipt
 				});
 
-				return transaction.hash;
+				return receipt;
 			} else {
 				throw Error('Configuration could not loaded.');
 			}
@@ -557,7 +594,7 @@ export function transfer(
 				payload: error.toString()
 			});
 
-			return '';
+			return {} as TXReceipt;
 		}
 	};
 }
