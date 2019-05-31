@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import styled from 'styled-components';
-
 import { BaseAccount, Static } from 'evm-lite-lib';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { connect } from 'react-redux';
@@ -19,24 +17,12 @@ import {
 	Banner,
 	FloatingButton,
 	LoadingButton,
-	Transaction
+	Transactions
 } from '../components';
 
 import { SentTransaction } from '../components/Transaction';
 
 import Misc from '../classes/Misc';
-
-const RedText = styled.div`
-	color: red;
-	padding: 20px;
-	padding-top: 0 !important;
-`;
-
-const Transactions = styled.div`
-	&.label {
-		margin-right: 10px !important;
-	}
-`;
 
 interface RouterParams {
 	address: string;
@@ -73,32 +59,7 @@ type LocalProps = OwnProps &
 	AlertProps &
 	RouteComponentProps<RouterParams>;
 
-const transactions: SentTransaction[] = [
-	// {
-	// 	id: 1,
-	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-	// 	value: 500000,
-	// 	status: true,
-	// 	incoming: true
-	// },
-	// {
-	// 	id: 2,
-	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-	// 	value: 10000,
-	// 	status: true,
-	// 	incoming: false
-	// },
-	// {
-	// 	id: 3,
-	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-	// 	value: 100000,
-	// 	status: false,
-	// 	incoming: true
-	// }
-];
+const transactions: SentTransaction[] = [];
 
 class Account extends React.Component<LocalProps, State> {
 	public state = {
@@ -258,34 +219,7 @@ class Account extends React.Component<LocalProps, State> {
 				<PaddedContent>
 					<Header as="h3">Transactions</Header>
 				</PaddedContent>
-				<Transactions>
-					{(transactions.length !== 0 &&
-						transactions.map((tx, i) => {
-							const transaction = tx as SentTransaction;
-							return (
-								<Spring
-									key={transaction.id}
-									from={{
-										marginRight: -Misc.MARGIN_CONSTANT,
-										opacity: 0
-									}}
-									to={{
-										marginRight: 0,
-										opacity: 1
-									}}
-									config={config.wobbly}
-								>
-									{props => (
-										<Transaction
-											style={props}
-											key={transaction.id}
-											transaction={transaction}
-										/>
-									)}
-								</Spring>
-							);
-						})) || <RedText>No transaction history.</RedText>}
-				</Transactions>
+				<Transactions transactions={transactions} />
 				{this.renderAccountUnlockButton()}
 				<FloatingButton bottomOffset={57}>
 					<LoadingButton

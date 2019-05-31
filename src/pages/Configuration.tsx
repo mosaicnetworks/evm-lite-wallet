@@ -5,24 +5,40 @@ import styled from 'styled-components';
 import { Static } from 'evm-lite-lib';
 import { InjectedAlertProp, withAlert } from 'react-alert';
 import { connect } from 'react-redux';
-import { config, Spring } from 'react-spring/renderprops';
-import { Form, Grid, Header, Message } from 'semantic-ui-react';
+import { Form, Grid, Header, Input } from 'semantic-ui-react';
 
 import { Store } from 'src/store';
-import { AccountsState } from '../modules/accounts';
-import { ApplicationState, setDirectory } from '../modules/application';
-import { ConfigurationState } from '../modules/configuration';
+import { ConfigurationState, setDirectory } from '../modules/configuration';
 
-import { Banner, Heading, PaddedContent } from '../components';
-
-import Misc from '../classes/Misc';
+import { Banner, Jumbo } from '../components';
 
 import './styles/Configuration.css';
 
-const Section = styled.div`
-	background: #fff !important;
-	padding: 30px !important;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03) !important;
+const Description = styled.div`
+	margin: 40px;
+`;
+
+const Column = styled(Grid.Column)`
+	background: #fff;
+	margin: 4px;
+	padding: 0 !important;
+
+	& > div {
+		padding: 20px;
+		padding-top: 0 !important;
+	}
+
+	& .form {
+		padding: 10px;
+		padding-top: 0;
+	}
+
+	& h3 {
+		padding: 10px 20px;
+		color: #333;
+		background: #fbfbfb;
+		border-bottom: 1px solid #f4f5f7;
+	}
 `;
 
 interface AlertProps {
@@ -30,8 +46,6 @@ interface AlertProps {
 }
 
 interface StoreProps {
-	accounts: AccountsState;
-	app: ApplicationState;
 	config: ConfigurationState;
 }
 
@@ -40,12 +54,11 @@ interface DispatchProps {
 }
 
 interface State {
-	selectedFromIndex: number;
 	fields: {
 		dataDirectory: string;
 		keystore: string;
-		gas: string;
-		gasPrice: string;
+		gas: number;
+		gasPrice: number;
 		from: string;
 	};
 }
@@ -54,23 +67,23 @@ type LocalProps = StoreProps & AlertProps & DispatchProps;
 
 class Configuration extends React.Component<LocalProps, State> {
 	public state = {
-		selectedFromIndex: 0,
 		fields: {
-			dataDirectory: '',
+			dataDirectory: this.props.config.directory,
 			keystore: '',
-			gas: '',
-			gasPrice: '',
+			gas: 0,
+			gasPrice: 0,
 			from: ''
 		}
 	};
 
 	public componentDidMount() {
-		if (this.props.app.directory) {
+		if (this.props.config.directory) {
+			console.log('Workgin');
 			this.setState(
 				{
 					fields: {
 						...this.state.fields,
-						dataDirectory: this.props.app.directory
+						dataDirectory: this.props.config.directory
 					}
 				},
 				() => {
@@ -81,8 +94,8 @@ class Configuration extends React.Component<LocalProps, State> {
 							fields: {
 								...this.state.fields,
 								keystore: config.storage.keystore,
-								gas: config.defaults.gas.toString(),
-								gasPrice: config.defaults.gasPrice.toString()
+								gas: config.defaults.gas,
+								gasPrice: config.defaults.gasPrice
 							}
 						});
 					}
@@ -92,11 +105,11 @@ class Configuration extends React.Component<LocalProps, State> {
 	}
 
 	public componentWillReceiveProps(nextProps: LocalProps) {
-		if (nextProps.app.directory !== this.props.app.directory) {
+		if (nextProps.config.directory !== this.props.config.directory) {
 			this.setState({
 				fields: {
 					...this.state.fields,
-					dataDirectory: nextProps.app.directory
+					dataDirectory: nextProps.config.directory
 				}
 			});
 		}
@@ -108,8 +121,8 @@ class Configuration extends React.Component<LocalProps, State> {
 				fields: {
 					...this.state.fields,
 					keystore: config.storage.keystore,
-					gas: config.defaults.gas.toString(),
-					gasPrice: config.defaults.gasPrice.toString()
+					gas: config.defaults.gas,
+					gasPrice: config.defaults.gasPrice
 				}
 			});
 		}
@@ -134,162 +147,125 @@ class Configuration extends React.Component<LocalProps, State> {
 		this.props.handleSetDataDirectory(fields.dataDirectory);
 	};
 
-	public render() {
-		const { app, accounts } = this.props;
-		const { fields } = this.state;
+	public handleSaveConfig = () => {
+		console.log(this.state.fields);
+	};
 
-		const selectAccounts = accounts.all.map((account, i) => {
-			return {
-				key: account.address.toLowerCase(),
-				text: account.address.toLowerCase(),
-				value: i
-			};
-		});
+	public render() {
+		const { config } = this.props;
 
 		return (
 			<React.Fragment>
-				<Heading
-					heading={'Configuration'}
-					subHeading={app.directory || ''}
-				/>
+				<Jumbo>
+					<Header as="h2" floated="left">
+						Configuration
+						<Header.Subheader>
+							{config.directory || ''}
+						</Header.Subheader>
+					</Header>
+					<Header as="h2" floated="right">
+						<Header.Subheader>
+							<Input
+								compact={true}
+								action={{
+									color: 'purple',
+									labelPosition: 'right',
+									icon: 'folder',
+									content: 'Set',
+									onClick: this.handleSetDataDirectory
+								}}
+								onChange={(_, { value }) =>
+									this.setState({
+										...this.state,
+										fields: {
+											...this.state.fields,
+											dataDirectory: value
+										}
+									})
+								}
+								defaultValue={config.directory}
+							/>
+						</Header.Subheader>
+					</Header>
+				</Jumbo>
 				<Banner color="black">
 					These configuration values will be read in by all actions
 					across the wallet and other evm-lite applications as default
 					values.
 				</Banner>
-				<br />
-				<br />
-				<PaddedContent>
-					<Header as="h3">
-						Data Directory ({app.directory || 'N/A'})
-					</Header>
-				</PaddedContent>
-				<Spring
-					from={{
-						marginRight: -Misc.MARGIN_CONSTANT,
-						opacity: 0
-					}}
-					to={{
-						marginRight: 0,
-						opacity: 1
-					}}
-					config={config.wobbly}
-				>
-					{props => (
-						<Section style={props}>
-							<Message info={true}>
-								Note: This must be an absolute path.
-							</Message>
+				<Description>
+					<Grid columns="equal">
+						<Column>
+							<h3>Connection</h3>
 							<div>
-								<Form.Group>
-									<Form.Input
-										fluid={true}
-										icon="folder"
-										placeholder={app.directory || 'N/A'}
-										onChange={(_, { value }) =>
-											this.setState({
-												fields: {
-													...fields,
-													dataDirectory: value
-												}
-											})
-										}
-										defaultValue={fields.dataDirectory}
-									/>
-									<br />
-									<Form.Button
-										color="blue"
-										content="Set"
-										onClick={this.handleSetDataDirectory}
-									/>
-								</Form.Group>
+								The node's connection details. These will be
+								used to fetch account details.
 							</div>
-						</Section>
-					)}
-				</Spring>
-				<br />
-				<br />
-				<PaddedContent>
-					<Header as="h3">Defaults & Keystore</Header>
-				</PaddedContent>
-				<br />
-				<Spring
-					from={{
-						marginRight: -Misc.MARGIN_CONSTANT,
-						opacity: 0
-					}}
-					to={{
-						marginRight: 0,
-						opacity: 1
-					}}
-					config={config.wobbly}
-				>
-					{props => (
-						<Grid style={props} columns="equal">
-							<Grid.Column className="data">
-								<div>
-									<Form.Group>
-										<Form.Select
-											// selection={true}
-											fluid={true}
-											placeholder={fields.from}
-											options={selectAccounts}
-											defaultValue={1}
-										/>
-									</Form.Group>
-									<Form.Group>
-										<Form.Input
+							<div className="form">
+								<Form>
+									<Form.Field>
+										<label>Host</label>
+										<Input placeholder="ex: 127.0.0.1" />
+									</Form.Field>
+									<Form.Field>
+										<label>Port</label>
+										<Input placeholder="ex: 8080" />
+									</Form.Field>
+								</Form>
+							</div>
+						</Column>
+						<Column>
+							<h3>Defaults</h3>
+							<div>
+								These values will be used as defaults for any
+								transactions sent.
+							</div>
+							<div className="form">
+								<Form>
+									<Form.Field>
+										<label>From</label>
+										<Input placeholder="ex: 0x5c3e95864f7eb2fd0789848f0a3368aa67b8439c" />
+									</Form.Field>
+									<Form.Field>
+										<label>Gas</label>
+										<Input
 											type="number"
-											fluid={true}
-											placeholder="Default Gas"
-											defaultValue={fields.gas}
+											placeholder="ex: 10000"
 										/>
-									</Form.Group>
-									<Form.Group>
-										<Form.Input
+									</Form.Field>
+									<Form.Field>
+										<label>Gas Price</label>
+										<Input
 											type="number"
-											fluid={true}
-											placeholder="Default Gas Price"
-											defaultValue={fields.gasPrice || ''}
+											placeholder="ex: 0"
 										/>
-									</Form.Group>
-									<br />
-									<Form.Group>
-										<Form.Button
-											color="blue"
-											content="Set"
-										/>
-									</Form.Group>
-								</div>
-							</Grid.Column>
-							<Grid.Column className="data">
-								<div>
-									<Form.Group>
-										<Form.Input
-											fluid={true}
-											icon="folder"
-											placeholder={'Keystore Directory'}
-											defaultValue={fields.keystore}
-										/>
-										<br />
-										<Form.Button
-											color="blue"
-											content="Set"
-										/>
-									</Form.Group>
-								</div>
-							</Grid.Column>
-						</Grid>
-					)}
-				</Spring>
+									</Form.Field>
+								</Form>
+							</div>
+						</Column>
+						<Column>
+							<h3>Storage</h3>
+							<div>
+								The keystore is the directory where any accounts
+								created or imported will be placed.
+							</div>
+							<div className="form">
+								<Form>
+									<Form.Field>
+										<label>Keystore</label>
+										<Input placeholder="ex: /home/tom/.evmlc" />
+									</Form.Field>
+								</Form>
+							</div>
+						</Column>
+					</Grid>
+				</Description>
 			</React.Fragment>
 		);
 	}
 }
 
 const mapStoreToProps = (store: Store): StoreProps => ({
-	accounts: store.accounts,
-	app: store.app,
 	config: store.config
 });
 

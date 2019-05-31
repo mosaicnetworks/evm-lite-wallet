@@ -5,10 +5,8 @@ import { combineReducers } from 'redux';
 import { Store } from 'src/store';
 
 import accounts from './accounts';
-import app from './application';
+// import app from './application';
 import config from './configuration';
-
-// Exports
 
 export type ThunkResult<R> = ThunkAction<R, Store, undefined, BaseAction<any>>;
 export interface BaseAction<Payload> {
@@ -17,7 +15,7 @@ export interface BaseAction<Payload> {
 }
 
 export default combineReducers({
-	app,
+	// app,
 	config,
 	accounts
 });

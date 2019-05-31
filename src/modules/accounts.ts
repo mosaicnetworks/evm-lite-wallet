@@ -10,7 +10,7 @@ import {
 	V3JSONKeyStore
 } from 'evm-lite-lib';
 
-import { BaseAction, ThunkResult } from 'src/modules';
+import { BaseAction, ThunkResult } from '.';
 
 // Lists all accounts in keystore
 const LIST_REQUEST = '@monet/accounts/LIST/REQUEST';
@@ -50,23 +50,23 @@ function integerWithCommas(x: number | string) {
 // Accounts state structure
 export interface AccountsState {
 	// Entire list of accounts
-	all: any[];
+	readonly all: BaseAccount[];
 
 	// Currently unlocked account
-	unlocked?: Account;
+	readonly unlocked?: Account;
 
 	// Entrie list of transactions (not specific to an account)
 	// Latest transaction hash
-	transactions: {
+	readonly transactions: {
 		all: SentTX[];
 		lastestReceipt?: TXReceipt;
 	};
 
 	// A single error field to be used by this module for any action
-	error?: string;
+	readonly error?: string;
 
 	// Loading states for async actions
-	loading: {
+	readonly loading: {
 		transfer: boolean;
 		list: boolean;
 		get: boolean;
@@ -75,7 +75,7 @@ export interface AccountsState {
 	};
 }
 
-// Initial State of the app
+// Initial State of the accounts module
 const initialState: AccountsState = {
 	all: [],
 	transactions: {
@@ -94,7 +94,7 @@ const initialState: AccountsState = {
 export default function reducer(
 	state: AccountsState = initialState,
 	action: BaseAction<any> = {} as BaseAction<any>
-): AccountsState {
+): Readonly<AccountsState> {
 	switch (action.type) {
 		// List accounts
 		case LIST_REQUEST:
@@ -324,14 +324,7 @@ export function list(): ThunkResult<Promise<BaseAccount[]>> {
 
 			const keystore = new Keystore(config.storage.keystore);
 
-			accounts = await keystore.list(connection).catch(error => {
-				dispatch({
-					type: LIST_ERROR,
-					payload: error.toString()
-				});
-
-				return [];
-			});
+			accounts = await keystore.list(connection);
 
 			dispatch({
 				type: LIST_SUCCESS,

@@ -6,8 +6,7 @@ import { connect } from 'react-redux';
 import { HashRouter, Route } from 'react-router-dom';
 import { Store } from 'src/store';
 
-import { initialize } from '../modules/application';
-import { load } from '../modules/configuration';
+import { initialize, load } from '../modules/configuration';
 
 import Account from '../pages/Account';
 import Accounts from '../pages/Accounts';

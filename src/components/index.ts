@@ -13,5 +13,6 @@ export { default as Transaction } from './Transaction';
 export { default as Wrapper } from './Wrapper';
 export { default as AccountTransfer } from './AccountTransfer';
 export { default as Animation } from './animations/Animation';
+export { default as Transactions } from './Transactions';
 
 export * from './Styling';
