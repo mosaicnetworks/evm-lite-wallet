@@ -37,6 +37,11 @@ const TRANSFER_REQUEST = '@monet/accounts/TRANSFER/REQUEST';
 const TRANSFER_SUCCESS = '@monet/accounts/TRANSFER/SUCCESS';
 const TRANSFER_ERROR = '@monet/accounts/TRANSFER/ERROR';
 
+/**
+ * Should comma seperate the integer/ string.
+ *
+ * @param x - The value to comma sepetate.
+ */
 function integerWithCommas(x: number | string) {
 	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
@@ -69,6 +74,7 @@ export interface AccountsState {
 	};
 }
 
+// Initial State of the app
 const initialState: AccountsState = {
 	all: [],
 	transactions: {
@@ -83,6 +89,7 @@ const initialState: AccountsState = {
 	}
 };
 
+// The root reducer for the accounts module
 export default function reducer(
 	state: AccountsState = initialState,
 	action: BaseAction<any> = {} as BaseAction<any>
@@ -238,6 +245,10 @@ export default function reducer(
 				transactions: {
 					...state.transactions,
 					lastestHash: undefined
+				},
+				loading: {
+					...state.loading,
+					transfer: true
 				}
 			};
 		case TRANSFER_SUCCESS:
@@ -247,6 +258,10 @@ export default function reducer(
 				transactions: {
 					...state.transactions,
 					lastestHash: action.payload
+				},
+				loading: {
+					...state.loading,
+					transfer: false
 				}
 			};
 		case TRANSFER_ERROR:
@@ -256,6 +271,10 @@ export default function reducer(
 					...state.transactions,
 					lastestHash: undefined
 				},
+				loading: {
+					...state.loading,
+					transfer: false
+				},
 				error: action.payload
 			};
 		default:
@@ -263,6 +282,10 @@ export default function reducer(
 	}
 }
 
+/**
+ * Should list all acounts from the keystore. It will update the redux state
+ * and set the `all` attribute to the desired result.
+ */
 export function list(): ThunkResult<Promise<BaseAccount[]>> {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -508,8 +531,8 @@ export function transfer(
 				await evmlc.testConnection();
 
 				const transaction = evmlc.accounts.prepareTransfer(to, value);
-				transaction.submit(state.accounts.unlocked, {
-					timeout: 5
+				await transaction.submit(state.accounts.unlocked, {
+					timeout: 3
 				});
 
 				if (!transaction.hash) {
@@ -518,6 +541,11 @@ export function transfer(
 							'transfer was submitted to node.'
 					);
 				}
+
+				dispatch({
+					type: TRANSFER_SUCCESS,
+					payload: transaction.hash
+				});
 
 				return transaction.hash;
 			} else {

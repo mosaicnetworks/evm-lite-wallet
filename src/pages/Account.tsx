@@ -74,30 +74,30 @@ type LocalProps = OwnProps &
 	RouteComponentProps<RouterParams>;
 
 const transactions: SentTransaction[] = [
-	{
-		id: 1,
-		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-		value: 500000,
-		status: true,
-		incoming: true
-	},
-	{
-		id: 2,
-		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-		value: 10000,
-		status: true,
-		incoming: false
-	},
-	{
-		id: 3,
-		from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
-		to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
-		value: 100000,
-		status: false,
-		incoming: true
-	}
+	// {
+	// 	id: 1,
+	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+	// 	value: 500000,
+	// 	status: true,
+	// 	incoming: true
+	// },
+	// {
+	// 	id: 2,
+	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+	// 	value: 10000,
+	// 	status: true,
+	// 	incoming: false
+	// },
+	// {
+	// 	id: 3,
+	// 	from: '0X89ACCD6B63D6EE73550ECA0CBA16C2027C13FDA6',
+	// 	to: '0x49a79da766fe9ac55e2c19e61c5f90c3fc40753b',
+	// 	value: 100000,
+	// 	status: false,
+	// 	incoming: true
+	// }
 ];
 
 class Account extends React.Component<LocalProps, State> {
