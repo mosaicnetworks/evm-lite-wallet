@@ -4,7 +4,7 @@ A user interface to interact with EVM-Lite.
 
 ## Installation
 
-To build and run `EVM-Lite Wallet`, simply execute the command:
+To build and run `EVM-Lite Wallet`, download / clone this repository, then simply execute the command:
 
 ```console
 make
